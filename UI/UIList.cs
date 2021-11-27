@@ -46,6 +46,14 @@ namespace Monomon.UI
             get { return selectedItem; }
             set
             {
+                if(Items.Any(x => x.Selected))
+                {
+                    var selected = Items.First(x => x.Selected);
+                    selected.Selected = false;
+                }
+
+                var newItem = Items.First(x => x.Item.Equals(value));
+                newItem.Selected = true;
                 selectedItem = value;
                 OnSelectionChanged(value);
             }
