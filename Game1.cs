@@ -14,20 +14,30 @@ namespace Monomon
 {
     public class Turn
     {
-        private readonly Action t;
+        private readonly Action<Turn> t;
+        private bool _completed;
 
-        public Turn(Action t)
+        public Turn(Action<Turn> t)
         {
             this.t = t;
-            Complete = false;
+            CanExecute = true;
+            Executing = false;
+            _completed = false;
         }
 
-        public Task Execute()
+        public void Execute()
         {
-            return Task.Run(() => t());
+            Executing = true;
+            t(this);
         }
 
-        public bool Complete { get; set; }
+        public bool CanExecute { get; set; }
+
+        internal bool Completed
+        {
+            get;set;
+        }
+        public bool Executing { get; set; }
     }
 
     public class Game1 : Game
@@ -63,7 +73,7 @@ namespace Monomon
             _spriteBatch = new SpriteBatch(_graphics.GraphicsDevice);
             font = Content.Load<SpriteFont>("File");
             _clearColor = Color.SkyBlue;
-            _currentTurn = new Turn(() => { });
+            _currentTurn = new Turn(x => { });
 
             _list = new UIList<string>(new List<UIItem<string>>() {
                 new UIItem<string>("Fight", x => { _currentList = fightList; }),
@@ -74,10 +84,13 @@ namespace Monomon
 
             fightList = new UIList<string>(new List<UIItem<string>>() {
                 new UIItem<string>("Tackle", x => {
-                    _currentTurn = new Turn(() => { 
+
+                    _currentTurn = new Turn(x => { 
                         _mob.Health -= 1;
+                        x.Completed = true;
                     });
-                    _currentTurn.Complete = true;
+
+                    _currentTurn.CanExecute = true;
                     _currentList = _list;
                 }),
                 new UIItem<string>("Growl", x => {}),
@@ -100,14 +113,14 @@ namespace Monomon
             _player = new Mobmon("Player", 25);
 
             _rand = new Random();
-            _enemyTurn = new Turn(() => {
+            _enemyTurn = new Turn(state => {
                 Task.Run(async () => {
                     await Task.Delay(500);
-                    _player.Health -= _rand.Next(5);
-                    _enemyTurn.Complete = true;
+                    _player.Health -= _rand.Next(1,5);
+                    state.Completed = true;
                 });
             });
-            _enemyTurn.Complete = true;
+            _enemyTurn.CanExecute = true;
 
             _currentEnemyCard = new BattleCardViewModel(_mob.Name, _mob.MaxHealth, _mob.Health, 2);
             _playerCard = new BattleCardViewModel("Player", 25, 25, 6);
@@ -170,10 +183,13 @@ namespace Monomon
                 _currentList.Select();
             }
 
-            if (_currentTurn.Complete)
+            if (_currentTurn.CanExecute && !_currentTurn.Executing)
             {
                 _currentTurn.Execute();
-                _currentTurn = NextTurn();
+            }
+            if(_currentTurn.Completed)
+            {
+                _currentTurn = NextTurn(); 
             }
 
             // TODO: Add your update logic here
@@ -188,9 +204,13 @@ namespace Monomon
         {
             turnNum++;
             if (turnNum % 2 == 0)
-                return new Turn(() => { });
+                return new Turn(x => { });
             else
+            {
+                _enemyTurn.CanExecute = true;
+                _enemyTurn.Executing = false;
                 return _enemyTurn;
+            }
         }
 
         private void UpdateBattleCard(Mobmon mob, BattleCardViewModel card)
