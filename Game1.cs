@@ -15,7 +15,7 @@ namespace Monomon
         private BufferInputHandler _input;
         private SpriteBatch _spriteBatch;
         private SpriteFont font;
-        private UIList<string> list;
+        private UIList<string> _list;
         private UIList<string> fightList;
         private UIList<string> itemList;
         private UIList<string> _currentList;
@@ -28,39 +28,46 @@ namespace Monomon
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
-
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-
             _input = new Monomon.Input.BufferInputHandler();
             _spriteBatch = new SpriteBatch(_graphics.GraphicsDevice);
             font = Content.Load<SpriteFont>("File");
             _clearColor = Color.SkyBlue;
 
-            list = new UIList<string>(new List<string>() {
-                "Fight",
-                "Item",
-                "Mon",
-                "Run"
+            _list = new UIList<string>(new List<UIItem<string>>() {
+                new UIItem<string>("Fight", x => { _currentList = fightList; }),
+                new UIItem<string>("Item", x => { _currentList = itemList;}),
+                new UIItem<string>("Mon"),
+                new UIItem<string>("Run"),
             }, x => { }, OnItemChanged);
 
-            fightList = new UIList<string>(new List<string>() { 
-                "Tackle",
-                "Growl",
+            fightList = new UIList<string>(new List<UIItem<string>>() {
+                new UIItem<string>("Tackle", x => {}),
+                new UIItem<string>("Growl", x => {}),
             }, x => { }, OnFightItemSelected);
 
-            itemList = new UIList<string>(new List<string>() { 
-                "potion",
-                "mana-potion",
-                "ball",
-            }, x => { }, OnFightItemSelected);
+            itemList = new UIList<string>(new List<UIItem<string>>() {
+                new UIItem<string>("Potion", x => {}),
+                new UIItem<string>("Mana Potion", x => {}),
+                new UIItem<string>("Back", x => {_currentList = _list; }),
+            }, x => { }, OnItemSelected);
 
-            _currentList = list;
+            //itemList = new UIList<string>(new List<string>() { 
+            //    "potion",
+            //    "mana-potion",
+            //    "ball",
+            //}, x => { }, OnFightItemSelected);
 
-            list.SelectedItem = "Fourth...";
+            _currentList = _list;
+
 
             base.Initialize();
+        }
+
+        private void OnItemSelected(string obj)
+        {
         }
 
         private void OnFightItemSelected(string obj)
@@ -70,12 +77,12 @@ namespace Monomon
         public void DrawUIList<T>(UIList<T> list, Vector2 pos) where T : IEquatable<T>
         {
             var y = pos.Y;
-            foreach(var item in list.Items.Select((x,i) => (x,i)))
+            foreach (var item in list.Items.Select((x, i) => (x, i)))
             {
-                var c = list.SelectedItem.Equals(item.x) ? Color.Red : Color.White;
-                c = item.x.Equals(_selection) ? Color.Green : c;
+                var c = item.x.Selected ? Color.Red : Color.White;
+                c = item.x.Item.Equals(_selection) ? Color.Green : c;
 
-                _spriteBatch.DrawString(font, item.x.ToString(), new Vector2(pos.X, y), c);
+                _spriteBatch.DrawString(font, item.x.Item.ToString(), new Vector2(pos.X, y), c);
                 y += 20;
             }
         }
@@ -84,22 +91,13 @@ namespace Monomon
         {
             _selection = obj;
             _clearColor = obj switch
-            { 
+            {
                 "Fight" => Color.HotPink,
                 "Item" => Color.Blue,
                 "Mon" => Color.Yellow,
                 "Run" => Color.Black,
                 _ => Color.SkyBlue
             };
-
-            if (_selection == "Fight")
-            {
-                _currentList = fightList;
-            }
-            else if(_selection == "Item")
-            {
-                _currentList = itemList;
-            }
         }
 
         protected override void LoadContent()
@@ -121,12 +119,12 @@ namespace Monomon
                 _currentList.SelectNext();
             if (_input.IsKeyPressed(Keys.Up))
                 _currentList.SelectPrevious();
-            if(_input.IsKeyPressed(Keys.A))
+            if (_input.IsKeyPressed(Keys.A))
             {
-                _currentList = list;
+                _currentList = _list;
             }
 
-            if(_input.IsKeyPressed(Keys.Space))
+            if (_input.IsKeyPressed(Keys.Space))
             {
                 _currentList.Select();
             }
