@@ -161,9 +161,13 @@ namespace Monomon
         private void DrawBattlecard(BattleCardViewModel card, Vector2 pos)
         {
             var color = card.IsLow() ? Color.Red : Color.White;
+            float percentage = (float)card.CurrentHealth / (float)card.MaxHealth;
+            float healthbarW = 16;
+
             _spriteBatch.DrawString(font, $"{card.Name}", new Vector2(pos.X, pos.Y), Color.White);
-            _spriteBatch.DrawString(font, $"HP: {card.CurrentHealth}/{card.MaxHealth}", new Vector2(pos.X, pos.Y + 20), color);
-            _spriteBatch.DrawString(font, $"Lv: {card.Level}", new Vector2(pos.X,pos.Y + 40), Color.White);
+            _spriteBatch.DrawString(font, $"{string.Join(null,Enumerable.Repeat("#",(int)(percentage*healthbarW)))}", new Vector2(pos.X, pos.Y + 20), color);
+            _spriteBatch.DrawString(font, $"HP: {card.CurrentHealth}/{card.MaxHealth}", new Vector2(pos.X, pos.Y + 35), color);
+            _spriteBatch.DrawString(font, $"Lv: {card.Level}", new Vector2(pos.X,pos.Y + 50), Color.White);
         }
     }
 }
