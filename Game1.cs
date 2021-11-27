@@ -2,7 +2,9 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Monomon.Input;
+using Monomon.Mons;
 using Monomon.UI;
+using Monomon.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,8 +21,10 @@ namespace Monomon
         private UIList<string> fightList;
         private UIList<string> itemList;
         private UIList<string> _currentList;
+        private Mobmon _mob;
         private string _selection;
         private Color _clearColor;
+        private BattleCardViewModel _currentEnemyCard;
 
         public Game1()
         {
@@ -44,7 +48,10 @@ namespace Monomon
             }, x => { }, OnItemChanged);
 
             fightList = new UIList<string>(new List<UIItem<string>>() {
-                new UIItem<string>("Tackle", x => {}),
+                new UIItem<string>("Tackle", x => {
+                    _mob.Health -= 1;
+                    _currentList = _list;
+                }),
                 new UIItem<string>("Growl", x => {}),
             }, x => { }, OnFightItemSelected);
 
@@ -61,6 +68,10 @@ namespace Monomon
             //}, x => { }, OnFightItemSelected);
 
             _currentList = _list;
+            _mob = new Mobmon("First Mob", 5);
+
+            _currentEnemyCard = new BattleCardViewModel(_mob.Name, _mob.MaxHealth, _mob.Health, 2);
+
 
 
             base.Initialize();
@@ -90,14 +101,6 @@ namespace Monomon
         private void OnItemChanged(string obj)
         {
             _selection = obj;
-            _clearColor = obj switch
-            {
-                "Fight" => Color.HotPink,
-                "Item" => Color.Blue,
-                "Mon" => Color.Yellow,
-                "Run" => Color.Black,
-                _ => Color.SkyBlue
-            };
         }
 
         protected override void LoadContent()
@@ -131,7 +134,13 @@ namespace Monomon
 
             // TODO: Add your update logic here
 
+            UpdateBattleCard(_mob, _currentEnemyCard);
             base.Update(gameTime);
+        }
+
+        private void UpdateBattleCard(Mobmon mob, BattleCardViewModel currentEnemyCard)
+        {
+            currentEnemyCard.CurrentHealth = mob.Health;
         }
 
         protected override void Draw(GameTime gameTime)
@@ -140,11 +149,20 @@ namespace Monomon
 
             _spriteBatch.Begin();
             DrawUIList(_currentList, new Vector2(30, 10));
+            DrawBattlecard(_currentEnemyCard, new Vector2(200,20));
             _spriteBatch.End();
 
             // TODO: Add your drawing code here
 
             base.Draw(gameTime);
+        }
+
+        private void DrawBattlecard(BattleCardViewModel card, Vector2 pos)
+        {
+            var color = card.IsLow() ? Color.Red : Color.White;
+            _spriteBatch.DrawString(font, $"{card.Name}", new Vector2(pos.X, pos.Y), Color.White);
+            _spriteBatch.DrawString(font, $"HP: {card.CurrentHealth}/{card.MaxHealth}", new Vector2(pos.X, pos.Y + 20), color);
+            _spriteBatch.DrawString(font, $"Lv: {card.Level}", new Vector2(pos.X,pos.Y + 40), Color.White);
         }
     }
 }
