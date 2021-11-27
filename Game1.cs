@@ -17,6 +17,7 @@ namespace Monomon
         private SpriteFont font;
         private UIList<string> list;
         private string _selection;
+        private Color _clearColor;
 
         public Game1()
         {
@@ -32,13 +33,14 @@ namespace Monomon
             _input = new Monomon.Input.BufferInputHandler();
             _spriteBatch = new SpriteBatch(_graphics.GraphicsDevice);
             font = Content.Load<SpriteFont>("File");
+            _clearColor = Color.SkyBlue;
 
             list = new UIList<string>(new List<string>() {
                 "Fight",
                 "Item",
                 "Mon",
                 "Run"
-            }, OnItemChanged);
+            }, x => { }, OnItemChanged);
 
             list.SelectedItem = "Fourth...";
 
@@ -60,6 +62,16 @@ namespace Monomon
 
         private void OnItemChanged(string obj)
         {
+            _selection = obj;
+            _clearColor = obj switch
+            { 
+                "Fight" => Color.HotPink,
+                "Item" => Color.Blue,
+                "Mon" => Color.Yellow,
+                "Run" => Color.Black,
+                _ => Color.SkyBlue
+            };
+
         }
 
         protected override void LoadContent()
@@ -84,7 +96,7 @@ namespace Monomon
 
             if(_input.IsKeyPressed(Keys.Space))
             {
-                _selection = list.SelectedItem;
+                list.Select();
             }
 
             // TODO: Add your update logic here
@@ -94,7 +106,7 @@ namespace Monomon
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(_clearColor);
 
             _spriteBatch.Begin();
             DrawUIList(list, new Vector2(30, 10));

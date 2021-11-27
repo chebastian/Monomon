@@ -12,11 +12,12 @@ namespace Monomon.UI
 
     public class UIList<T> where T : IEquatable<T>
     {
-        public UIList(List<T> items, Action<T> onSelectionChanged)
+        public UIList(List<T> items, Action<T> onSelectionChanged, Action<T> onItemSelected)
         {
             Debug.Assert(items.Count > 0);
             Items = items;
             OnSelectionChanged = onSelectionChanged;
+            OnItemSelected = onItemSelected;
             SelectedItem = Items.First();
         }
 
@@ -30,6 +31,11 @@ namespace Monomon.UI
                 selectedItem = value;
                 OnSelectionChanged(value);
             }
+        }
+
+        public void Select()
+        {
+            OnItemSelected(SelectedItem);
         }
 
         public void SelectNext()
@@ -51,5 +57,6 @@ namespace Monomon.UI
 
         public List<T> Items { get; }
         public Action<T> OnSelectionChanged { get; }
+        public Action<T> OnItemSelected { get; }
     }
 }
