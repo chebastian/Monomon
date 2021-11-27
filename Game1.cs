@@ -16,6 +16,9 @@ namespace Monomon
         private SpriteBatch _spriteBatch;
         private SpriteFont font;
         private UIList<string> list;
+        private UIList<string> fightList;
+        private UIList<string> itemList;
+        private UIList<string> _currentList;
         private string _selection;
         private Color _clearColor;
 
@@ -42,9 +45,26 @@ namespace Monomon
                 "Run"
             }, x => { }, OnItemChanged);
 
+            fightList = new UIList<string>(new List<string>() { 
+                "Tackle",
+                "Growl",
+            }, x => { }, OnFightItemSelected);
+
+            itemList = new UIList<string>(new List<string>() { 
+                "potion",
+                "mana-potion",
+                "ball",
+            }, x => { }, OnFightItemSelected);
+
+            _currentList = list;
+
             list.SelectedItem = "Fourth...";
 
             base.Initialize();
+        }
+
+        private void OnFightItemSelected(string obj)
+        {
         }
 
         public void DrawUIList<T>(UIList<T> list, Vector2 pos) where T : IEquatable<T>
@@ -72,6 +92,14 @@ namespace Monomon
                 _ => Color.SkyBlue
             };
 
+            if (_selection == "Fight")
+            {
+                _currentList = fightList;
+            }
+            else if(_selection == "Item")
+            {
+                _currentList = itemList;
+            }
         }
 
         protected override void LoadContent()
@@ -90,13 +118,17 @@ namespace Monomon
             var pad = GamePad.GetState(PlayerIndex.One);
 
             if (_input.IsKeyPressed(Keys.Down))
-                list.SelectNext();
+                _currentList.SelectNext();
             if (_input.IsKeyPressed(Keys.Up))
-                list.SelectPrevious();
+                _currentList.SelectPrevious();
+            if(_input.IsKeyPressed(Keys.A))
+            {
+                _currentList = list;
+            }
 
             if(_input.IsKeyPressed(Keys.Space))
             {
-                list.Select();
+                _currentList.Select();
             }
 
             // TODO: Add your update logic here
@@ -109,7 +141,7 @@ namespace Monomon
             GraphicsDevice.Clear(_clearColor);
 
             _spriteBatch.Begin();
-            DrawUIList(list, new Vector2(30, 10));
+            DrawUIList(_currentList, new Vector2(30, 10));
             _spriteBatch.End();
 
             // TODO: Add your drawing code here
