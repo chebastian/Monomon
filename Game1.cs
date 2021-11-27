@@ -25,6 +25,7 @@ namespace Monomon
         private string _selection;
         private Color _clearColor;
         private BattleCardViewModel _currentEnemyCard;
+        private BattleCardViewModel _playerCard;
 
         public Game1()
         {
@@ -71,8 +72,7 @@ namespace Monomon
             _mob = new Mobmon("First Mob", 5);
 
             _currentEnemyCard = new BattleCardViewModel(_mob.Name, _mob.MaxHealth, _mob.Health, 2);
-
-
+            _playerCard = new BattleCardViewModel("Player", 25, 25, 6);
 
             base.Initialize();
         }
@@ -145,11 +145,12 @@ namespace Monomon
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(_clearColor);
+            GraphicsDevice.Clear(Color.Black);
 
             _spriteBatch.Begin();
-            DrawUIList(_currentList, new Vector2(30, 10));
-            DrawBattlecard(_currentEnemyCard, new Vector2(200,20));
+            DrawUIList(_currentList, new Vector2(200, 200));
+            DrawBattlecard(_currentEnemyCard, new Vector2(30,20));
+            DrawBattlecard(_playerCard, new Vector2(30,200));
             _spriteBatch.End();
 
             // TODO: Add your drawing code here
