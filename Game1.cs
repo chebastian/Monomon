@@ -8,9 +8,28 @@ using Monomon.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Monomon
 {
+    public class Turn
+    {
+        private readonly Action t;
+
+        public Turn(Action t)
+        {
+            this.t = t;
+            Complete = false;
+        }
+
+        public Task Execute()
+        {
+            return Task.Run(() => t());
+        }
+
+        public bool Complete { get; set; }
+    }
+
     public class Game1 : Game
     {
         private GraphicsDeviceManager _graphics;
@@ -22,8 +41,12 @@ namespace Monomon
         private UIList<string> itemList;
         private UIList<string> _currentList;
         private Mobmon _mob;
+        private Mobmon _player;
+        private Random _rand;
+        private Turn _enemyTurn;
         private string _selection;
         private Color _clearColor;
+        private Turn _currentTurn;
         private BattleCardViewModel _currentEnemyCard;
         private BattleCardViewModel _playerCard;
 
@@ -40,6 +63,7 @@ namespace Monomon
             _spriteBatch = new SpriteBatch(_graphics.GraphicsDevice);
             font = Content.Load<SpriteFont>("File");
             _clearColor = Color.SkyBlue;
+            _currentTurn = new Turn(() => { });
 
             _list = new UIList<string>(new List<UIItem<string>>() {
                 new UIItem<string>("Fight", x => { _currentList = fightList; }),
@@ -50,7 +74,10 @@ namespace Monomon
 
             fightList = new UIList<string>(new List<UIItem<string>>() {
                 new UIItem<string>("Tackle", x => {
-                    _mob.Health -= 1;
+                    _currentTurn = new Turn(() => { 
+                        _mob.Health -= 1;
+                    });
+                    _currentTurn.Complete = true;
                     _currentList = _list;
                 }),
                 new UIItem<string>("Growl", x => {}),
@@ -70,6 +97,17 @@ namespace Monomon
 
             _currentList = _list;
             _mob = new Mobmon("First Mob", 5);
+            _player = new Mobmon("Player", 25);
+
+            _rand = new Random();
+            _enemyTurn = new Turn(() => {
+                Task.Run(async () => {
+                    await Task.Delay(500);
+                    _player.Health -= _rand.Next(5);
+                    _enemyTurn.Complete = true;
+                });
+            });
+            _enemyTurn.Complete = true;
 
             _currentEnemyCard = new BattleCardViewModel(_mob.Name, _mob.MaxHealth, _mob.Health, 2);
             _playerCard = new BattleCardViewModel("Player", 25, 25, 6);
@@ -132,15 +170,32 @@ namespace Monomon
                 _currentList.Select();
             }
 
+            if (_currentTurn.Complete)
+            {
+                _currentTurn.Execute();
+                _currentTurn = NextTurn();
+            }
+
             // TODO: Add your update logic here
 
             UpdateBattleCard(_mob, _currentEnemyCard);
+            UpdateBattleCard(_player, _playerCard);
             base.Update(gameTime);
         }
 
-        private void UpdateBattleCard(Mobmon mob, BattleCardViewModel currentEnemyCard)
+        int turnNum = 0;
+        private Turn NextTurn()
         {
-            currentEnemyCard.CurrentHealth = mob.Health;
+            turnNum++;
+            if (turnNum % 2 == 0)
+                return new Turn(() => { });
+            else
+                return _enemyTurn;
+        }
+
+        private void UpdateBattleCard(Mobmon mob, BattleCardViewModel card)
+        {
+            card.CurrentHealth = mob.Health;
         }
 
         protected override void Draw(GameTime gameTime)
