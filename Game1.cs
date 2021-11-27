@@ -102,12 +102,6 @@ namespace Monomon
                 new UIItem<string>("Back", x => {_currentList = _list; }),
             }, x => { }, OnItemSelected);
 
-            //itemList = new UIList<string>(new List<string>() { 
-            //    "potion",
-            //    "mana-potion",
-            //    "ball",
-            //}, x => { }, OnFightItemSelected);
-
             _currentList = _list;
             _mob = new Mobmon("First Mob", 5);
             _player = new Mobmon("Player", 25);
