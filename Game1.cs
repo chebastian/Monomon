@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Monomon.Battle;
 using Monomon.Input;
 using Monomon.Mons;
 using Monomon.UI;
@@ -12,37 +13,11 @@ using System.Threading.Tasks;
 
 namespace Monomon
 {
-    public class Turn
-    {
-        private readonly Action<Turn> t;
-        private bool _completed;
-
-        public Turn(Action<Turn> t)
-        {
-            this.t = t;
-            CanExecute = true;
-            Executing = false;
-            _completed = false;
-        }
-
-        public void Execute()
-        {
-            Executing = true;
-            t(this);
-        }
-
-        public bool CanExecute { get; set; }
-
-        internal bool Completed
-        {
-            get;set;
-        }
-        public bool Executing { get; set; }
-    }
 
     public class Game1 : Game
     {
         private GraphicsDeviceManager _graphics;
+        private TurnManager _turnHandler;
         private BufferInputHandler _input;
         private SpriteBatch _spriteBatch;
         private SpriteFont font;
@@ -56,7 +31,6 @@ namespace Monomon
         private Turn _enemyTurn;
         private string _selection;
         private Color _clearColor;
-        private Turn _currentTurn;
         private BattleCardViewModel _currentEnemyCard;
         private BattleCardViewModel _playerCard;
 
@@ -69,11 +43,13 @@ namespace Monomon
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            _turnHandler = new TurnManager();
+
             _input = new Monomon.Input.BufferInputHandler();
             _spriteBatch = new SpriteBatch(_graphics.GraphicsDevice);
             font = Content.Load<SpriteFont>("File");
             _clearColor = Color.SkyBlue;
-            _currentTurn = new Turn(x => { });
+            _turnHandler.SetTurn(new Turn(x => { }));
 
             _list = new UIList<string>(new List<UIItem<string>>() {
                 new UIItem<string>("Fight", x => { _currentList = fightList; }),
@@ -85,12 +61,17 @@ namespace Monomon
             fightList = new UIList<string>(new List<UIItem<string>>() {
                 new UIItem<string>("Tackle", x => {
 
-                    _currentTurn = new Turn(x => { 
-                        _mob.Health -= 1;
-                        x.Completed = true;
-                    });
+                    _turnHandler.SetTurn(new Turn(c => {
+                        Task.Run(async () => {
+                            await Task.Delay(200);
+                            _mob.Health -= 1;
+                            await Task.Delay(200);
+                            _mob.Health -= 1;
+                            await Task.Delay(200);
+                            c.Completed = true;
+                        });
+                    }));
 
-                    _currentTurn.CanExecute = true;
                     _currentList = _list;
                 }),
                 new UIItem<string>("Growl", x => {}),
@@ -105,8 +86,8 @@ namespace Monomon
             _currentList = _list;
             _mob = new Mobmon("First Mob", 5);
             _player = new Mobmon("Player", 25);
-
             _rand = new Random();
+
             _enemyTurn = new Turn(state => {
                 Task.Run(async () => {
                     await Task.Delay(500);
@@ -114,7 +95,6 @@ namespace Monomon
                     state.Completed = true;
                 });
             });
-            _enemyTurn.CanExecute = true;
 
             _currentEnemyCard = new BattleCardViewModel(_mob.Name, _mob.MaxHealth, _mob.Health, 2);
             _playerCard = new BattleCardViewModel("Player", 25, 25, 6);
@@ -177,16 +157,11 @@ namespace Monomon
                 _currentList.Select();
             }
 
-            if (_currentTurn.CanExecute && !_currentTurn.Executing)
+            if( _turnHandler.TurnIsOver() )
             {
-                _currentTurn.Execute();
-            }
-            if(_currentTurn.Completed)
-            {
-                _currentTurn = NextTurn(); 
+                _turnHandler.SetTurn(NextTurn());
             }
 
-            // TODO: Add your update logic here
 
             UpdateBattleCard(_mob, _currentEnemyCard);
             UpdateBattleCard(_player, _playerCard);
@@ -201,8 +176,6 @@ namespace Monomon
                 return new Turn(x => { });
             else
             {
-                _enemyTurn.CanExecute = true;
-                _enemyTurn.Executing = false;
                 return _enemyTurn;
             }
         }

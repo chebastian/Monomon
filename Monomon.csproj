@@ -30,6 +30,5 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Input\" />
-    <Folder Include="Battle\" />
   </ItemGroup>
 </Project>
