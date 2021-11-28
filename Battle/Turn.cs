@@ -5,14 +5,12 @@ namespace Monomon.Battle
     public class Turn
     {
         private readonly Action<Turn> t;
-        private bool _completed;
 
         public Turn(Action<Turn> t)
         {
             this.t = t;
             CanExecute = true;
             Executing = false;
-            _completed = false;
         }
 
         public void Execute()
