@@ -10,18 +10,14 @@
 
         public void SetTurn(Turn t)
         {
-            _currentTurn.Executing = false;
             _currentTurn.Completed = false;
-            _currentTurn.CanExecute = false;
 
-            t.CanExecute = true;
             t.Completed = false;
-            t.Executing = false;
             _currentTurn = t;
             _currentTurn.Execute();
         }
 
-        internal bool TurnIsOver()
+        internal bool TurnIsDone()
         {
             return _currentTurn.Completed;
         }

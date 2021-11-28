@@ -157,7 +157,7 @@ namespace Monomon
                 _currentList.Select();
             }
 
-            if( _turnHandler.TurnIsOver() )
+            if( _turnHandler.TurnIsDone() )
             {
                 _turnHandler.SetTurn(NextTurn());
             }
