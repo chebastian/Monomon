@@ -17,7 +17,7 @@ namespace Monomon
     public class Game1 : Game
     {
         private GraphicsDeviceManager _graphics;
-        private TurnManager _turnHandler;
+        private BattleManager _battleManager;
         private BufferInputHandler _input;
         private SpriteBatch _spriteBatch;
         private SpriteFont font;
@@ -28,7 +28,6 @@ namespace Monomon
         private Mobmon _mob;
         private Mobmon _player;
         private Random _rand;
-        private Turn _enemyTurn;
         private string _selection;
         private Color _clearColor;
         private BattleCardViewModel _currentEnemyCard;
@@ -43,13 +42,11 @@ namespace Monomon
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            _turnHandler = new TurnManager();
 
             _input = new Monomon.Input.BufferInputHandler();
             _spriteBatch = new SpriteBatch(_graphics.GraphicsDevice);
             font = Content.Load<SpriteFont>("File");
             _clearColor = Color.SkyBlue;
-            _turnHandler.SetTurn(new Turn(x => { }));
 
             _list = new UIList<string>(new List<UIItem<string>>() {
                 new UIItem<string>("Fight", x => { _currentList = fightList; }),
@@ -61,17 +58,8 @@ namespace Monomon
             fightList = new UIList<string>(new List<UIItem<string>>() {
                 new UIItem<string>("Tackle", x => {
 
-                    _turnHandler.SetTurn(new Turn(c => {
-                        Task.Run(async () => {
-                            await Task.Delay(200);
-                            _mob.Health -= 1;
-                            await Task.Delay(200);
-                            _mob.Health -= 1;
-                            await Task.Delay(200);
-                            c.Completed = true;
-                        });
-                    }));
-
+                    _battleManager.Attack(new AttackCommand(AttackType.Normal, new MonStatus(1,2,3)));
+    
                     _currentList = _list;
                 }),
                 new UIItem<string>("Growl", x => {}),
@@ -84,17 +72,12 @@ namespace Monomon
             }, x => { }, OnItemSelected);
 
             _currentList = _list;
-            _mob = new Mobmon("First Mob", 5);
+            _mob = new Mobmon("First Mob", 15);
             _player = new Mobmon("Player", 25);
             _rand = new Random();
 
-            _enemyTurn = new Turn(state => {
-                Task.Run(async () => {
-                    await Task.Delay(500);
-                    _player.Health -= _rand.Next(1,5);
-                    state.Completed = true;
-                });
-            });
+            _battleManager = new BattleManager(_player,_mob);
+            _battleManager.Start();
 
             _currentEnemyCard = new BattleCardViewModel(_mob.Name, _mob.MaxHealth, _mob.Health, 2);
             _playerCard = new BattleCardViewModel("Player", 25, 25, 6);
@@ -157,27 +140,15 @@ namespace Monomon
                 _currentList.Select();
             }
 
-            if( _turnHandler.TurnIsDone() )
+            if( _battleManager.TurnIsDone())
             {
-                _turnHandler.SetTurn(NextTurn());
+                _battleManager.NextTurn();
             }
 
 
             UpdateBattleCard(_mob, _currentEnemyCard);
             UpdateBattleCard(_player, _playerCard);
             base.Update(gameTime);
-        }
-
-        int turnNum = 0;
-        private Turn NextTurn()
-        {
-            turnNum++;
-            if (turnNum % 2 == 0)
-                return new Turn(x => { });
-            else
-            {
-                return _enemyTurn;
-            }
         }
 
         private void UpdateBattleCard(Mobmon mob, BattleCardViewModel card)
