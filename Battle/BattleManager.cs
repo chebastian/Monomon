@@ -19,7 +19,7 @@ namespace Monomon.Battle
             _isPlayerTurn = true;
         }
 
-        public void SetTurn(Turn t)
+        private void SetTurn(Turn t)
         {
             _currentTurn.Completed = false;
 
@@ -31,11 +31,6 @@ namespace Monomon.Battle
         internal bool TurnIsDone()
         {
             return _currentTurn.Completed;
-        }
-
-        internal Turn Next()
-        {
-            return new Turn(c => { });
         }
 
         internal void Attack(AttackCommand attackCommand)
