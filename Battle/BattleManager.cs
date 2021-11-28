@@ -75,7 +75,7 @@ namespace Monomon.Battle
 
             if (!_isPlayerTurn)
             {
-                Attack(new AttackCommand(AttackType.Normal,new MonStatus(1,2,3)));
+                Attack(new AttackCommand(AttackType.Normal, _attacker.Stats));
             }
 
         }

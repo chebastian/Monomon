@@ -58,7 +58,7 @@ namespace Monomon
             fightList = new UIList<string>(new List<UIItem<string>>() {
                 new UIItem<string>("Tackle", x => {
 
-                    _battleManager.Attack(new AttackCommand(AttackType.Normal, new MonStatus(1,2,3)));
+                    _battleManager.Attack(new AttackCommand(AttackType.Normal, _player.Stats));
     
                     _currentList = _list;
                 }),
@@ -72,8 +72,8 @@ namespace Monomon
             }, x => { }, OnItemSelected);
 
             _currentList = _list;
-            _mob = new Mobmon("First Mob", 15);
-            _player = new Mobmon("Player", 4);
+            _player = new Mobmon("Player", 4, new MonStatus(8,2,3) );
+            _mob = new Mobmon("First Mob", 15, new MonStatus(1,2,3));
             _rand = new Random();
 
             _battleManager = new BattleManager(_player,_mob);
