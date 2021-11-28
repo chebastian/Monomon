@@ -4,8 +4,14 @@ using System.Threading.Tasks;
 
 namespace Monomon.Battle
 {
+    public enum BattleOutcome
+    {
+        Win,
+        Lose,
+    }
     public class BattleManager
     {
+        private Mobmon _player;
         private Mobmon _attacker;
         private Mobmon _oponent;
         private Turn _currentTurn;
@@ -13,6 +19,7 @@ namespace Monomon.Battle
 
         public BattleManager(Mons.Mobmon player, Mons.Mobmon oponent)
         {
+            _player = player;
             _attacker = player;
             _oponent = oponent;
             _currentTurn = new Turn(x => { });
@@ -71,6 +78,16 @@ namespace Monomon.Battle
                 Attack(new AttackCommand(AttackType.Normal,new MonStatus(1,2,3)));
             }
 
+        }
+
+        internal bool BattleOver()
+        {
+            return _attacker.Health <= 0 || _oponent.Health <= 0;
+        }
+
+        internal BattleOutcome GetOutcome()
+        {
+            return _player.Health > 0 ? BattleOutcome.Win : BattleOutcome.Lose;
         }
     }
 }

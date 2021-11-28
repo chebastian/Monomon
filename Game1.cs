@@ -73,14 +73,14 @@ namespace Monomon
 
             _currentList = _list;
             _mob = new Mobmon("First Mob", 15);
-            _player = new Mobmon("Player", 25);
+            _player = new Mobmon("Player", 4);
             _rand = new Random();
 
             _battleManager = new BattleManager(_player,_mob);
             _battleManager.Start();
 
             _currentEnemyCard = new BattleCardViewModel(_mob.Name, _mob.MaxHealth, _mob.Health, 2);
-            _playerCard = new BattleCardViewModel("Player", 25, 25, 6);
+            _playerCard = new BattleCardViewModel("Player", _player.MaxHealth, _player.Health, 6);
 
             base.Initialize();
         }
@@ -145,11 +145,13 @@ namespace Monomon
                 _battleManager.NextTurn();
             }
 
-
             UpdateBattleCard(_mob, _currentEnemyCard);
-            UpdateBattleCard(_player, _playerCard);
+            UpdateBattleCard(_player, _playerCard); 
+
+
             base.Update(gameTime);
         }
+
 
         private void UpdateBattleCard(Mobmon mob, BattleCardViewModel card)
         {
@@ -161,9 +163,16 @@ namespace Monomon
             GraphicsDevice.Clear(Color.Black);
 
             _spriteBatch.Begin();
-            DrawUIList(_currentList, new Vector2(200, 200));
-            DrawBattlecard(_currentEnemyCard, new Vector2(30,20));
-            DrawBattlecard(_playerCard, new Vector2(30,200));
+
+            if (!_battleManager.BattleOver())
+            {
+                DrawBattle();
+            }
+            else
+            {
+                DrawBattleResult(_battleManager.GetOutcome());
+            }
+
             _spriteBatch.End();
 
             // TODO: Add your drawing code here
@@ -171,10 +180,24 @@ namespace Monomon
             base.Draw(gameTime);
         }
 
+        private void DrawBattleResult(BattleOutcome battleOutcome)
+        {
+            var outcomeString = battleOutcome
+                == BattleOutcome.Win ? "You win!" : "You lose";
+            _spriteBatch.DrawString(font, outcomeString,new Vector2(10,10),Color.White);
+        }
+
+        private void DrawBattle()
+        {
+            DrawUIList(_currentList, new Vector2(200, 200));
+            DrawBattlecard(_currentEnemyCard, new Vector2(30,20));
+            DrawBattlecard(_playerCard, new Vector2(30,200));
+        }
+
         private void DrawBattlecard(BattleCardViewModel card, Vector2 pos)
         {
             var color = card.IsLow() ? Color.Red : Color.White;
-            float percentage = (float)card.CurrentHealth / (float)card.MaxHealth;
+            float percentage = card.CurrentHealth > 0 ? (float)card.CurrentHealth / (float)card.MaxHealth : 0.01f;
             float healthbarW = 16;
 
             _spriteBatch.DrawString(font, $"{card.Name}", new Vector2(pos.X, pos.Y), Color.White);

@@ -20,6 +20,6 @@ namespace Monomon.ViewModels
         public int MaxHealth { get; }
         public int CurrentHealth { get; set; }
         public int Level { get; }
-        public bool IsLow() => (float)CurrentHealth / (float)MaxHealth <= 0.2f;
+        public bool IsLow() => (float)CurrentHealth / (float)MaxHealth <= 0.25f;
     }
 }
