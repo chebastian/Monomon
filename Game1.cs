@@ -28,6 +28,7 @@ namespace Monomon
         private Mobmon _mob;
         private Mobmon _player;
         private Random _rand;
+        private BattleReporter _battleReporter;
         private string _selection;
         private Color _clearColor;
         private BattleCardViewModel _currentEnemyCard;
@@ -72,11 +73,12 @@ namespace Monomon
             }, x => { }, OnItemSelected);
 
             _currentList = _list;
-            _player = new Mobmon("Player", 4, new MonStatus(8,2,3) );
-            _mob = new Mobmon("First Mob", 15, new MonStatus(1,2,3));
+            _player = new Mobmon("Player", 15, new MonStatus(4,2,3) );
+            _mob = new Mobmon("Mob", 15, new MonStatus(2,2,3));
             _rand = new Random();
 
-            _battleManager = new BattleManager(_player,_mob);
+            _battleReporter = new BattleReporter(_spriteBatch);
+            _battleManager = new BattleManager(_player, _mob, _battleReporter);
             _battleManager.Start();
 
             _currentEnemyCard = new BattleCardViewModel(_mob.Name, _mob.MaxHealth, _mob.Health, 2);
@@ -187,11 +189,20 @@ namespace Monomon
             _spriteBatch.DrawString(font, outcomeString,new Vector2(10,10),Color.White);
         }
 
+        private void DrawBattleLog()
+        {
+            //var list = _battleReporter.Messages.Select(x => new UIItem<string>(x)).Reverse().ToList();
+            //    DrawUIList<string>(new UIList<string>(list,x => { }, y => { }), new Vector2(200,100));
+            if(_battleReporter.Messages.Any())
+                _spriteBatch.DrawString(font, _battleReporter.Messages.Last(), new Vector2(200, 100), Color.White);
+        }
+
         private void DrawBattle()
         {
             DrawUIList(_currentList, new Vector2(200, 200));
             DrawBattlecard(_currentEnemyCard, new Vector2(30,20));
             DrawBattlecard(_playerCard, new Vector2(30,200));
+            DrawBattleLog();
         }
 
         private void DrawBattlecard(BattleCardViewModel card, Vector2 pos)

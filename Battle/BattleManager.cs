@@ -9,16 +9,19 @@ namespace Monomon.Battle
         Win,
         Lose,
     }
+
     public class BattleManager
     {
+        private IBattleReporter _reporter;
         private Mobmon _player;
         private Mobmon _attacker;
         private Mobmon _oponent;
         private Turn _currentTurn;
         private bool _isPlayerTurn;
 
-        public BattleManager(Mons.Mobmon player, Mons.Mobmon oponent)
+        public BattleManager(Mons.Mobmon player, Mons.Mobmon oponent, IBattleReporter reporter)
         {
+            _reporter = reporter;
             _player = player;
             _attacker = player;
             _oponent = oponent;
@@ -48,10 +51,10 @@ namespace Monomon.Battle
                 {
                     await Task.Delay(200);
                     _oponent.Health -= attackCommand.stat.attack;
-                    await Task.Delay(200);
-                    _oponent.Health -= attackCommand.stat.attack;
-                    await Task.Delay(200);
+                    _reporter.OnAttack(new BattleMessage(_attacker.Name, _oponent.Name, attackCommand.stat.attack));
+                    await Task.Delay(1000);
                     c.Completed = true;
+
                 });
             }));
         }
