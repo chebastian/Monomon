@@ -4,10 +4,9 @@ namespace Monomon.Battle
 {
     public enum AttackType
     { 
-        Normal,
-        Earth,
-        Wind,
-        Fire
+        Tackle,
+        Slash,
+        Wrap,
     } 
 
     public record MonStatus(int attack, int defense, int speed);

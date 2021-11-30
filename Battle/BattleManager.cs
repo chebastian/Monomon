@@ -49,14 +49,66 @@ namespace Monomon.Battle
             {
                 Task.Run(async () =>
                 {
-                    await Task.Delay(200);
-                    _oponent.Health -= attackCommand.stat.attack;
-                    _reporter.OnAttack(new BattleMessage(_attacker.Name, _oponent.Name, attackCommand.stat.attack));
-                    await Task.Delay(1000);
-                    c.Completed = true;
+                    var task = attackCommand.attackType switch
+                    { 
+                        AttackType.Tackle => Tackle(attackCommand,c),
+                        AttackType.Slash => Swipe(attackCommand,c),
+                        AttackType.Wrap => Wrap(attackCommand,c),
+                        _ => throw new ArgumentOutOfRangeException($"{attackCommand.attackType}")
+                    };
 
+                    task.Start();
+                    await task;
                 });
+
             }));
+        }
+
+        Random rand = new Random();
+        private Task Wrap(AttackCommand attackCommand, Turn c)
+        {
+            var count = rand.Next(1, 4);
+            return new Task(async () =>
+            {
+                var total = 0;
+                for (var i = 0; i < count; i++)
+                {
+                    var attackDamage = rand.Next(1, 2);
+                    _oponent.Health -= attackDamage;
+                    total += attackDamage;
+                    await Task.Delay(300);
+                }
+
+                _reporter.OnAttack(new BattleMessage(_attacker.Name, _oponent.Name, total));
+                await Task.Delay(1000);
+                c.Completed = true;
+            }); 
+        }
+
+        Task Tackle(AttackCommand attackCommand, Turn t)
+        {
+            return new Task(async () =>
+            {
+                await Task.Delay(200);
+                _oponent.Health -= attackCommand.stat.attack;
+                _reporter.OnAttack(new BattleMessage(_attacker.Name, _oponent.Name, attackCommand.stat.attack));
+                await Task.Delay(1000);
+                t.Completed = true;
+            }); 
+        }
+
+        Task Swipe(AttackCommand attackCommand, Turn t)
+        {
+            return new Task(async () =>
+            {
+                await Task.Delay(200);
+                _oponent.Health -= attackCommand.stat.attack;
+                await Task.Delay(200);
+                _oponent.Health -= attackCommand.stat.attack;
+                _reporter.OnAttack(new BattleMessage(_attacker.Name, _oponent.Name, attackCommand.stat.attack * 2));
+                await Task.Delay(1000);
+                t.Completed = true;
+            }); 
         }
 
         internal void Start()
@@ -78,7 +130,7 @@ namespace Monomon.Battle
 
             if (!_isPlayerTurn)
             {
-                Attack(new AttackCommand(AttackType.Normal, _attacker.Stats));
+                Attack(new AttackCommand(AttackType.Tackle, _attacker.Stats));
             }
 
         }
