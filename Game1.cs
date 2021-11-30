@@ -6,6 +6,7 @@ using Monomon.Input;
 using Monomon.Mons;
 using Monomon.UI;
 using Monomon.ViewModels;
+using Monomon.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,8 +32,10 @@ namespace Monomon
         private BattleReporter _battleReporter;
         private string _selection;
         private Color _clearColor;
+        private Texture2D _spriteMap;
         private BattleCardViewModel _currentEnemyCard;
         private BattleCardViewModel _playerCard;
+        private SpriteCollection progressSprites;
 
         public Game1()
         {
@@ -48,6 +51,8 @@ namespace Monomon
             _spriteBatch = new SpriteBatch(_graphics.GraphicsDevice);
             font = Content.Load<SpriteFont>("File");
             _clearColor = Color.SkyBlue;
+
+            _spriteMap = Content.Load<Texture2D>("spritemap");
 
             _list = new UIList<string>(new List<UIItem<string>>() {
                 new UIItem<string>("Fight", x => { _currentList = fightList; }),
@@ -89,6 +94,13 @@ namespace Monomon
 
             _currentEnemyCard = new BattleCardViewModel(_mob.Name, _mob.MaxHealth, _mob.Health, 2);
             _playerCard = new BattleCardViewModel("Player", _player.MaxHealth, _player.Health, 6);
+
+            progressSprites = new SpriteCollection(
+                new Rectangle(0,0,8,8),
+                new Rectangle(8,0,8,8),
+                new Rectangle(16,0,8,8)
+                );
+
 
             base.Initialize();
         }
@@ -208,6 +220,8 @@ namespace Monomon
             DrawUIList(_currentList, new Vector2(200, 200));
             DrawBattlecard(_currentEnemyCard, new Vector2(30,20));
             DrawBattlecard(_playerCard, new Vector2(30,200));
+
+
             DrawBattleLog();
         }
 
@@ -215,10 +229,9 @@ namespace Monomon
         {
             var color = card.IsLow() ? Color.Red : Color.White;
             float percentage = card.CurrentHealth > 0 ? (float)card.CurrentHealth / (float)card.MaxHealth : 0.01f;
-            float healthbarW = 16;
 
             _spriteBatch.DrawString(font, $"{card.Name}", new Vector2(pos.X, pos.Y), Color.White);
-            _spriteBatch.DrawString(font, $"{string.Join(null,Enumerable.Repeat("#",(int)(percentage*healthbarW)))}", new Vector2(pos.X, pos.Y + 20), color);
+            ProgressbarView.Draw(_spriteBatch, percentage, 150, new Vector2(pos.X, pos.Y+20),progressSprites, _spriteMap,color);
             _spriteBatch.DrawString(font, $"HP: {card.CurrentHealth}/{card.MaxHealth}", new Vector2(pos.X, pos.Y + 35), color);
             _spriteBatch.DrawString(font, $"Lv: {card.Level}", new Vector2(pos.X,pos.Y + 50), Color.White);
         }
