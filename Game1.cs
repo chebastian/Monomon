@@ -165,17 +165,18 @@ namespace Monomon
                 _battleManager.NextTurn();
             }
 
-            UpdateBattleCard(_mob, _currentEnemyCard);
-            UpdateBattleCard(_player, _playerCard); 
+            UpdateBattleCard(_mob, _currentEnemyCard, (float)gameTime.ElapsedGameTime.TotalSeconds);
+            UpdateBattleCard(_player, _playerCard, (float)gameTime.ElapsedGameTime.TotalSeconds); 
 
 
             base.Update(gameTime);
         }
 
 
-        private void UpdateBattleCard(Mobmon mob, BattleCardViewModel card)
+        private void UpdateBattleCard(Mobmon mob, BattleCardViewModel card, float t)
         {
             card.CurrentHealth = mob.Health;
+            card.Update(t);
         }
 
         protected override void Draw(GameTime gameTime)
@@ -231,7 +232,7 @@ namespace Monomon
             float percentage = card.CurrentHealth > 0 ? (float)card.CurrentHealth / (float)card.MaxHealth : 0.01f;
 
             _spriteBatch.DrawString(font, $"{card.Name}", new Vector2(pos.X, pos.Y), Color.White);
-            ProgressbarView.Draw(_spriteBatch, percentage, 150, new Vector2(pos.X, pos.Y+20),progressSprites, _spriteMap,color);
+            ProgressbarView.Draw(_spriteBatch, card.Percentage, 150, new Vector2(pos.X, pos.Y+20),progressSprites, _spriteMap,color);
             _spriteBatch.DrawString(font, $"HP: {card.CurrentHealth}/{card.MaxHealth}", new Vector2(pos.X, pos.Y + 35), color);
             _spriteBatch.DrawString(font, $"Lv: {card.Level}", new Vector2(pos.X,pos.Y + 50), Color.White);
         }
