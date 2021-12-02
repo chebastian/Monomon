@@ -1,4 +1,5 @@
-﻿using Monomon.Mons;
+﻿using Monomon.Input;
+using Monomon.Mons;
 using System;
 using System.Threading.Tasks;
 
@@ -18,8 +19,9 @@ namespace Monomon.Battle
         private Mobmon _oponent;
         private Turn _currentTurn;
         private bool _isPlayerTurn;
+        private IINputHandler _input;
 
-        public BattleManager(Mons.Mobmon player, Mons.Mobmon oponent, IBattleReporter reporter)
+        public BattleManager(Mons.Mobmon player, Mons.Mobmon oponent, IBattleReporter reporter, IINputHandler input)
         {
             _reporter = reporter;
             _player = player;
@@ -27,6 +29,7 @@ namespace Monomon.Battle
             _oponent = oponent;
             _currentTurn = new Turn(x => { });
             _isPlayerTurn = true;
+            _input = input;
         }
 
         private void SetTurn(Turn t)
@@ -40,7 +43,7 @@ namespace Monomon.Battle
 
         internal bool TurnIsDone()
         {
-            return _currentTurn.Completed;
+            return _currentTurn.Completed && _input.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.A);
         }
 
         internal void Attack(AttackCommand attackCommand)
@@ -49,6 +52,7 @@ namespace Monomon.Battle
             {
                 Task.Run(async () =>
                 {
+                    _executing = true;
                     var task = attackCommand.attackType switch
                     { 
                         AttackType.Tackle => Tackle(attackCommand,c),
@@ -58,13 +62,24 @@ namespace Monomon.Battle
                     };
 
                     task.Start();
-                    await task;
+                    await task.ContinueWith(
+                    x  => {
+                        c.Completed = true;
+                        _executing = false;
+                    });
                 });
 
             }));
         }
 
+        public bool IsInteractive()
+        {
+            return _isPlayerTurn && !_executing;
+        }
+
         Random rand = new Random();
+        private bool _executing;
+
         private Task Wrap(AttackCommand attackCommand, Turn c)
         {
             var count = rand.Next(1, 4);
@@ -81,7 +96,7 @@ namespace Monomon.Battle
 
                 _reporter.OnAttack(new BattleMessage(_attacker.Name, _oponent.Name, total));
                 await Task.Delay(1000);
-                c.Completed = true;
+                //c.Completed = true;
             }); 
         }
 
@@ -92,8 +107,8 @@ namespace Monomon.Battle
                 await Task.Delay(200);
                 _oponent.Health -= attackCommand.stat.attack;
                 _reporter.OnAttack(new BattleMessage(_attacker.Name, _oponent.Name, attackCommand.stat.attack));
-                await Task.Delay(1000);
-                t.Completed = true;
+                //await Task.Delay(1000);
+                //t.Completed = true;
             }); 
         }
 
@@ -114,6 +129,7 @@ namespace Monomon.Battle
         internal void Start()
         {
             SetTurn(new Turn(x => { }));
+            _executing = false;
         }
 
         internal void NextTurn()
@@ -133,6 +149,11 @@ namespace Monomon.Battle
                 Attack(new AttackCommand(AttackType.Tackle, _attacker.Stats));
             }
 
+        }
+
+        public bool IsPlayerTurn()
+        {
+            return _isPlayerTurn;
         }
 
         internal bool BattleOver()

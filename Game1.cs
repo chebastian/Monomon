@@ -84,21 +84,21 @@ namespace Monomon
             }, x => { }, OnItemSelected);
 
             _currentList = _list;
-            _player = new Mobmon("Player", 15, new MonStatus(4,2,3) );
-            _mob = new Mobmon("Mob", 25, new MonStatus(2,2,3));
+            _player = new Mobmon("Player", 15, new MonStatus(4, 2, 3));
+            _mob = new Mobmon("Mob", 25, new MonStatus(2, 2, 3));
             _rand = new Random();
 
             _battleReporter = new BattleReporter(_spriteBatch);
-            _battleManager = new BattleManager(_player, _mob, _battleReporter);
+            _battleManager = new BattleManager(_player, _mob, _battleReporter, _input);
             _battleManager.Start();
 
             _currentEnemyCard = new BattleCardViewModel(_mob.Name, _mob.MaxHealth, _mob.Health, 2);
             _playerCard = new BattleCardViewModel("Player", _player.MaxHealth, _player.Health, 6);
 
             progressSprites = new SpriteCollection(
-                new Rectangle(0,0,8,8),
-                new Rectangle(8,0,8,8),
-                new Rectangle(16,0,8,8)
+                new Rectangle(0, 0, 8, 8),
+                new Rectangle(8, 0, 8, 8),
+                new Rectangle(16, 0, 8, 8)
                 );
 
 
@@ -146,27 +146,30 @@ namespace Monomon
             _input.Update(gameTime);
             var pad = GamePad.GetState(PlayerIndex.One);
 
-            if (_input.IsKeyPressed(Keys.Down))
-                _currentList.SelectNext();
-            if (_input.IsKeyPressed(Keys.Up))
-                _currentList.SelectPrevious();
-            if (_input.IsKeyPressed(Keys.A))
+            if (_battleManager.IsPlayerTurn() && _battleManager.IsInteractive())
             {
-                _currentList = _list;
+                if (_input.IsKeyPressed(Keys.Down))
+                    _currentList.SelectNext();
+                if (_input.IsKeyPressed(Keys.Up))
+                    _currentList.SelectPrevious();
+                if (_input.IsKeyPressed(Keys.A))
+                {
+                    _currentList = _list;
+                }
+
+                if (_input.IsKeyPressed(Keys.Space))
+                {
+                    _currentList.Select();
+                }
             }
 
-            if (_input.IsKeyPressed(Keys.Space))
-            {
-                _currentList.Select();
-            }
-
-            if( _battleManager.TurnIsDone())
+            if (_battleManager.TurnIsDone())
             {
                 _battleManager.NextTurn();
             }
 
             UpdateBattleCard(_mob, _currentEnemyCard, (float)gameTime.ElapsedGameTime.TotalSeconds);
-            UpdateBattleCard(_player, _playerCard, (float)gameTime.ElapsedGameTime.TotalSeconds); 
+            UpdateBattleCard(_player, _playerCard, (float)gameTime.ElapsedGameTime.TotalSeconds);
 
 
             base.Update(gameTime);
@@ -205,22 +208,22 @@ namespace Monomon
         {
             var outcomeString = battleOutcome
                 == BattleOutcome.Win ? "You win!" : "You lose";
-            _spriteBatch.DrawString(font, outcomeString,new Vector2(10,10),Color.White);
+            _spriteBatch.DrawString(font, outcomeString, new Vector2(10, 10), Color.White);
         }
 
         private void DrawBattleLog()
         {
             //var list = _battleReporter.Messages.Select(x => new UIItem<string>(x)).Reverse().ToList();
             //    DrawUIList<string>(new UIList<string>(list,x => { }, y => { }), new Vector2(200,100));
-            if(_battleReporter.Messages.Any())
+            if (_battleReporter.Messages.Any())
                 _spriteBatch.DrawString(font, _battleReporter.Messages.Last(), new Vector2(200, 100), Color.White);
         }
 
         private void DrawBattle()
         {
             DrawUIList(_currentList, new Vector2(200, 200));
-            DrawBattlecard(_currentEnemyCard, new Vector2(30,20));
-            DrawBattlecard(_playerCard, new Vector2(30,200));
+            DrawBattlecard(_currentEnemyCard, new Vector2(30, 20));
+            DrawBattlecard(_playerCard, new Vector2(30, 200));
 
 
             DrawBattleLog();
@@ -232,9 +235,9 @@ namespace Monomon
             float percentage = card.CurrentHealth > 0 ? (float)card.CurrentHealth / (float)card.MaxHealth : 0.01f;
 
             _spriteBatch.DrawString(font, $"{card.Name}", new Vector2(pos.X, pos.Y), Color.White);
-            ProgressbarView.Draw(_spriteBatch, card.Percentage, 150, new Vector2(pos.X, pos.Y+20),progressSprites, _spriteMap,color);
+            ProgressbarView.Draw(_spriteBatch, card.Percentage, 150, new Vector2(pos.X, pos.Y + 20), progressSprites, _spriteMap, color);
             _spriteBatch.DrawString(font, $"HP: {card.CurrentHealth}/{card.MaxHealth}", new Vector2(pos.X, pos.Y + 35), color);
-            _spriteBatch.DrawString(font, $"Lv: {card.Level}", new Vector2(pos.X,pos.Y + 50), Color.White);
+            _spriteBatch.DrawString(font, $"Lv: {card.Level}", new Vector2(pos.X, pos.Y + 50), Color.White);
         }
     }
 }
