@@ -7,6 +7,7 @@ using Monomon.Mons;
 using Monomon.UI;
 using Monomon.ViewModels;
 using Monomon.Views;
+using Monomon.Views.Samples;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,6 +37,7 @@ namespace Monomon
         private BattleCardViewModel _currentEnemyCard;
         private BattleCardViewModel _playerCard;
         private SpriteCollection progressSprites;
+        private SceneView _currentScene;
 
         public Game1()
         {
@@ -43,6 +45,7 @@ namespace Monomon
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
+
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
@@ -101,6 +104,8 @@ namespace Monomon
                 new Rectangle(16, 0, 8, 8)
                 );
 
+            _currentScene = new BattleCardSample(GraphicsDevice);
+            _currentScene.LoadScene(Content);
 
             base.Initialize();
         }
@@ -168,6 +173,8 @@ namespace Monomon
                 _battleManager.NextTurn();
             }
 
+            _currentScene.Update(gameTime);
+
             UpdateBattleCard(_mob, _currentEnemyCard, (float)gameTime.ElapsedGameTime.TotalSeconds);
             UpdateBattleCard(_player, _playerCard, (float)gameTime.ElapsedGameTime.TotalSeconds);
 
@@ -188,14 +195,16 @@ namespace Monomon
 
             _spriteBatch.Begin();
 
-            if (!_battleManager.BattleOver())
-            {
-                DrawBattle();
-            }
-            else
-            {
-                DrawBattleResult(_battleManager.GetOutcome());
-            }
+            _currentScene.Draw(gameTime);
+
+            //if (!_battleManager.BattleOver())
+            //{
+            //    DrawBattle();
+            //}
+            //else
+            //{
+            //    DrawBattleResult(_battleManager.GetOutcome());
+            //}
 
             _spriteBatch.End();
 
