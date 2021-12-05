@@ -59,11 +59,6 @@ namespace Monomon
             }
         }
 
-        private void OnItemChanged(string obj)
-        {
-            _selection = obj;
-        }
-
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
