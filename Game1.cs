@@ -22,6 +22,7 @@ namespace Monomon
         private BufferInputHandler _input;
         private SpriteBatch _spriteBatch;
         private SpriteFont font;
+        private UIList<string> _sceneList;
         private string _selection;
         private SceneView _currentScene;
 
@@ -40,10 +41,28 @@ namespace Monomon
             _spriteBatch = new SpriteBatch(_graphics.GraphicsDevice);
             font = Content.Load<SpriteFont>("File");
 
+            _sceneList = new UIList<string>(new List<UIItem<string>>() {
+                new UIItem<string>("Battle test",x => {
+                    SwapScene(new BattleSample(GraphicsDevice));
+                }),
+                new UIItem<string>("BattleCard sample",x => {
+                    SwapScene(new BattleCardSample(GraphicsDevice));
+                }),
+                new UIItem<string>("Empty",x => {
+                    SwapScene(new EmptyScene(GraphicsDevice));
+                }),
+            }, x => { }, x => { });
+
             //_currentScene = new BattleCardSample(GraphicsDevice);
-            _currentScene = new BattleSample(GraphicsDevice);
+            _currentScene = new EmptyScene(GraphicsDevice);
 
             base.Initialize();
+        }
+
+        void SwapScene(SceneView scene)
+        {
+            _currentScene = scene;
+            _currentScene.LoadScene(Content);
         }
 
         public void DrawUIList<T>(UIList<T> list, Vector2 pos) where T : IEquatable<T>
@@ -74,6 +93,12 @@ namespace Monomon
 
             _input.Update(gameTime);
 
+            if (_input.IsKeyPressed(Keys.Down))
+                _sceneList.SelectNext();
+            if (_input.IsKeyPressed(Keys.Up))
+                _sceneList.SelectPrevious();
+            if (_input.IsKeyPressed(Keys.Right))
+                _sceneList.Select();
 
             _currentScene.Update(gameTime);
 
@@ -88,6 +113,7 @@ namespace Monomon
 
             _spriteBatch.Begin();
 
+            DrawUIList(_sceneList, new Vector2(0, 0));
             _currentScene.Draw(gameTime);
 
 
