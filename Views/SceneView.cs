@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Monomon.Views
 {
-    abstract class SceneView
+    public abstract class SceneView
     {
         private GraphicsDevice _graphics;
         protected SpriteBatch _spriteBatch;
@@ -20,7 +20,7 @@ namespace Monomon.Views
             _spriteBatch = new SpriteBatch(_graphics);
         }
 
-        internal void Draw(GameTime time)
+        internal void Draw(double time)
         {
             _spriteBatch.Begin();
             OnDraw(_spriteBatch);
@@ -28,7 +28,7 @@ namespace Monomon.Views
         }
 
         protected abstract void OnDraw(SpriteBatch batch);
-        public abstract void Update(GameTime time);
+        public abstract void Update(double time);
         public abstract void LoadScene(ContentManager content);
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using Monomon.Battle;
 using Monomon.Input;
 using Monomon.Mons;
+using Monomon.State;
 using Monomon.UI;
 using Monomon.ViewModels;
 using Monomon.Views;
@@ -25,12 +26,14 @@ namespace Monomon
         private UIList<string> _sceneList;
         private string _selection;
         private SceneView _currentScene;
+        private StateStack<double> _stateStack;
 
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+            _stateStack = new StateStack<double>();
         }
 
         protected override void Initialize()
@@ -54,8 +57,10 @@ namespace Monomon
             }, x => { }, x => { });
 
             //_currentScene = new BattleCardSample(GraphicsDevice);
-            _currentScene = new EmptyScene(GraphicsDevice);
+            _currentScene = new SampleScene(GraphicsDevice, _stateStack, _input);
 
+            _stateStack.Push(new SceneState(_currentScene,_input),
+                () => { });
             base.Initialize();
         }
 
@@ -63,6 +68,9 @@ namespace Monomon
         {
             _currentScene = scene;
             _currentScene.LoadScene(Content);
+            _stateStack.Push(new SceneState(scene,_input),() => {
+                _stateStack.Push(new SceneState(new EmptyScene(GraphicsDevice), _input),()  => { });
+            });
         }
 
         public void DrawUIList<T>(UIList<T> list, Vector2 pos) where T : IEquatable<T>
@@ -91,16 +99,18 @@ namespace Monomon
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            _input.Update(gameTime);
+            _input.Update();
 
-            if (_input.IsKeyPressed(Keys.Down))
-                _sceneList.SelectNext();
-            if (_input.IsKeyPressed(Keys.Up))
-                _sceneList.SelectPrevious();
-            if (_input.IsKeyPressed(Keys.Right))
-                _sceneList.Select();
+            //if (_input.IsKeyPressed(Keys.Down))
+            //    _sceneList.SelectNext();
+            //if (_input.IsKeyPressed(Keys.Up))
+            //    _sceneList.SelectPrevious();
+            //if (_input.IsKeyPressed(Keys.Right))
+            //    _sceneList.Select();
 
-            _currentScene.Update(gameTime);
+            //_currentScene.Update(gameTime.ElapsedGameTime.TotalSeconds);
+
+            _stateStack.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
 
 
             base.Update(gameTime);
@@ -113,8 +123,10 @@ namespace Monomon
 
             _spriteBatch.Begin();
 
-            DrawUIList(_sceneList, new Vector2(0, 0));
-            _currentScene.Draw(gameTime);
+            //DrawUIList(_sceneList, new Vector2(0, 0));
+            //_currentScene.Draw(gameTime.ElapsedGameTime.TotalSeconds);
+
+            _stateStack.Render(gameTime.ElapsedGameTime.TotalSeconds);
 
 
             _spriteBatch.End();

@@ -69,9 +69,9 @@ namespace Monomon.Input
             return state.GetPressedKeys().Union(padKeys).ToArray();
         }
 
-        public void Update(GameTime gt)
+        public void Update()
         {
-            _mouse.Update(gt);
+            _mouse.Update();
             var pressed = GetPressedKeys();
             var newKeys = _wasPressed == null ? pressed : pressed.Except(_wasPressed);
             _keys = pressed;

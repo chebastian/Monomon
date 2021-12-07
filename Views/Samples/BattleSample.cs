@@ -97,9 +97,9 @@ namespace Monomon.Views.Samples
             _spriteMap = content.Load<Texture2D>("spritemap");
         }
 
-        public override void Update(GameTime time)
+        public override void Update(double time)
         {
-            _input.Update(time);
+            _input.Update();
             if (_battleManager.IsPlayerTurn() && _battleManager.IsInteractive())
             {
                 if (_input.IsKeyPressed(Keys.Down))
@@ -122,8 +122,8 @@ namespace Monomon.Views.Samples
                 _battleManager.NextTurn();
             }
 
-            UpdateBattleCard(_mob, _currentEnemyCard, (float)time.ElapsedGameTime.TotalSeconds);
-            UpdateBattleCard(_player, _playerCard, (float)time.ElapsedGameTime.TotalSeconds);
+            UpdateBattleCard(_mob, _currentEnemyCard, (float)time);
+            UpdateBattleCard(_player, _playerCard, (float)time);
 
         }
         private void UpdateBattleCard(Mobmon mob, BattleCardViewModel card, float t)

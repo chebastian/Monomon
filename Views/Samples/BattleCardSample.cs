@@ -58,11 +58,11 @@ namespace Monomon.Views.Samples
             DrawBattlecard(_moving, new Vector2(100, 300));
         }
 
-        public override void Update(GameTime time)
+        public override void Update(double time)
         {
-            _card.Update((float)time.ElapsedGameTime.TotalSeconds);
-            _lowHealth.Update((float)time.ElapsedGameTime.TotalSeconds);
-            _moving.Update((float)time.ElapsedGameTime.TotalSeconds);
+            _card.Update((float)time);
+            _lowHealth.Update((float)time);
+            _moving.Update((float)time);
         }
 
         private void DrawBattlecard(BattleCardViewModel card, Vector2 pos)

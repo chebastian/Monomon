@@ -38,7 +38,7 @@ namespace Monomon.Input
             return _state;
         }
 
-        public void Update(GameTime gt)
+        public void Update()
         {
             BufferedMouseState GetState(ButtonState oldState, ButtonState current)
             {
