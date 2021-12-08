@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Monomon.ViewModels;
+using Monomon.Views.Battle;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,9 +54,9 @@ namespace Monomon.Views.Samples
 
         protected override void OnDraw(SpriteBatch batch)
         {
-            DrawBattlecard(_card, new Vector2(100, 100));
-            DrawBattlecard(_lowHealth, new Vector2(100, 200));
-            DrawBattlecard(_moving, new Vector2(100, 300));
+            BattleCardView.Draw(batch, new Vector2(100, 100), font, _spriteMap, _card);
+            BattleCardView.Draw(batch, new Vector2(100, 200), font, _spriteMap, _lowHealth);
+            BattleCardView.Draw(batch, new Vector2(100, 300), font, _spriteMap, _moving); 
         }
 
         public override void Update(double time)
@@ -63,17 +64,6 @@ namespace Monomon.Views.Samples
             _card.Update((float)time);
             _lowHealth.Update((float)time);
             _moving.Update((float)time);
-        }
-
-        private void DrawBattlecard(BattleCardViewModel card, Vector2 pos)
-        {
-            var color = card.IsLow() ? Color.Red : Color.White;
-            float percentage = card.CurrentHealth > 0 ? (float)card.CurrentHealth / (float)card.MaxHealth : 0.01f;
-
-            _spriteBatch.DrawString(font, $"{card.Name}", new Vector2(pos.X, pos.Y), Color.White);
-            ProgressbarView.Draw(_spriteBatch, card.Percentage, 150, new Vector2(pos.X, pos.Y + 20), progressSprites, _spriteMap, color);
-            _spriteBatch.DrawString(font, $"HP: {card.CurrentHealth}/{card.MaxHealth}", new Vector2(pos.X, pos.Y + 35), color);
-            _spriteBatch.DrawString(font, $"Lv: {card.Level}", new Vector2(pos.X, pos.Y + 50), Color.White);
         }
     }
 }

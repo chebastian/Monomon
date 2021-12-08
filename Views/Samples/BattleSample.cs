@@ -7,6 +7,7 @@ using Monomon.Input;
 using Monomon.Mons;
 using Monomon.UI;
 using Monomon.ViewModels;
+using Monomon.Views.Battle;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -159,24 +160,13 @@ namespace Monomon.Views.Samples
 
         private void DrawBattle()
         {
-            DrawUIList(_currentList, new Vector2(200, 200));
-            DrawBattlecard(_currentEnemyCard, new Vector2(30, 20));
-            DrawBattlecard(_playerCard, new Vector2(30, 200));
-
+            DrawUIList(_currentList, new Vector2(300, 200));
+            BattleCardView.Draw(_spriteBatch, new Vector2(100, 10), font, _spriteMap, _currentEnemyCard);
+            BattleCardView.Draw(_spriteBatch, new Vector2(100, 200), font, _spriteMap, _playerCard);
 
             DrawBattleLog();
         }
 
-        private void DrawBattlecard(BattleCardViewModel card, Vector2 pos)
-        {
-            var color = card.IsLow() ? Color.Red : Color.White;
-            float percentage = card.CurrentHealth > 0 ? (float)card.CurrentHealth / (float)card.MaxHealth : 0.01f;
-
-            _spriteBatch.DrawString(font, $"{card.Name}", new Vector2(pos.X, pos.Y), Color.White);
-            ProgressbarView.Draw(_spriteBatch, card.Percentage, 150, new Vector2(pos.X, pos.Y + 20), progressSprites, _spriteMap, color);
-            _spriteBatch.DrawString(font, $"HP: {card.CurrentHealth}/{card.MaxHealth}", new Vector2(pos.X, pos.Y + 35), color);
-            _spriteBatch.DrawString(font, $"Lv: {card.Level}", new Vector2(pos.X, pos.Y + 50), Color.White);
-        }
         public void DrawUIList<T>(UIList<T> list, Vector2 pos) where T : IEquatable<T>
         {
             var y = pos.Y;
