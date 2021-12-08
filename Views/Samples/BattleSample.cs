@@ -22,7 +22,6 @@ namespace Monomon.Views.Samples
         private BufferInputHandler _input;
         private Mobmon _player;
         private Mobmon _mob;
-        private Random _rand;
         private UIList<string> _list;
         private UIList<string> fightList;
         private UIList<string> itemList;
@@ -30,7 +29,6 @@ namespace Monomon.Views.Samples
         private BattleReporter _battleReporter;
         private BattleCardViewModel _currentEnemyCard;
         private BattleCardViewModel _playerCard;
-        private SpriteCollection progressSprites;
         private SpriteFont? font;
         private Texture2D? _spriteMap;
 
@@ -39,7 +37,6 @@ namespace Monomon.Views.Samples
             _input = new Monomon.Input.BufferInputHandler();
             _player = new Mobmon("Player", 15, new MonStatus(4, 2, 3));
             _mob = new Mobmon("Mob", 25, new MonStatus(2, 2, 3));
-            _rand = new Random();
             _battleReporter = new BattleReporter(_spriteBatch);
             _battleManager = new BattleManager(_player, _mob, _battleReporter, _input);
 
@@ -84,12 +81,6 @@ namespace Monomon.Views.Samples
 
             _currentEnemyCard = new BattleCardViewModel(_mob.Name, _mob.MaxHealth, _mob.Health, 2);
             _playerCard = new BattleCardViewModel("Player", _player.MaxHealth, _player.Health, 6);
-
-            progressSprites = new SpriteCollection(
-                new Rectangle(0, 0, 8, 8),
-                new Rectangle(8, 0, 8, 8),
-                new Rectangle(16, 0, 8, 8)
-                );
         }
 
         public override void LoadScene(ContentManager content)
