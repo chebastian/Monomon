@@ -8,6 +8,7 @@ using Monomon.Mons;
 using Monomon.UI;
 using Monomon.ViewModels;
 using Monomon.Views.Battle;
+using Monomon.Views.Gui;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -151,23 +152,12 @@ namespace Monomon.Views.Samples
 
         private void DrawBattle()
         {
-            DrawUIList(_currentList, new Vector2(300, 200));
+            ListView.DrawUIList(_currentList, new Vector2(300, 200),_spriteBatch,font);
             BattleCardView.Draw(_spriteBatch, new Vector2(100, 10), font, _spriteMap, _currentEnemyCard);
             BattleCardView.Draw(_spriteBatch, new Vector2(100, 200), font, _spriteMap, _playerCard);
 
             DrawBattleLog();
         }
 
-        public void DrawUIList<T>(UIList<T> list, Vector2 pos) where T : IEquatable<T>
-        {
-            var y = pos.Y;
-            foreach (var item in list.Items.Select((x, i) => (x, i)))
-            {
-                var c = item.x.Selected ? Color.Red : Color.White;
-
-                _spriteBatch.DrawString(font, item.x.Item.ToString(), new Vector2(pos.X, y), c);
-                y += 20;
-            }
-        }
     }
 }
