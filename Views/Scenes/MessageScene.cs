@@ -1,21 +1,17 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Monomon.Views.Scenes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Monomon.Views.Samples
+namespace Monomon.Views.Scenes
 {
-    class EmptyScene : SceneView
+    class MessageScene : SceneView
     {
+        private readonly string message;
         private SpriteFont font;
 
-        public EmptyScene(GraphicsDevice gd) : base(gd)
+        public MessageScene(GraphicsDevice gd, string message) : base(gd)
         {
+            this.message = message;
         }
 
         public override void LoadScene(ContentManager content)
@@ -29,7 +25,7 @@ namespace Monomon.Views.Samples
 
         protected override void OnDraw(SpriteBatch batch)
         {
-            batch.DrawString(font,"Empty",new Vector2(100,100), Color.White);
+            batch.DrawString(font,message,new Vector2(100,100), Color.White);
         }
     }
 }

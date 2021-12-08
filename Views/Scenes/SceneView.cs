@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Monomon.Views
+namespace Monomon.Views.Scenes
 {
     public abstract class SceneView
     {

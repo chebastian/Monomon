@@ -7,6 +7,7 @@ using Monomon.Input;
 using Monomon.Mons;
 using Monomon.UI;
 using Monomon.ViewModels;
+using Monomon.Views.Scenes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
