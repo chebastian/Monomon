@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Input;
 using Monomon.Input;
 using Monomon.State;
 using Monomon.UI;
+using Monomon.Views.Gui;
 using Monomon.Views.Scenes;
 using System;
 using System.Collections.Generic;
@@ -88,20 +89,9 @@ namespace Monomon.Views.Samples
                 _sceneList.Select();
         }
 
-        public void DrawUIList<T>(UIList<T> list, Vector2 pos) where T : IEquatable<T>
-        {
-            var y = pos.Y;
-            foreach (var item in list.Items.Select((x, i) => (x, i)))
-            {
-                var c = item.x.Selected ? Color.Red : Color.White;
-
-                _spriteBatch.DrawString(font, item.x.Item.ToString(), new Vector2(pos.X, y), c);
-                y += 20;
-            }
-        }
         protected override void OnDraw(SpriteBatch batch)
         {
-            DrawUIList(_sceneList, new Vector2(10, 10));
+            ListView.DrawUIList(_sceneList, new Vector2(10, 10),batch,font);
         }
     }
 }

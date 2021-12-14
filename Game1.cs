@@ -74,19 +74,6 @@ namespace Monomon
             });
         }
 
-        public void DrawUIList<T>(UIList<T> list, Vector2 pos) where T : IEquatable<T>
-        {
-            var y = pos.Y;
-            foreach (var item in list.Items.Select((x, i) => (x, i)))
-            {
-                var c = item.x.Selected ? Color.Red : Color.White;
-                c = item.x.Item.Equals(_selection) ? Color.Green : c;
-
-                _spriteBatch.DrawString(font, item.x.Item.ToString(), new Vector2(pos.X, y), c);
-                y += 20;
-            }
-        }
-
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
