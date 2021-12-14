@@ -9,6 +9,7 @@ using Monomon.UI;
 using Monomon.ViewModels;
 using Monomon.Views;
 using Monomon.Views.Samples;
+using Monomon.Views.Scenes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
