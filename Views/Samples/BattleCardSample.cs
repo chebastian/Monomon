@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Monomon.ViewModels;
 using Monomon.Views.Battle;
+using Monomon.Views.Scenes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
