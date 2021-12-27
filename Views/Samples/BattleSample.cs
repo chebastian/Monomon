@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Input;
 using Monomon.Battle;
 using Monomon.Input;
 using Monomon.Mons;
+using Monomon.State;
 using Monomon.UI;
 using Monomon.ViewModels;
 using Monomon.Views.Battle;
@@ -33,13 +34,14 @@ namespace Monomon.Views.Samples
         private BattleCardViewModel _playerCard;
         private SpriteFont? font;
         private Texture2D? _spriteMap;
+        private readonly StateStack<double> stack;
 
-        public BattleSample(GraphicsDevice gd) : base(gd)
+        public BattleSample(GraphicsDevice gd, BattleReporter reporter) : base(gd)
         {
             _input = new Monomon.Input.BufferInputHandler();
             _player = new Mobmon("Player", 15, new MonStatus(4, 2, 3));
             _mob = new Mobmon("Mob", 25, new MonStatus(2, 2, 3));
-            _battleReporter = new BattleReporter(_spriteBatch);
+            _battleReporter = reporter;
             _battleManager = new BattleManager(_player, _mob, _battleReporter, _input);
 
             _list = new UIList<string>(new List<UIItem<string>>() {
