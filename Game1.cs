@@ -47,7 +47,6 @@ namespace Monomon
 
             _sceneList = new UIList<string>(new List<UIItem<string>>() {
                 new UIItem<string>("Battle test",x => {
-                    SwapScene(new BattleSample(GraphicsDevice));
                 }),
                 new UIItem<string>("BattleCard sample",x => {
                     SwapScene(new BattleCardSample(GraphicsDevice));
