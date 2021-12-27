@@ -39,7 +39,7 @@ namespace Monomon.Views.Samples
             font = content.Load<SpriteFont>("File");
             _sceneList = new UIList<string>(new List<UIItem<string>>() {
                 new UIItem<string>("Battle test",x => {
-                    SwapScene(new BattleSample(GraphicsDevice));
+                    SwapScene(new BattleSample(GraphicsDevice,new BattleReporter(_spriteBatch,GraphicsDevice,_stack,_input,font)));
                 }),
                 new UIItem<string>("Message",x => {
                     SwapScene(new MessageScene(GraphicsDevice,"First message",font));
