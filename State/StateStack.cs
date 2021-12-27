@@ -45,8 +45,15 @@ namespace Monomon.State
         
         public void Render(RenderArgs param)
         {
-            foreach (var state in _states)
-                state.state.Render(param); 
+            try
+            {
+                foreach (var state in _states)
+                    state.state.Render(param); 
+            }
+            catch when (true)
+            {
+                throw;
+            }
         }
     }
 }
