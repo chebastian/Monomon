@@ -48,28 +48,30 @@ namespace Monomon.Battle
 
         internal void Attack(AttackCommand attackCommand)
         {
-            SetTurn(new Turn(c =>
-            {
-                Task.Run(async () =>
-                {
-                    _executing = true;
-                    var task = attackCommand.attackType switch
-                    { 
-                        AttackType.Tackle => Tackle(attackCommand,c),
-                        AttackType.Slash => Swipe(attackCommand,c),
-                        AttackType.Wrap => Wrap(attackCommand,c),
-                        _ => throw new ArgumentOutOfRangeException($"{attackCommand.attackType}")
-                    };
+            //SetTurn(new Turn(c =>
+            //{
+            //    Task.Run(async () =>
+            //    {
+            //        _executing = true;
+            //        var task = attackCommand.attackType switch
+            //        {
+            //            AttackType.Tackle => Tackle(attackCommand, c),
+            //            AttackType.Slash => Swipe(attackCommand, c),
+            //            AttackType.Wrap => Wrap(attackCommand, c),
+            //            _ => throw new ArgumentOutOfRangeException($"{attackCommand.attackType}")
+            //        };
 
-                    task.Start();
-                    await task.ContinueWith(
-                    x  => {
-                        c.Completed = true;
-                        _executing = false;
-                    });
-                });
+            //        task.Start();
+            //        await task.ContinueWith(
+            //        x =>
+            //        {
+            //            c.Completed = true;
+            //            _executing = false;
+            //        });
+            //    });
 
-            }));
+            //}));
+            DoTackle(attackCommand);
         }
 
         public bool IsInteractive()
@@ -94,22 +96,27 @@ namespace Monomon.Battle
                     await Task.Delay(300);
                 }
 
-                _reporter.OnAttack(new BattleMessage(_attacker.Name, _oponent.Name, total));
+                _reporter.OnAttack(new BattleMessage(_attacker.Name, _oponent.Name,"Wrap", total));
                 await Task.Delay(1000);
                 //c.Completed = true;
-            }); 
+            });
+        }
+
+        void DoTackle(AttackCommand attackCommand)
+        {
+            _reporter.OnAttack(new BattleMessage(_attacker.Name, _oponent.Name, "Tackle",attackCommand.stat.attack));
+            _oponent.Health -= attackCommand.stat.attack;
         }
 
         Task Tackle(AttackCommand attackCommand, Turn t)
         {
             return new Task(async () =>
             {
-                await Task.Delay(200);
                 _oponent.Health -= attackCommand.stat.attack;
-                _reporter.OnAttack(new BattleMessage(_attacker.Name, _oponent.Name, attackCommand.stat.attack));
+                _reporter.OnAttack(new BattleMessage(_attacker.Name, _oponent.Name, "Tackle",attackCommand.stat.attack));
                 //await Task.Delay(1000);
                 //t.Completed = true;
-            }); 
+            });
         }
 
         Task Swipe(AttackCommand attackCommand, Turn t)
@@ -120,10 +127,10 @@ namespace Monomon.Battle
                 _oponent.Health -= attackCommand.stat.attack;
                 await Task.Delay(200);
                 _oponent.Health -= attackCommand.stat.attack;
-                _reporter.OnAttack(new BattleMessage(_attacker.Name, _oponent.Name, attackCommand.stat.attack * 2));
+                _reporter.OnAttack(new BattleMessage(_attacker.Name, _oponent.Name, "Swipe",attackCommand.stat.attack * 2));
                 await Task.Delay(1000);
                 t.Completed = true;
-            }); 
+            });
         }
 
         internal void Start()
