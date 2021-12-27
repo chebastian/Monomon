@@ -12,6 +12,7 @@ namespace Monomon.State
         private readonly Action onCancel;
         private CancellationTokenSource cancelation;
         private CancellationToken token;
+        private bool signalDone = false;
 
         public TimeoutState(SceneView view,int timeoutMs, IINputHandler input, Action onCancel) : base(view, input)
         {
@@ -20,8 +21,8 @@ namespace Monomon.State
             Task.Run(async () =>
             {
                 await Task.Delay(timeoutMs);
-                if(!token.IsCancellationRequested)
-                    Completed = true;
+                if (!token.IsCancellationRequested)
+                    signalDone = true;
 
             }, token);
             this.input = input;
@@ -35,6 +36,8 @@ namespace Monomon.State
                 cancelation.Cancel();
                 onCancel();
             }
+            if (signalDone)
+                Completed = true; 
         }
 
         public override void Render(double param)
