@@ -42,11 +42,11 @@ namespace Monomon.Views.Samples
                     SwapScene(new BattleSample(GraphicsDevice));
                 }),
                 new UIItem<string>("Message",x => {
-                    SwapScene(new MessageScene(GraphicsDevice,"First message"));
+                    SwapScene(new MessageScene(GraphicsDevice,"First message",font));
                 }),
                 new UIItem<string>("Timed message 2",x => {
 
-                    var scene =new MessageScene(GraphicsDevice,"Completes in for 2s...");
+                    var scene =new MessageScene(GraphicsDevice,"Completes in for 2s...",font);
                     scene.LoadScene(content);
                     _stack.Push(new TimeoutState(scene,2000,_input,
                     onCancel: () => {
@@ -55,7 +55,7 @@ namespace Monomon.Views.Samples
                     onCompleted: () => 
                     {
                         _stack.Pop();
-                        SwapScene(new MessageScene(GraphicsDevice,"Completed!")); }
+                        SwapScene(new MessageScene(GraphicsDevice,"Completed!",font)); }
                     );
             ;
                 }),
