@@ -96,7 +96,6 @@ namespace Monomon.Battle
                     await Task.Delay(300);
                 }
 
-                _reporter.OnAttack(new BattleMessage(_attacker.Name, _oponent.Name,"Wrap", total));
                 await Task.Delay(1000);
                 //c.Completed = true;
             });
@@ -104,19 +103,24 @@ namespace Monomon.Battle
 
         void DoTackle(AttackCommand attackCommand)
         {
-            _reporter.OnAttack(new BattleMessage(_attacker.Name, _oponent.Name, "Tackle",attackCommand.stat.attack));
-            _oponent.Health -= attackCommand.stat.attack;
+            //DisplayAttackName(attackCommand.attackType);
+            //RenderAnimationToCompletion(attackCommand.attackType);
+            //UpdateHealthBar(attackCommand.stat.attack);
+            //DislpayOptionalAttackMessage(attackCommand);
+            //NextRound();
+
+            //MVP
+            // display attackname
+            // update health
+            // next round
+
+            ReportMessage(new BattleMessage(_attacker.Name, _oponent.Name, "Tackle", attackCommand.stat.attack),
+                () => { _oponent.Health -= attackCommand.stat.attack; });
         }
 
-        Task Tackle(AttackCommand attackCommand, Turn t)
+        private void ReportMessage(BattleMessage msg, Action continueWith)
         {
-            return new Task(async () =>
-            {
-                _oponent.Health -= attackCommand.stat.attack;
-                _reporter.OnAttack(new BattleMessage(_attacker.Name, _oponent.Name, "Tackle",attackCommand.stat.attack));
-                //await Task.Delay(1000);
-                //t.Completed = true;
-            });
+            _reporter.OnAttack(msg,continueWith);
         }
 
         Task Swipe(AttackCommand attackCommand, Turn t)
@@ -127,7 +131,6 @@ namespace Monomon.Battle
                 _oponent.Health -= attackCommand.stat.attack;
                 await Task.Delay(200);
                 _oponent.Health -= attackCommand.stat.attack;
-                _reporter.OnAttack(new BattleMessage(_attacker.Name, _oponent.Name, "Swipe",attackCommand.stat.attack * 2));
                 await Task.Delay(1000);
                 t.Completed = true;
             });

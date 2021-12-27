@@ -18,9 +18,9 @@ namespace Monomon
         private GraphicsDevice _gd;
 
         public List<string> Messages { get; set; }
-        public BattleReporter(SpriteBatch batch, GraphicsDevice gd, State.StateStack<double> stack,IINputHandler input, SpriteFont font)
+        public BattleReporter(SpriteBatch batch, GraphicsDevice gd, State.StateStack<double> stack, IINputHandler input, SpriteFont font)
         {
-            _font = font; 
+            _font = font;
             _input = input;
             _gd = gd;
             if (batch is null)
@@ -33,11 +33,26 @@ namespace Monomon
             Messages = new List<string>();
         }
 
-        public void OnAttack(BattleMessage message)
+        public void OnAttack(BattleMessage message, Action continueWith)
         {
             var str = $"{message.attacker} attacked {message.receiver} for {message.damage} points of damage!";
             var view = new MessageScene(_gd, str, _font);
-            _stack.Push(new TimeoutState(view,1000,_input, () => { _stack.Pop(); }),() => { _stack.Pop(); });
+
+            var attackInfo = new MessageScene(_gd, $"{message.attacker} choose {message.name}", _font);
+            var attackMessage = new MessageScene(_gd, str, _font);
+
+            _stack.Push(new TimeoutState(attackInfo, 1000, _input, onCancel: () => { _stack.Pop(); }),
+                onCompleted:
+                    () =>
+                    {
+                        _stack.Pop();
+                        _stack.Push(new TimeoutState(attackMessage, 1000, _input, () => { _stack.Pop(); }),
+                            onCompleted:
+                                () => { _stack.Pop();
+                                    continueWith()  ;
+                                });
+                    });
+
         }
     }
 }

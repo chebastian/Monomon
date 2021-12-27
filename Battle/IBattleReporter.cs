@@ -8,6 +8,6 @@ namespace Monomon.Battle
 {
     public interface IBattleReporter
     {
-        public void OnAttack(BattleMessage message);
+        public void OnAttack(BattleMessage message, Action continueWith);
     }
 }
