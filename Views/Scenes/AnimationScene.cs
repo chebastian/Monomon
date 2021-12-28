@@ -83,7 +83,7 @@ namespace Monomon.Views.Scenes
         }
 
         public override void Render(double param)
-        {
+            {
         }
         float Lerp(float firstFloat, float secondFloat, float by)
         {
@@ -96,7 +96,10 @@ namespace Monomon.Views.Scenes
             var result = Lerp(start, target, totalTime / inTime);
             _update((time,result));
             if (totalTime >= inTime)
+            {
                 completed();
+                Completed = true;
+            }
         }
     }
 }
