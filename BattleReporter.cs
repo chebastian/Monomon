@@ -13,13 +13,15 @@ namespace Monomon
     {
         private readonly SpriteBatch batch;
         private readonly StateStack<double> _stack;
+        private Texture2D _sprites;
         private SpriteFont _font;
         private IINputHandler _input;
         private GraphicsDevice _gd;
 
         public List<string> Messages { get; set; }
-        public BattleReporter(SpriteBatch batch, GraphicsDevice gd, State.StateStack<double> stack, IINputHandler input, SpriteFont font)
+        public BattleReporter(SpriteBatch batch, GraphicsDevice gd, State.StateStack<double> stack, IINputHandler input, SpriteFont font, Texture2D sprites)
         {
+            _sprites = sprites;
             _font = font;
             _input = input;
             _gd = gd;
@@ -48,8 +50,20 @@ namespace Monomon
                         _stack.Pop();
                         _stack.Push(new TimeoutState(attackMessage, 1000, _input, () => { _stack.Pop(); }),
                             onCompleted:
-                                () => { _stack.Pop();
-                                    continueWith()  ;
+                                () => { 
+                                    _stack.Pop();
+                                    var animation = new List<Animation.Frame>() 
+                                    { 
+                                        new Animation.Frame(0,16),
+                                        new Animation.Frame(24,16),
+                                        new Animation.Frame(48,16),
+                                        new Animation.Frame(72,16,() => { _stack.Pop(); continueWith(); }),
+                                    };
+                                    var anim = new AnimationScene(_gd, new Microsoft.Xna.Framework.Vector2(200, 0), _sprites, animation); 
+
+                                    var fs = new SceneState(anim,_input);
+                                    _stack.Push(fs,() => {
+                                    });
                                 });
                     });
 
