@@ -22,7 +22,7 @@ namespace Monomon.Views.Battle
 
             batch.DrawString(font, $"{card.Name}", new Vector2(pos.X, pos.Y), Color.White);
             ProgressbarView.Draw(batch, card.Percentage, 150, new Vector2(pos.X, pos.Y + 20), barSprites, spriteMap, color);
-            batch.DrawString(font, $"HP: {card.CurrentHealth}/{card.MaxHealth}", new Vector2(pos.X, pos.Y + 35), color);
+            batch.DrawString(font, $"HP: {(int)(card.CurrentHealth)}/{card.MaxHealth}", new Vector2(pos.X, pos.Y + 35), color);
             batch.DrawString(font, $"Lv: {card.Level}", new Vector2(pos.X, pos.Y + 50), Color.White);
         }
     }

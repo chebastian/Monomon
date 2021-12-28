@@ -18,7 +18,7 @@ namespace Monomon.Mons
         }
 
         public string Name { get; }
-        public int Health { get; set; }
+        public float Health { get; set; }
         public int MaxHealth { get; }
         public MonStatus Stats { get; }
     }
