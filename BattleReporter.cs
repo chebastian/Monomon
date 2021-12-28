@@ -35,20 +35,28 @@ namespace Monomon
             Messages = new List<string>();
         }
 
+        TimedState TimedMessage(string message)
+        { 
+            return new TimedState(new MessageScene(_gd,message,_font), 1000, _input);
+        }
+
+        ConfirmState ConfirmMessage(string message)
+        { 
+            return new ConfirmState(new MessageScene(_gd,message,_font), _input);
+        }
+
+
         public void OnAttack(BattleMessage message, Mons.Mobmon _oponent, Action continueWith)
         {
-            var str = $"{message.attacker} attacked {message.receiver} for {message.damage} points of damage!";
-            var view = new MessageScene(_gd, str, _font);
+            var attackInfoState = TimedMessage($"{message.attacker} choose {message.name}");
+            var attackMessageState = TimedMessage($"{message.attacker} attacked {message.receiver} for {message.damage} points of damage!");
 
-            var attackInfo = new MessageScene(_gd, $"{message.attacker} choose {message.name}", _font);
-            var attackMessage = new MessageScene(_gd, str, _font);
-
-            var attackInfoState = new TimedState(attackInfo, 2000, _input);
-            var attackMessageState = new TimedState(attackMessage, 1000, _input);
             var health = _oponent.Health;
+            var hasFainted = false;
             var healthbarUpdateState = new TweenState((arg) => _oponent.Health = (float)(health - arg.lerp), () =>
             {
                 _oponent.Health = health - message.damage;
+                hasFainted = _oponent.Health <= 0;
             }, 0.0f, message.damage, 1.0f);
 
 
@@ -59,11 +67,18 @@ namespace Monomon
                 _stack.Push(healthbarUpdateState, () =>
                 {
                     //Remove ourself, the attack message state
-                    _stack.Pop(); 
-                    _stack.Push(attackMessageState, () => {
-                        _stack.Pop(); 
-                        continueWith();
-                    });
+                    _stack.Pop();
+                    if (hasFainted)
+                    {
+                    }
+                    else
+                    {
+                        _stack.Push(attackMessageState, () =>
+                        {
+                            _stack.Pop();
+                            continueWith();
+                        });
+                    }
                 });
             });
         }
