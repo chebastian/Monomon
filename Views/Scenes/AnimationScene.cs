@@ -62,4 +62,41 @@ namespace Monomon.Views.Scenes
             render(batch);
         }
     }
+
+    public class TweenState : State.State<double>
+    {
+        private readonly Action<(double time, double lerp)> _update;
+        private readonly Action completed;
+        private readonly float start;
+        private readonly float target;
+        private readonly float inTime;
+        private float totalTime;
+
+        public TweenState(Action<(double time, double lerp)> update, Action completed, float start, float target, float inTime)
+        {
+            _update = update;
+            this.completed = completed;
+            this.start = start;
+            this.target = target;
+            this.inTime = inTime;
+            totalTime = 0.0f;
+        }
+
+        public override void Render(double param)
+        {
+        }
+        float Lerp(float firstFloat, float secondFloat, float by)
+        {
+            return firstFloat * (1 - by) + secondFloat * by;
+        }
+
+        public override void Update(float time)
+        {
+            totalTime += time;
+            var result = Lerp(start, target, totalTime / inTime);
+            _update((time,result));
+            if (totalTime >= inTime)
+                completed();
+        }
+    }
 }
