@@ -34,7 +34,6 @@ namespace Monomon.Views.Samples
         private BattleCardViewModel _playerCard;
         private SpriteFont? font;
         private Texture2D? _spriteMap;
-        private readonly StateStack<double> stack;
 
         public BattleSample(GraphicsDevice gd, BattleReporter reporter) : base(gd)
         {
@@ -71,7 +70,7 @@ namespace Monomon.Views.Samples
                 //TODO same here... remove?
             });
 
-            itemList = new UIList<string>(new List<UIItem<string>>() {
+                itemList = new UIList<string>(new List<UIItem<string>>() {
                 new UIItem<string>("Potion", x => {}),
                 new UIItem<string>("Mana Potion", x => {}),
                 new UIItem<string>("Back", x => {_currentList = _list; }),
