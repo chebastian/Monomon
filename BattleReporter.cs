@@ -43,36 +43,29 @@ namespace Monomon
             var attackInfo = new MessageScene(_gd, $"{message.attacker} choose {message.name}", _font);
             var attackMessage = new MessageScene(_gd, str, _font);
 
-            _stack.Push(new TimeoutState(attackInfo, 1000, _input, onCancel: () => { _stack.Pop(); }),
-                onCompleted:
-                    () =>
-                    {
-                        _stack.Pop();
-                        _stack.Push(new TimeoutState(attackMessage, 1000, _input, () => { _stack.Pop(); }),
-                            onCompleted:
-                                () => { 
-                                    _stack.Pop();
+            var attackInfoState = new TimedState(attackInfo, 2000, _input);
+            var attackMessageState = new TimedState(attackMessage, 1000, _input);
+            var health = _oponent.Health;
+            var healthbarUpdateState = new TweenState((arg) => _oponent.Health = (float)(health - arg.lerp), () =>
+            {
+                _oponent.Health = health - message.damage;
+            }, 0.0f, message.damage, 1.0f);
 
-                                    var animation = new List<Animation.Frame>() 
-                                    { 
-                                        new Animation.Frame(0,16),
-                                        new Animation.Frame(24,16),
-                                        new Animation.Frame(48,16),
-                                        new Animation.Frame(72,16,() => { _stack.Pop(); continueWith(); }),
-                                    };
-                                    var anim = new AnimationScene(_gd, new Microsoft.Xna.Framework.Vector2(200, 0), _sprites, animation);
 
-                                    var health = _oponent.Health;
-                                    var tween = new TweenState((arg) => _oponent.Health= (float)(health -arg.lerp), () => {
-                                        _oponent.Health = health - message.damage;
-                                        _stack.Pop(); continueWith(); }, 0.0f, message.damage, 1.0f);
-
-                                    var fs = new SceneState(anim,_input); 
-                                    //_stack.Push(fs,() => { });
-                                    _stack.Push(tween, () => {});
-                                });
+            _stack.Push(attackInfoState, () =>
+            {
+                //Remove ourself the attack info state
+                _stack.Pop();
+                _stack.Push(healthbarUpdateState, () =>
+                {
+                    //Remove ourself, the attack message state
+                    _stack.Pop(); 
+                    _stack.Push(attackMessageState, () => {
+                        _stack.Pop(); 
+                        continueWith();
                     });
-
+                });
+            });
         }
     }
 }
