@@ -29,6 +29,24 @@ namespace Monomon.State
         }
     }
 
+    public class ConfirmState : SceneState
+    {
+        public ConfirmState(SceneView view,IINputHandler input) : base(view, input)
+        {
+        }
+
+        public override void Render(double param)
+        {
+            base.Render(param);
+        }
+
+        public override void Update(float time)
+        {
+            if (_input.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Space))
+                Completed = true;
+        }
+    }
+
     public class TimeoutState : SceneState
     {
         private readonly IINputHandler input;
