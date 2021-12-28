@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace Monomon
 {
-    internal class BattleReporter : IBattleReporter
+    public class BattleReporter
     {
         private readonly SpriteBatch batch;
         private readonly StateStack<double> _stack;
@@ -35,7 +35,7 @@ namespace Monomon
             Messages = new List<string>();
         }
 
-        public void OnAttack(BattleMessage message, Action continueWith)
+        public void OnAttack(BattleMessage message, Mons.Mobmon _oponent, Action continueWith)
         {
             var str = $"{message.attacker} attacked {message.receiver} for {message.damage} points of damage!";
             var view = new MessageScene(_gd, str, _font);
@@ -52,6 +52,7 @@ namespace Monomon
                             onCompleted:
                                 () => { 
                                     _stack.Pop();
+
                                     var animation = new List<Animation.Frame>() 
                                     { 
                                         new Animation.Frame(0,16),
@@ -59,11 +60,16 @@ namespace Monomon
                                         new Animation.Frame(48,16),
                                         new Animation.Frame(72,16,() => { _stack.Pop(); continueWith(); }),
                                     };
-                                    var anim = new AnimationScene(_gd, new Microsoft.Xna.Framework.Vector2(200, 0), _sprites, animation); 
+                                    var anim = new AnimationScene(_gd, new Microsoft.Xna.Framework.Vector2(200, 0), _sprites, animation);
 
-                                    var fs = new SceneState(anim,_input);
-                                    _stack.Push(fs,() => {
-                                    });
+                                    var health = _oponent.Health;
+                                    var tween = new TweenState((arg) => _oponent.Health= (float)(health -arg.lerp), () => {
+                                        _oponent.Health = health - message.damage;
+                                        _stack.Pop(); continueWith(); }, 0.0f, message.damage, 1.0f);
+
+                                    var fs = new SceneState(anim,_input); 
+                                    //_stack.Push(fs,() => { });
+                                    _stack.Push(tween, () => {});
                                 });
                     });
 

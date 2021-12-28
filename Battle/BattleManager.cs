@@ -13,7 +13,7 @@ namespace Monomon.Battle
 
     public class BattleManager
     {
-        private IBattleReporter _reporter;
+        private BattleReporter _reporter;
         private Mobmon _player;
         private Mobmon _attacker;
         private Mobmon _oponent;
@@ -21,7 +21,7 @@ namespace Monomon.Battle
         private bool _isPlayerTurn;
         private IINputHandler _input;
 
-        public BattleManager(Mons.Mobmon player, Mons.Mobmon oponent, IBattleReporter reporter, IINputHandler input)
+        public BattleManager(Mons.Mobmon player, Mons.Mobmon oponent, BattleReporter reporter, IINputHandler input)
         {
             _reporter = reporter;
             _player = player;
@@ -114,13 +114,10 @@ namespace Monomon.Battle
             // update health
             // next round
 
-            ReportMessage(new BattleMessage(_attacker.Name, _oponent.Name, "Tackle", attackCommand.stat.attack),
-                () => { _oponent.Health -= attackCommand.stat.attack; });
-        }
-
-        private void ReportMessage(BattleMessage msg, Action continueWith)
-        {
-            _reporter.OnAttack(msg,continueWith);
+            var msg = new BattleMessage(_attacker.Name, _oponent.Name, "Tackle", attackCommand.stat.attack);
+            _reporter.OnAttack(msg,_oponent, () => {
+                NextTurn();
+            });
         }
 
         Task Swipe(AttackCommand attackCommand, Turn t)
@@ -144,7 +141,6 @@ namespace Monomon.Battle
 
         internal void NextTurn()
         {
-            Start();
             _isPlayerTurn = !_isPlayerTurn;
 
             //swap player and mon
