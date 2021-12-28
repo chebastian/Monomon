@@ -70,6 +70,12 @@ namespace Monomon
                     _stack.Pop();
                     if (hasFainted)
                     {
+                        _stack.Push(ConfirmMessage($"{_oponent.Name} has fainted"),
+                            () => 
+                            {
+                                _stack.Pop();// pop this message
+                                _stack.Pop(); // pop the battle
+                            });
                     }
                     else
                     {
