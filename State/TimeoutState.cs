@@ -6,6 +6,29 @@ using System.Threading.Tasks;
 
 namespace Monomon.State
 {
+    public class TimedState : SceneState
+    {
+        public TimedState(SceneView view,int timeoutMs, IINputHandler input) : base(view, input)
+        {
+            timeout = timeoutMs;
+        }
+
+        private float timeout;
+
+        public override void Render(double param)
+        {
+            base.Render(param);
+        }
+
+        public override void Update(float time)
+        {
+            base.Update(time);
+            timeout -= time*1000.0f;
+            if (timeout <= 0)
+                Completed = true;
+        }
+    }
+
     public class TimeoutState : SceneState
     {
         private readonly IINputHandler input;
