@@ -154,9 +154,12 @@ namespace Monomon.Views.Samples
 
         private void DrawBattle()
         {
-            ListView.DrawUIList(_currentList, new Vector2(300, 200),_spriteBatch,font);
-            BattleCardView.Draw(_spriteBatch, new Vector2(100, 10), font, _spriteMap, _currentEnemyCard);
-            BattleCardView.Draw(_spriteBatch, new Vector2(100, 200), font, _spriteMap, _playerCard);
+            int x = 200;
+            _currentEnemyCard.SetHealth( _mob.Health);
+            _playerCard.SetHealth( _player.Health);
+            ListView.DrawUIList(_currentList, new Vector2(x+200, 200),_spriteBatch,font);
+            BattleCardView.Draw(_spriteBatch, new Vector2(x, 10), font, _spriteMap, _currentEnemyCard);
+            BattleCardView.Draw(_spriteBatch, new Vector2(x, 200), font, _spriteMap, _playerCard);
 
             DrawBattleLog();
         }
