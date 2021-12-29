@@ -37,11 +37,11 @@ namespace Monomon.Views.Samples
             _task = Task.Run( async () => { 
                 while(true)
                 {
-                    _moving.CurrentHealth = 50;
+                    _moving.SetHealth(50);
                     await Task.Delay(2000);
-                    _moving.CurrentHealth = 25;
+                    _moving.SetHealth( 25);
                     await Task.Delay(2000);
-                    _moving.CurrentHealth = 1;
+                    _moving.SetHealth(10);
                     await Task.Delay(2000);
                 }
             });
