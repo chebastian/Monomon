@@ -32,3 +32,15 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:spritemap.png
+
+#begin menuMoveChirpy.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:menuMoveChirpy.wav
+
+#begin menuSelectChirpy.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:menuSelectChirpy.wav
