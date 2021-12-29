@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -34,6 +35,8 @@ namespace Monomon.Views.Samples
         private BattleCardViewModel _playerCard;
         private SpriteFont? font;
         private Texture2D? _spriteMap;
+        private SoundEffect _menuMoveEffect;
+        private SoundEffect _menuSelectEffect;
 
         public BattleSample(GraphicsDevice gd, BattleReporter reporter,IINputHandler input) : base(gd)
         {
@@ -48,8 +51,12 @@ namespace Monomon.Views.Samples
                 new UIItem<string>("Item", x => { _currentList = itemList;}),
                 new UIItem<string>("Mon"),
                 new UIItem<string>("Run"),
-            }, x => { }, x => {
+            }, x => {
+
+                OnMenuMove();
+            }, x => {
                 //TODO can we remove this callback?
+                OnMenuSelect();
             });
 
             fightList = new UIList<string>(new List<UIItem<string>>() {
@@ -66,16 +73,20 @@ namespace Monomon.Views.Samples
                     _currentList = _list;
                 }),
                 new UIItem<string>("Growl", x => {}),
-            }, x => { }, x => { 
-                //TODO same here... remove?
+            }, x => {
+                OnMenuMove();
+            }, x => {
+                OnMenuSelect();
             });
 
                 itemList = new UIList<string>(new List<UIItem<string>>() {
                 new UIItem<string>("Potion", x => {}),
                 new UIItem<string>("Mana Potion", x => {}),
                 new UIItem<string>("Back", x => {_currentList = _list; }),
-            }, x => { }, x => { 
-                //TODO remove?
+            }, x => {
+                OnMenuMove();
+            },
+            x => {OnMenuSelect(); 
             });
 
             _currentList = _list;
@@ -90,6 +101,17 @@ namespace Monomon.Views.Samples
         {
             font = content.Load<SpriteFont>("File");
             _spriteMap = content.Load<Texture2D>("spritemap");
+            _menuMoveEffect = content.Load<SoundEffect>("menuMoveChirpy");
+            _menuSelectEffect = content.Load<SoundEffect>("menuSelectChirpy");
+        }
+
+        public void OnMenuMove()
+        {
+            _menuMoveEffect?.CreateInstance().Play();
+        }
+        public void OnMenuSelect()
+        {
+            _menuSelectEffect?.CreateInstance().Play();
         }
 
         public override void Update(double time)
