@@ -45,8 +45,8 @@ namespace Monomon.Views.Samples
         public BattleSample(GraphicsDevice gd, IINputHandler input,StateStack<double> stack) : base(gd)
         {
             _input = input;
-            _player = new Mobmon("Player", 2, new MonStatus(4, 2, 3));
-            _mob = new Mobmon("Mob", 7, new MonStatus(2, 2, 3));
+            _player = new Mobmon("Player", 20, new MonStatus(4, 2, 3));
+            _mob = new Mobmon("Mob", 9, new MonStatus(2, 2, 3));
             _stack = stack;
 
             _list = new UIList<string>(new List<UIItem<string>>() {
@@ -67,12 +67,12 @@ namespace Monomon.Views.Samples
                     _battleManager.Attack(new AttackCommand(AttackType.Tackle, _player.Stats));
                     _currentList = _list;
                 }),
-                new UIItem<string>("Swipe", x => {
-                    _battleManager.Attack(new AttackCommand(AttackType.Slash, _player.Stats));
+                new UIItem<string>("Slash", x => {
+                    _battleManager.Attack(new Slash(_player.Stats));
                     _currentList = _list;
                 }),
-                new UIItem<string>("Wrap", x => {
-                    _battleManager.Attack(new AttackCommand(AttackType.Wrap, _player.Stats));
+                new UIItem<string>("Swipe", x => {
+                    _battleManager.Attack(new Swipe( _player.Stats));
                     _currentList = _list;
                 }),
                 new UIItem<string>("Growl", x => {}),
@@ -197,6 +197,7 @@ namespace Monomon.Views.Samples
             int x = 200;
             _currentEnemyCard.SetHealth( _mob.Health);
             _playerCard.SetHealth( _player.Health);
+            _playerCard.SetXp(_player.Xp);
             ListView.DrawUIList(_currentList, new Vector2(x+200, 200),_spriteBatch,font);
             BattleCardView.Draw(_spriteBatch, new Vector2(x, 10), font, _spriteMap, _currentEnemyCard);
             BattleCardView.Draw(_spriteBatch, new Vector2(x, 200), font, _spriteMap, _playerCard);
