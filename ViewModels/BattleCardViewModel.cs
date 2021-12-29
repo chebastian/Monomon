@@ -20,7 +20,9 @@ namespace Monomon.ViewModels
             CurrentHealth = currentHealth;
             Level = level;
             _lastHealth = currentHealth;
-            _healt = maxHealth;
+            _healt = currentHealth;
+            _xp = 1;
+            _xpToNextLevel = 100;
         }
 
         public string Name { get; }
@@ -41,9 +43,14 @@ namespace Monomon.ViewModels
 
         public void SetHealth(float h)
         {
-            _healt = h;
-            CurrentHealth = h;
+            _healt = Math.Max(0, h);
+            CurrentHealth = _healt;
             NewUpdate();
+        }
+
+        public void SetXp(float xp)
+        {
+            _xp = xp;
         }
 
         public void Update(float time)
@@ -64,6 +71,7 @@ namespace Monomon.ViewModels
         private void NewUpdate()
         {
             Percentage = (float)_healt / (float)MaxHealth;
+            XpPercentage = (float)_xp / (float)_xpToNextLevel;
         }
 
         float Lerp(float firstFloat, float secondFloat, float by)
@@ -73,6 +81,9 @@ namespace Monomon.ViewModels
 
         public int Level { get; }
         public float Percentage { get; set; }
+        public float XpPercentage { get; set; }
+        private float _xp;
+        private float _xpToNextLevel;
 
         public bool IsLow() => (float)CurrentHealth / (float)MaxHealth <= 0.25f;
     }
