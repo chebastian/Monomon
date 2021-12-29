@@ -22,7 +22,7 @@ namespace Monomon.Views.Samples
     class BattleSample : SceneView
     {
         private BattleManager _battleManager;
-        private BufferInputHandler _input;
+        private IINputHandler _input;
         private Mobmon _player;
         private Mobmon _mob;
         private UIList<string> _list;
@@ -35,11 +35,11 @@ namespace Monomon.Views.Samples
         private SpriteFont? font;
         private Texture2D? _spriteMap;
 
-        public BattleSample(GraphicsDevice gd, BattleReporter reporter) : base(gd)
+        public BattleSample(GraphicsDevice gd, BattleReporter reporter,IINputHandler input) : base(gd)
         {
-            _input = new Monomon.Input.BufferInputHandler();
-            _player = new Mobmon("Player", 15, new MonStatus(4, 2, 3));
-            _mob = new Mobmon("Mob", 25, new MonStatus(2, 2, 3));
+            _input = input;
+            _player = new Mobmon("Player", 2, new MonStatus(4, 2, 3));
+            _mob = new Mobmon("Mob", 7, new MonStatus(2, 2, 3));
             _battleReporter = reporter;
             _battleManager = new BattleManager(_player, _mob, _battleReporter, _input);
 
@@ -94,7 +94,6 @@ namespace Monomon.Views.Samples
 
         public override void Update(double time)
         {
-            _input.Update();
             if (_battleManager.IsPlayerTurn() && _battleManager.IsInteractive())
             {
                 if (_input.IsKeyPressed(Keys.Down))

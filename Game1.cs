@@ -86,8 +86,9 @@ namespace Monomon
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            _input.Update();
 
+
+            _input.Update();
             //if (_input.IsKeyPressed(Keys.Down))
             //    _sceneList.SelectNext();
             //if (_input.IsKeyPressed(Keys.Up))
