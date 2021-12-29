@@ -26,6 +26,7 @@ namespace Monomon.Views.Samples
         private IINputHandler _input;
         private Mobmon _player;
         private Mobmon _mob;
+        private StateStack<double> _stack;
         private UIList<string> _list;
         private UIList<string> fightList;
         private UIList<string> itemList;
@@ -38,13 +39,12 @@ namespace Monomon.Views.Samples
         private SoundEffect _menuMoveEffect;
         private SoundEffect _menuSelectEffect;
 
-        public BattleSample(GraphicsDevice gd, BattleReporter reporter,IINputHandler input) : base(gd)
+        public BattleSample(GraphicsDevice gd, IINputHandler input,StateStack<double> stack) : base(gd)
         {
             _input = input;
             _player = new Mobmon("Player", 2, new MonStatus(4, 2, 3));
             _mob = new Mobmon("Mob", 7, new MonStatus(2, 2, 3));
-            _battleReporter = reporter;
-            _battleManager = new BattleManager(_player, _mob, _battleReporter, _input);
+            _stack = stack;
 
             _list = new UIList<string>(new List<UIItem<string>>() {
                 new UIItem<string>("Fight", x => { _currentList = fightList; }),
@@ -91,14 +91,15 @@ namespace Monomon.Views.Samples
 
             _currentList = _list;
 
-            _battleManager.Start();
-
             _currentEnemyCard = new BattleCardViewModel(_mob.Name, _mob.MaxHealth, _mob.Health, 2);
             _playerCard = new BattleCardViewModel("Player", _player.MaxHealth, _player.Health, 6);
         }
 
         public override void LoadScene(ContentManager content)
         {
+            _battleReporter = new BattleReporter(_spriteBatch,_graphics,_stack,_input,content.Load<SpriteFont>("File"),content.Load<Texture2D>("spritemap"));
+            _battleManager = new BattleManager(_player, _mob, _battleReporter, _input);
+
             font = content.Load<SpriteFont>("File");
             _spriteMap = content.Load<Texture2D>("spritemap");
             //_menuMoveEffect = content.Load<SoundEffect>("menuMoveChirpy");
@@ -106,6 +107,8 @@ namespace Monomon.Views.Samples
 
             _menuMoveEffect = content.Load<SoundEffect>("menuSelectSimple");
             _menuSelectEffect = content.Load<SoundEffect>("menuMoveChirpy");
+
+            _battleManager.Start();
         }
 
         public void OnMenuMove()

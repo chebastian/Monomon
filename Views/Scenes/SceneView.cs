@@ -11,7 +11,7 @@ namespace Monomon.Views.Scenes
 {
     public abstract class SceneView
     {
-        private GraphicsDevice _graphics;
+        protected GraphicsDevice _graphics;
         protected SpriteBatch _spriteBatch;
 
         public SceneView(GraphicsDevice gd)
