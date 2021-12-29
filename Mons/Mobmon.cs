@@ -15,11 +15,13 @@ namespace Monomon.Mons
             Health = health;
             MaxHealth = health;
             Stats = stats;
+            Xp = 0;
         }
 
         public string Name { get; }
         public float Health { get; set; }
         public int MaxHealth { get; }
         public MonStatus Stats { get; }
+        public float Xp { get; set; }
     }
 }
