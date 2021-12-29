@@ -101,8 +101,11 @@ namespace Monomon.Views.Samples
         {
             font = content.Load<SpriteFont>("File");
             _spriteMap = content.Load<Texture2D>("spritemap");
-            _menuMoveEffect = content.Load<SoundEffect>("menuMoveChirpy");
-            _menuSelectEffect = content.Load<SoundEffect>("menuSelectChirpy");
+            //_menuMoveEffect = content.Load<SoundEffect>("menuMoveChirpy");
+            //_menuSelectEffect = content.Load<SoundEffect>("menuSelectSimple");
+
+            _menuMoveEffect = content.Load<SoundEffect>("menuSelectSimple");
+            _menuSelectEffect = content.Load<SoundEffect>("menuMoveChirpy");
         }
 
         public void OnMenuMove()
@@ -150,14 +153,7 @@ namespace Monomon.Views.Samples
 
         protected override void OnDraw(SpriteBatch batch)
         {
-            if (!_battleManager.BattleOver())
-            {
-                DrawBattle();
-            }
-            else
-            {
-                DrawBattleResult(_battleManager.GetOutcome());
-            }
+            DrawBattle();
         }
 
         private void DrawBattleResult(BattleOutcome battleOutcome)

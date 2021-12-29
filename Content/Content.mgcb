@@ -44,3 +44,9 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:menuSelectChirpy.wav
+
+#begin menuSelectSimple.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:menuSelectSimple.wav
