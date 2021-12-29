@@ -38,6 +38,9 @@ namespace Monomon.Views.Samples
         private Texture2D? _spriteMap;
         private SoundEffect _menuMoveEffect;
         private SoundEffect _menuSelectEffect;
+        private SoundEffect _battleTackleEffect;
+        private SoundEffect _battleHurtEffect;
+        private SoundEffect _battleXpUpEffect;
 
         public BattleSample(GraphicsDevice gd, IINputHandler input,StateStack<double> stack) : base(gd)
         {
@@ -97,7 +100,7 @@ namespace Monomon.Views.Samples
 
         public override void LoadScene(ContentManager content)
         {
-            _battleReporter = new BattleReporter(_spriteBatch,_graphics,_stack,_input,content.Load<SpriteFont>("File"),content.Load<Texture2D>("spritemap"));
+            _battleReporter = new BattleReporter(_spriteBatch,_graphics,_stack,_input,content.Load<SpriteFont>("File"),content.Load<Texture2D>("spritemap"),OnPlaySound);
             _battleManager = new BattleManager(_player, _mob, _battleReporter, _input);
 
             font = content.Load<SpriteFont>("File");
@@ -108,7 +111,24 @@ namespace Monomon.Views.Samples
             _menuMoveEffect = content.Load<SoundEffect>("menuSelectSimple");
             _menuSelectEffect = content.Load<SoundEffect>("menuMoveChirpy");
 
+            _battleTackleEffect = content.Load<SoundEffect>("tackle");
+            _battleHurtEffect = content.Load<SoundEffect>("hurtChirpy");
+            _battleXpUpEffect = content.Load<SoundEffect>("XpUp");
+
             _battleManager.Start();
+        }
+
+        private void OnPlaySound(Sounds sound)
+        {
+            var instance = sound switch
+            {
+                Sounds.Attack_Tackle => _battleTackleEffect.CreateInstance(),
+                Sounds.TakeDamage => _battleHurtEffect.CreateInstance(),
+                Sounds.XpUP => _battleXpUpEffect.CreateInstance(),
+                _ => _battleTackleEffect.CreateInstance(),
+            };
+
+            instance.Play();
         }
 
         public void OnMenuMove()

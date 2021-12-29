@@ -9,18 +9,27 @@ using System.Collections.Generic;
 
 namespace Monomon
 {
+    public enum Sounds
+    { 
+        Attack_Tackle,
+        TakeDamage,
+        XpUP,
+    }
+
     public class BattleReporter
     {
         private readonly SpriteBatch batch;
         private readonly StateStack<double> _stack;
+        private Action<Sounds> _soundCallback;
         private Texture2D _sprites;
         private SpriteFont _font;
         private IINputHandler _input;
         private GraphicsDevice _gd;
 
         public List<string> Messages { get; set; }
-        public BattleReporter(SpriteBatch batch, GraphicsDevice gd, State.StateStack<double> stack, IINputHandler input, SpriteFont font, Texture2D sprites)
+        public BattleReporter(SpriteBatch batch, GraphicsDevice gd, State.StateStack<double> stack, IINputHandler input, SpriteFont font, Texture2D sprites, Action<Sounds> soundCallback)
         {
+            _soundCallback = soundCallback;
             _sprites = sprites;
             _font = font;
             _input = input;
@@ -60,16 +69,19 @@ namespace Monomon
             }, 0.0f, message.damage, 1.0f);
 
 
+            //_soundCallback(Sounds.Attack_Tackle);
             _stack.Push(attackInfoState, () =>
             {
                 //Remove ourself the attack info state
                 _stack.Pop();
+                _soundCallback(Sounds.Attack_Tackle);
                 _stack.Push(healthbarUpdateState, () =>
                 {
                     //Remove ourself, the attack message state
                     _stack.Pop();
                     if (hasFainted)
                     {
+                        _soundCallback(Sounds.TakeDamage);
                         _stack.Push(ConfirmMessage($"{_oponent.Name} has fainted"),
                             () => 
                             {

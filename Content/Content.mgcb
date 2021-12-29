@@ -50,3 +50,21 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:menuSelectSimple.wav
+
+#begin tackle.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:tackle.wav
+
+#begin XpUp.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:XpUp.wav
+
+#begin hurtChirpy.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:hurtChirpy.wav
