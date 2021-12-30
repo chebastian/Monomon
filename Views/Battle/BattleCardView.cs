@@ -25,7 +25,7 @@ namespace Monomon.Views.Battle
             batch.DrawString(font, $"HP: {(int)(card.CurrentHealth)}/{card.MaxHealth}", new Vector2(pos.X, pos.Y + 20), color);
             batch.DrawString(font, $"Lv: {card.Level}", new Vector2(pos.X, pos.Y + 60), Color.White);
 
-            ProgressbarView.Draw(batch, card.XpPercentage, 150, new Vector2(pos.X, pos.Y + 80), barSprites, spriteMap, Color.Gold);
+            ProgressbarView.Draw(batch, card.XpPercentage, 150, new Vector2(pos.X, pos.Y + 80), barSprites, spriteMap, Color.Blue);
         }
     }
 }
