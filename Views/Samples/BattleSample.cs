@@ -10,6 +10,7 @@ using Monomon.State;
 using Monomon.UI;
 using Monomon.ViewModels;
 using Monomon.Views.Battle;
+using Monomon.Views.Constants;
 using Monomon.Views.Gui;
 using Monomon.Views.Scenes;
 using System;
@@ -194,15 +195,14 @@ namespace Monomon.Views.Samples
 
         private void DrawBattle()
         {
-            int x = 200;
             _currentEnemyCard.SetHealth( _mob.Health);
             _playerCard.SetHealth( _player.Health);
             _playerCard.SetXp(_player.Xp);
-            ListView.DrawUIList(_currentList, new Vector2(x+200, 200),_spriteBatch,font);
-            BattleCardView.Draw(_spriteBatch, new Vector2(x, 10), font, _spriteMap, _currentEnemyCard);
-            BattleCardView.Draw(_spriteBatch, new Vector2(x, 200), font, _spriteMap, _playerCard);
+            ListView.DrawUIList(_currentList, new Vector2(UIValues.PlayerHudX, UIValues.PlayerHudY+100),_spriteBatch,font);
+            BattleCardView.Draw(_spriteBatch, new Vector2(UIValues.PlayerHudX, 10), font, _spriteMap, _currentEnemyCard);
+            BattleCardView.Draw(_spriteBatch, new Vector2(UIValues.PlayerHudX, UIValues.PlayerHudY), font, _spriteMap, _playerCard);
 
-            DrawBattleLog();
+            //DrawBattleLog();
         }
 
     }

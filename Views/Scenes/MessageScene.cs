@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Monomon.Views.Constants;
 
 namespace Monomon.Views.Scenes
 {
@@ -25,7 +26,7 @@ namespace Monomon.Views.Scenes
 
         protected override void OnDraw(SpriteBatch batch)
         {
-            batch.DrawString(_font,message,new Vector2(100,100), Color.White);
+            batch.DrawString(_font,message,new Vector2(100,UIValues.BattleMessageY), Color.White);
         }
     }
 }
