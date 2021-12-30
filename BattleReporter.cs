@@ -55,7 +55,7 @@ namespace Monomon
         }
 
 
-        public void OnAttack(BattleMessage message, Mons.Mobmon _oponent, Action continueWith)
+        public void OnAttack(BattleMessage message,Mons.Mobmon attacker, Mons.Mobmon _oponent, Action continueWith)
         {
             var attackInfoState = TimedMessage($"{message.attacker} choose {message.name}");
             var attackMessageState = TimedMessage($"{message.attacker} attacked {message.receiver} for {message.damage} points of damage!");
@@ -68,6 +68,11 @@ namespace Monomon
                 hasFainted = _oponent.Health <= 0;
             }, 0.0f, message.damage, 1.0f);
 
+            var xp = attacker.Xp;
+            var xpUpdate = new TweenState((arg) => attacker.Xp = (float)(xp + arg.lerp), () =>
+            {
+                attacker.Xp = xp + 20;
+            }, 0.0f, 20, 1.0f);
 
             //_soundCallback(Sounds.Attack_Tackle);
             _stack.Push(attackInfoState, () =>
@@ -82,11 +87,24 @@ namespace Monomon
                     if (hasFainted)
                     {
                         _soundCallback(Sounds.TakeDamage);
+
+                        _stack.Push(xpUpdate, () => { 
+
+                            _stack.Pop();
+                            _stack.Push(ConfirmMessage($"XP Gained!"),
+                            () => 
+                            {
+                                _stack.Pop();// pop this message
+                                _stack.Pop();// pop this message
+                            });
+
+                        });
+
                         _stack.Push(ConfirmMessage($"{_oponent.Name} has fainted"),
                             () => 
                             {
                                 _stack.Pop();// pop this message
-                                _stack.Pop(); // pop the battle
+                                _soundCallback(Sounds.XpUP);
                             });
                     }
                     else
@@ -96,6 +114,7 @@ namespace Monomon
                             _stack.Pop();
                             continueWith();
                         });
+
                     }
                 });
             });

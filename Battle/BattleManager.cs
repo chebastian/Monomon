@@ -114,8 +114,8 @@ namespace Monomon.Battle
             // update health
             // next round
 
-            var msg = new BattleMessage(_attacker.Name, _oponent.Name, "Tackle", attackCommand.stat.attack);
-            _reporter.OnAttack(msg,_oponent, () => {
+            var msg = new BattleMessage(_attacker.Name, _oponent.Name, attackCommand.attackType.ToString(), attackCommand.stat.attack);
+            _reporter.OnAttack(msg,_attacker,_oponent, () => {
                 NextTurn();
             });
         }
