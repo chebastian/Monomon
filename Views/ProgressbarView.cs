@@ -8,7 +8,13 @@ using System.Threading.Tasks;
 
 namespace Monomon.Views
 {
-    public record SpriteCollection(Rectangle first, Rectangle mid, Rectangle end);
+    public record SpriteCollection(Rectangle first, Rectangle mid, Rectangle end)
+    {
+        public static SpriteCollection FromRow(int x,int y, int xoffset, int h) => new SpriteCollection(
+            new Rectangle(x,y,xoffset,h), new Rectangle(x+xoffset,y,xoffset,h), new Rectangle(x+xoffset+xoffset,y,xoffset,h)
+            );
+    }
+    public record NineSquare(SpriteCollection top, SpriteCollection mid, SpriteCollection bottom);
     public class ProgressbarView
     {
         public static void Draw(SpriteBatch batch, float percentage, int fullW, Vector2 pos, SpriteCollection sprites, Texture2D tex, Color color)
