@@ -46,12 +46,12 @@ namespace Monomon
 
         TimedState TimedMessage(string message)
         { 
-            return new TimedState(new MessageScene(_gd,message,_font), 1000, _input);
+            return new TimedState(new MessageScene(_gd,message,_font,_sprites), 2500, _input);
         }
 
         ConfirmState ConfirmMessage(string message)
         { 
-            return new ConfirmState(new MessageScene(_gd,message,_font), _input);
+            return new ConfirmState(new MessageScene(_gd,message,_font,_sprites), _input);
         }
 
 

@@ -37,16 +37,23 @@ namespace Monomon.Views.Samples
         public override void LoadScene(ContentManager content)
         {
             font = content.Load<SpriteFont>("File");
+            var sprites = content.Load<Texture2D>("spritemap");
             _sceneList = new UIList<string>(new List<UIItem<string>>() {
                 new UIItem<string>("Battle test",x => {
                     SwapScene(new BattleSample(GraphicsDevice,_input,_stack));
                 }),
                 new UIItem<string>("Message",x => {
-                    SwapScene(new MessageScene(GraphicsDevice,"First message",font));
+                    SwapScene(new MessageScene(GraphicsDevice,"First message",font,sprites));
+                }),
+                new UIItem<string>("Long Message",x => {
+                    SwapScene(new MessageScene(GraphicsDevice,"First message aaa aa a aaa a aa aaaa aaa aaaa a aa aaa a aaaaaaa aaaaaaaaaaaaa aaa aaaaaaaaaaaaaaaaaaaaa aaa",font,sprites));
+                }),
+                new UIItem<string>("Long single worded message",x => {
+                    SwapScene(new MessageScene(GraphicsDevice,"first message aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",font,sprites));
                 }),
                 new UIItem<string>("Timed message 2",x => {
 
-                    var scene =new MessageScene(GraphicsDevice,"Completes in for 2s...",font);
+                    var scene =new MessageScene(GraphicsDevice,"Completes in for 2s...",font,sprites);
                     scene.LoadScene(content);
                     _stack.Push(new TimeoutState(scene,2000,_input,
                     onCancel: () => {
@@ -55,7 +62,7 @@ namespace Monomon.Views.Samples
                     onCompleted: () => 
                     {
                         _stack.Pop();
-                        SwapScene(new MessageScene(GraphicsDevice,"Completed!",font)); }
+                        SwapScene(new MessageScene(GraphicsDevice,"Completed!",font,sprites)); }
                     );
             ;
                 }),
