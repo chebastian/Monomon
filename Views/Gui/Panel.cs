@@ -18,6 +18,15 @@ namespace Monomon.Views.Gui
             //Bottom
             SpriteCollection.FromRow(0,56,8,8)
             );
+
+        public static NineSquare AltPanel = new NineSquare(
+            //Top
+            SpriteCollection.FromRow(0,64,8,8),
+            //Mid
+            SpriteCollection.FromRow(0,72,8,8),
+            //Bottom
+            SpriteCollection.FromRow(0,80,8,8)
+            );
         public static void Draw(SpriteBatch batch, Texture2D texture, NineSquare sprites, Rectangle rect)
         {
 

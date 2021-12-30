@@ -45,7 +45,7 @@ namespace Monomon.Views.Scenes
                 int padding = 8;
                 var renderString = FitString(message, panelw - (padding * 2));
                 var height = Math.Max(_font.MeasureString(renderString).Y, 100);
-                Panel.Draw(batch, _sprites, Panel.BasePanel, new Rectangle(panelx, UIValues.BattleMessageY, panelw, (int)(height + padding)));
+                Panel.Draw(batch, _sprites, Panel.AltPanel, new Rectangle(panelx, UIValues.BattleMessageY, panelw, (int)(height + padding)));
 
                 string FitString(string msg, int w)
                 {
