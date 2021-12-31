@@ -88,23 +88,22 @@ namespace Monomon
                     {
                         _soundCallback(Sounds.TakeDamage);
 
-                        _stack.Push(xpUpdate, () => { 
-
-                            _stack.Pop();
-                            _stack.Push(ConfirmMessage($"XP Gained!"),
-                            () => 
-                            {
-                                _stack.Pop();// pop this message
-                                _stack.Pop();// pop this message
-                            });
-
-                        });
 
                         _stack.Push(ConfirmMessage($"{_oponent.Name} has fainted"),
                             () => 
                             {
                                 _stack.Pop();// pop this message
-                                _soundCallback(Sounds.XpUP);
+                                _stack.Push(ConfirmMessage($"XP Gained"), () => { 
+                                    _stack.Pop();
+                                    _soundCallback(Sounds.XpUP);
+                                    _stack.Push(xpUpdate,
+                                    () => 
+                                    {
+                                        _stack.Pop();// pop xpupdate animation
+                                        _stack.Pop();// pop battle state
+                                    });
+
+                                });
                             });
                     }
                     else
