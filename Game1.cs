@@ -8,6 +8,7 @@ using Monomon.State;
 using Monomon.UI;
 using Monomon.ViewModels;
 using Monomon.Views;
+using Monomon.Views.Gui;
 using Monomon.Views.Samples;
 using Monomon.Views.Scenes;
 using System;
@@ -76,6 +77,7 @@ namespace Monomon
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+            ListView.PanelTexture = Content.Load<Texture2D>("spritemap");
 
             _currentScene.LoadScene(Content);
             // TODO: use this.Content to load your game content here
