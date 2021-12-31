@@ -20,7 +20,7 @@ namespace Monomon.Views.Gui
             var w = list.Items.Max(x => font.MeasureString(x.Item.ToString()).X) + padding+padding;
             if (PanelTexture != null)
             {
-                Panel.Draw(batch, PanelTexture, Panel.BasePanel, new Rectangle((int)pos.X, (int)pos.Y, (int)w, (int)h));
+                Panel.Draw(batch, PanelTexture, Panel.BasePanel, new Rectangle((int)pos.X, (int)pos.Y, (int)Math.Max(w,100), (int)h));
             }
 
 
