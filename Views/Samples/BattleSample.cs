@@ -145,16 +145,16 @@ namespace Monomon.Views.Samples
         {
             if (_battleManager.IsPlayerTurn() && _battleManager.IsInteractive())
             {
-                if (_input.IsKeyPressed(Keys.Down))
+                if (_input.IsKeyPressed(KeyName.Down))
                     _currentList.SelectNext();
-                if (_input.IsKeyPressed(Keys.Up))
+                if (_input.IsKeyPressed(KeyName.Up))
                     _currentList.SelectPrevious();
-                if (_input.IsKeyPressed(Keys.A))
+                if (_input.IsKeyPressed(KeyName.Back))
                 {
                     _currentList = _list;
                 }
 
-                if (_input.IsKeyPressed(Keys.Space))
+                if (_input.IsKeyPressed(KeyName.Select))
                 {
                     _currentList.Select();
                 }

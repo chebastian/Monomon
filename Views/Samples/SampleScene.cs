@@ -88,11 +88,11 @@ namespace Monomon.Views.Samples
 
         public override void Update(double time)
         {
-            if (_input.IsKeyPressed(Keys.Down))
+            if (_input.IsKeyPressed(KeyName.Down))
                 _sceneList.SelectNext();
-            if (_input.IsKeyPressed(Keys.Up))
+            if (_input.IsKeyPressed(KeyName.Up))
                 _sceneList.SelectPrevious();
-            if (_input.IsKeyPressed(Keys.Space))
+            if (_input.IsKeyPressed(KeyName.Select))
                 _sceneList.Select();
         }
 

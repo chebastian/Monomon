@@ -22,7 +22,7 @@ namespace Monomon.State
         public override void Update(float time)
         {
             _scene.Update((double)time);
-            if(_input.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.A))
+            if(_input.IsKeyPressed(KeyName.Quit))
             {
                 Completed = true;
             }

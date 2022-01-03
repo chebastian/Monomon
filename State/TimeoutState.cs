@@ -42,7 +42,7 @@ namespace Monomon.State
 
         public override void Update(float time)
         {
-            if (_input.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Space))
+            if (_input.IsKeyPressed(KeyName.Select))
                 Completed = true;
         }
     }
@@ -72,7 +72,7 @@ namespace Monomon.State
 
         public override void Update(float time)
         { 
-            if(input.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.A))
+            if(input.IsKeyPressed(KeyName.Back))
             {
                 cancelation.Cancel();
                 onCancel();
