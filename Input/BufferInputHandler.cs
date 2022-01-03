@@ -9,11 +9,23 @@ using System.Threading.Tasks;
 
 namespace Monomon.Input
 {
-    public interface IINputHandler: IMouseHandler
+    public enum KeyName
+    {
+        Up,
+        Down,
+        Left,
+        Right,
+        Select,
+        Back,
+        Quit,
+    }
+
+    public interface IINputHandler : IMouseHandler
     {
         int GetX();
         int GetY();
         bool IsKeyPressed(Keys key);
+        bool IsKeyPressed(KeyName key);
         bool IsKeyReleased(Keys key);
         bool IsKeyDown(Keys keys);
     }
@@ -116,6 +128,23 @@ namespace Monomon.Input
         (BufferedMouseState left, BufferedMouseState right) IMouseHandler.MouseButtonState()
         {
             return _mouse.MouseButtonState();
+        }
+
+        public bool IsKeyPressed(KeyName key)
+        {
+            var kk = key switch
+            {
+                KeyName.Left => new[]   { Keys.Left },
+                KeyName.Right => new[]  { Keys.Right },
+                KeyName.Up => new[]     { Keys.Up,Keys.K },
+                KeyName.Down => new[]   { Keys.Down,Keys.J },
+                KeyName.Select => new[] { Keys.A,Keys.Space },
+                KeyName.Back => new[]   { Keys.S },
+                KeyName.Quit => new[]   { Keys.C },
+                _ => throw new ArgumentOutOfRangeException(),
+            };
+
+            return _pressed.Any(pressed => kk.Contains(pressed));
         }
     }
 }
