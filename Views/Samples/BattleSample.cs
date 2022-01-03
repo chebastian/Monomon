@@ -160,10 +160,6 @@ namespace Monomon.Views.Samples
                 }
             }
 
-            if (_battleManager.TurnIsDone())
-            {
-                _battleManager.NextTurn();
-            }
 
             UpdateBattleCard(_mob, _currentEnemyCard, (float)time);
             UpdateBattleCard(_player, _playerCard, (float)time);
