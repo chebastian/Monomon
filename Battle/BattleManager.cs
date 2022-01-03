@@ -40,12 +40,6 @@ namespace Monomon.Battle
             _currentTurn = t;
             _currentTurn.Execute();
         }
-
-        internal bool TurnIsDone()
-        {
-            return _currentTurn.Completed && _input.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.A);
-        }
-
         internal void Attack(AttackCommand attackCommand)
         {
             //SetTurn(new Turn(c =>
