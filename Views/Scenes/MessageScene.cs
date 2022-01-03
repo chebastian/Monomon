@@ -10,12 +10,14 @@ namespace Monomon.Views.Scenes
 {
     class MessageScene : SceneView
     {
+        private readonly bool _confirm;
         private readonly string message;
         private SpriteFont _font;
         private Texture2D _sprites;
 
-        public MessageScene(GraphicsDevice gd, string message, SpriteFont font,Texture2D sprites) : base(gd)
+        public MessageScene(GraphicsDevice gd, string message, SpriteFont font,Texture2D sprites, bool confirm = false) : base(gd)
         {
+            _confirm = confirm;
             this.message = message;
             _font = font;
             _sprites = sprites;
@@ -70,6 +72,8 @@ namespace Monomon.Views.Scenes
                 }
 
                 batch.DrawString(_font,renderString,new Vector2(panelx+padding,UIValues.BattleMessageY+padding), Color.White);
+                if(_confirm)
+                    batch.DrawString(_font,"X",new Vector2(panelx+panelw-padding-padding,UIValues.BattleMessageY+height-padding), Color.Red);
             }
         }
     }

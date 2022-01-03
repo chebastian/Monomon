@@ -51,7 +51,7 @@ namespace Monomon
 
         ConfirmState ConfirmMessage(string message)
         { 
-            return new ConfirmState(new MessageScene(_gd,message,_font,_sprites), _input);
+            return new ConfirmState(new MessageScene(_gd,message,_font,_sprites,true), _input);
         }
 
 
