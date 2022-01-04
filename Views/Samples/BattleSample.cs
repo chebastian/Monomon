@@ -195,9 +195,12 @@ namespace Monomon.Views.Samples
             _playerCard.SetHealth( _player.Health);
             _playerCard.SetXp(_player.Xp);
             ListView.DrawUIList(_currentList, new Vector2(UIValues.PlayerHudX, UIValues.PlayerHudY+100),_spriteBatch,font);
-            BattleCardView.Draw(_spriteBatch, new Vector2(UIValues.PlayerHudX, 10), font, _spriteMap, _currentEnemyCard);
+            BattleCardView.Draw(_spriteBatch, new Vector2(UIValues.OponentHudX, 10), font, _spriteMap, _currentEnemyCard);
             BattleCardView.Draw(_spriteBatch, new Vector2(UIValues.PlayerHudX, UIValues.PlayerHudY), font, _spriteMap, _playerCard);
 
+            _spriteBatch.Draw(_spriteMap, new Rectangle(UIValues.OponentHudX+240,UIValues.PlayerHudY-128,80,128), new Rectangle(0,90,72,128), Color.White);
+
+            _spriteBatch.Draw(_spriteMap, new Rectangle(UIValues.PlayerHudX-56*2,UIValues.PlayerHudY-32,96,128), new Rectangle(72,90,96,128), Color.White);
             //DrawBattleLog();
         }
 
