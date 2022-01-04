@@ -138,8 +138,8 @@ namespace Monomon.Input
                 KeyName.Right => new[]  { Keys.Right },
                 KeyName.Up => new[]     { Keys.Up,Keys.K },
                 KeyName.Down => new[]   { Keys.Down,Keys.J },
-                KeyName.Select => new[] { Keys.Space },
-                KeyName.Back => new[]   { Keys.A },
+                KeyName.Select => new[] { Keys.A },
+                KeyName.Back => new[]   { Keys.S },
                 KeyName.Quit => new[]   { Keys.C },
                 _ => throw new ArgumentOutOfRangeException(),
             };
