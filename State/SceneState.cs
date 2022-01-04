@@ -5,7 +5,7 @@ namespace Monomon.State
 {
     public class SceneState : State<double>
     {
-        private SceneView _scene;
+        protected SceneView _scene;
         protected IINputHandler _input;
 
         public SceneState(SceneView view, IINputHandler input)

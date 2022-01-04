@@ -44,6 +44,8 @@ namespace Monomon.State
         {
             if (_input.IsKeyPressed(KeyName.Select))
                 Completed = true;
+
+            _scene.Update((float)time);
         }
     }
 
