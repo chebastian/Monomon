@@ -4,7 +4,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Monomon.Views.Constants;
 using Monomon.Views.Gui;
 using System;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Monomon.Views.Scenes
 {
@@ -14,13 +16,18 @@ namespace Monomon.Views.Scenes
         private readonly string message;
         private SpriteFont _font;
         private Texture2D _sprites;
+        private int _charCount;
+        private float _totalTime;
 
-        public MessageScene(GraphicsDevice gd, string message, SpriteFont font,Texture2D sprites, bool confirm = false) : base(gd)
+        public MessageScene(GraphicsDevice gd, string message, SpriteFont font, Texture2D sprites, bool confirm = false) : base(gd)
         {
             _confirm = confirm;
             this.message = message;
             _font = font;
             _sprites = sprites;
+
+            _charCount = 0;
+            _totalTime = 0.0f;
         }
 
         public override void LoadScene(ContentManager content)
@@ -29,6 +36,8 @@ namespace Monomon.Views.Scenes
 
         public override void Update(double time)
         {
+            _totalTime += (float)time;
+            _charCount = (int)(Math.Min(1.0f, _totalTime) * message.Length);
         }
 
         protected override void OnDraw(SpriteBatch batch)
@@ -51,7 +60,7 @@ namespace Monomon.Views.Scenes
 
                 string FitString(string msg, int w)
                 {
-                    var words = msg.Split(' ');
+                    var words = msg.Substring(0,Math.Min(_charCount,msg.Length)).Split(' ').ToArray();
                     var builder = new StringBuilder();
                     var wordsAdded = 0;
                     var completeString = "";
