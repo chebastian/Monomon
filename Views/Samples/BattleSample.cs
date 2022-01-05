@@ -98,10 +98,17 @@ namespace Monomon.Views.Samples
             _currentEnemyCard = new BattleCardViewModel(_mob.Name, _mob.MaxHealth, _mob.Health, 2);
             _currentEnemyCard.X = UIValues.OponentHudX;
             _currentEnemyCard.Y = 10;
+            _currentEnemyCard.PortraitSrc = new Rectangle(0, 90, 72, 112);
+            _currentEnemyCard.PortraitOffsetX = 240;
+            _currentEnemyCard.PortraitOffsetY = 32;
 
             _playerCard = new BattleCardViewModel("Player", _player.MaxHealth, _player.Health, 6);
             _playerCard.X = UIValues.PlayerHudX;
             _playerCard.Y = UIValues.PlayerHudY;
+            _playerCard.PortraitSrc = new Rectangle(72, 90, 96, 128);
+            _playerCard.PortraitOffsetX = -112;
+            _playerCard.PortraitOffsetY = -32;
+
         }
 
         public override void LoadScene(ContentManager content)
@@ -206,13 +213,6 @@ namespace Monomon.Views.Samples
             BattleCardView.Draw(_spriteBatch, new Vector2(_currentEnemyCard.X,_currentEnemyCard.Y), font, _spriteMap, _currentEnemyCard);
             BattleCardView.Draw(_spriteBatch, new Vector2(_playerCard.X,_playerCard.Y), font, _spriteMap, _playerCard);
 
-            _playerCard.PortraitSrc = new Rectangle(72, 90, 96, 128);
-            _playerCard.PortraitOffsetX = -112;
-            _playerCard.PortraitOffsetY = -32;
-
-            _currentEnemyCard.PortraitSrc = new Rectangle(0, 90, 72, 112);
-            _currentEnemyCard.PortraitOffsetX = 240;
-            _currentEnemyCard.PortraitOffsetY = 32;
 
 
             //DrawBattleLog();
