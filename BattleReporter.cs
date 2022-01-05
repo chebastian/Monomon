@@ -120,7 +120,7 @@ namespace Monomon
 
                 var ey = oponentCard.PortraitOffsetY;
                 var hitAnim = new TweenState((arg) => {
-                    oponentCard.PortraitOffsetY = (int)(ey + Math.Sin(3.14 * arg.lerp)*-40);
+                    oponentCard.PortraitOffsetY = (int)(ey + Math.Sin(3.14 * arg.lerp)*20);
                 }, () => {
                 }, 0, 1, .3f);
                 _stack.Push(hitAnim, () =>
@@ -129,7 +129,7 @@ namespace Monomon
                 });
                 var y = attackerCard.PortraitOffsetY;
                 var attackAnimation = new TweenState((arg) => {
-                    attackerCard.PortraitOffsetY = (int)(y + Math.Sin(3.14 * arg.lerp)*40);
+                    attackerCard.PortraitOffsetY = (int)(y + Math.Sin(3.14 * arg.lerp)*-40);
                 }, () => {
                     _soundCallback(Sounds.Attack_Tackle);
                 }, 0, 1, .3f);
