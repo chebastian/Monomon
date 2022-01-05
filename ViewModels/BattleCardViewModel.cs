@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,6 +25,9 @@ namespace Monomon.ViewModels
             _xp = 1;
             _xpToNextLevel = 100;
         }
+
+        public int X { get; set; }
+        public int Y { get; set; }
 
         public string Name { get; }
         public int MaxHealth { get; }
@@ -82,6 +86,10 @@ namespace Monomon.ViewModels
         public int Level { get; }
         public float Percentage { get; set; }
         public float XpPercentage { get; set; }
+        public int PortraitOffsetX { get; internal set; }
+        public int PortraitOffsetY { get; internal set; }
+        public Rectangle PortraitSrc { get; internal set; }
+
         private float _xp;
         private float _xpToNextLevel;
 

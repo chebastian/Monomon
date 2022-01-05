@@ -26,6 +26,8 @@ namespace Monomon.Views.Battle
             batch.DrawString(font, $"Lv: {card.Level}", new Vector2(pos.X, pos.Y + 60), Color.White);
 
             ProgressbarView.Draw(batch, card.XpPercentage, 150, new Vector2(pos.X, pos.Y + 80), barSprites, spriteMap, Color.Blue);
+
+            batch.Draw(spriteMap, new Rectangle(card.X+card.PortraitOffsetX,card.Y+card.PortraitOffsetY,card.PortraitSrc.Width,card.PortraitSrc.Height), card.PortraitSrc, Color.White);
         }
     }
 }
