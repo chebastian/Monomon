@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Monomon.Battle;
 using Monomon.Input;
 using Monomon.State;
+using Monomon.ViewModels;
 using Monomon.Views.Scenes;
 using System;
 using System.Collections.Generic;
@@ -34,6 +35,7 @@ namespace Monomon
             _font = font;
             _input = input;
             _gd = gd;
+
             if (batch is null)
             {
                 throw new ArgumentNullException(nameof(batch));
@@ -55,7 +57,7 @@ namespace Monomon
         }
 
 
-        public void OnAttack(BattleMessage message,Mons.Mobmon attacker, Mons.Mobmon _oponent, Action continueWith)
+        public void OnAttack(BattleMessage message,Mons.Mobmon attacker, Mons.Mobmon _oponent, Action continueWith, BattleCardViewModel attackerCard, BattleCardViewModel oponentCard)
         {
             var attackInfoState = TimedMessage($"{message.attacker} choose {message.name}");
             var attackMessageState = TimedMessage($"{message.attacker} attacked {message.receiver} for {message.damage} points of damage!");
@@ -79,7 +81,6 @@ namespace Monomon
             {
                 //Remove ourself the attack info state
                 _stack.Pop();
-                _soundCallback(Sounds.Attack_Tackle);
                 _stack.Push(healthbarUpdateState, () =>
                 {
                     //Remove ourself, the attack message state
@@ -115,6 +116,26 @@ namespace Monomon
                         });
 
                     }
+                });
+
+                var ey = oponentCard.PortraitOffsetY;
+                var hitAnim = new TweenState((arg) => {
+                    oponentCard.PortraitOffsetY = (int)(ey + Math.Sin(3.14 * arg.lerp)*-40);
+                }, () => {
+                }, 0, 1, .3f);
+                _stack.Push(hitAnim, () =>
+                {
+                    _stack.Pop();
+                });
+                var y = attackerCard.PortraitOffsetY;
+                var attackAnimation = new TweenState((arg) => {
+                    attackerCard.PortraitOffsetY = (int)(y + Math.Sin(3.14 * arg.lerp)*40);
+                }, () => {
+                    _soundCallback(Sounds.Attack_Tackle);
+                }, 0, 1, .3f);
+                _stack.Push(attackAnimation, () =>
+                {
+                    _stack.Pop();
                 });
             });
         }

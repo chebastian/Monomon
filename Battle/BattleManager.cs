@@ -1,5 +1,6 @@
 ﻿using Monomon.Input;
 using Monomon.Mons;
+using Monomon.ViewModels;
 using System;
 using System.Threading.Tasks;
 
@@ -20,8 +21,10 @@ namespace Monomon.Battle
         private Turn _currentTurn;
         private bool _isPlayerTurn;
         private IINputHandler _input;
+        private BattleCardViewModel _attackerCard;
+        private BattleCardViewModel _oponentCard;
 
-        public BattleManager(Mons.Mobmon player, Mons.Mobmon oponent, BattleReporter reporter, IINputHandler input)
+        public BattleManager(Mons.Mobmon player, Mons.Mobmon oponent, BattleReporter reporter, IINputHandler input, BattleCardViewModel playerCard, BattleCardViewModel oponentCard)
         {
             _reporter = reporter;
             _player = player;
@@ -30,6 +33,8 @@ namespace Monomon.Battle
             _currentTurn = new Turn(x => { });
             _isPlayerTurn = true;
             _input = input;
+            _attackerCard = playerCard;
+            _oponentCard = oponentCard;
         }
 
         private void SetTurn(Turn t)
@@ -111,7 +116,7 @@ namespace Monomon.Battle
             var msg = new BattleMessage(_attacker.Name, _oponent.Name, attackCommand.attackType.ToString(), attackCommand.stat.attack);
             _reporter.OnAttack(msg,_attacker,_oponent, () => {
                 NextTurn();
-            });
+            },_attackerCard,_oponentCard);
         }
 
         Task Swipe(AttackCommand attackCommand, Turn t)
@@ -139,9 +144,11 @@ namespace Monomon.Battle
 
             //swap player and mon
             {
-                var temp = _attacker;
+                var temp = (_attacker, _attackerCard);
                 _attacker = _oponent;
-                _oponent = temp;
+                _attackerCard = _oponentCard;
+                _oponent = temp._attacker;
+                _oponentCard = temp._attackerCard;
             }
 
             if (!_isPlayerTurn)

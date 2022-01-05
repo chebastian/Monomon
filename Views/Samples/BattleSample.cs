@@ -96,13 +96,19 @@ namespace Monomon.Views.Samples
             _currentList = _list;
 
             _currentEnemyCard = new BattleCardViewModel(_mob.Name, _mob.MaxHealth, _mob.Health, 2);
+            _currentEnemyCard.X = UIValues.OponentHudX;
+            _currentEnemyCard.Y = 10;
+
             _playerCard = new BattleCardViewModel("Player", _player.MaxHealth, _player.Health, 6);
+            _playerCard.X = UIValues.PlayerHudX;
+            _playerCard.Y = UIValues.PlayerHudY;
         }
 
         public override void LoadScene(ContentManager content)
         {
             _battleReporter = new BattleReporter(_spriteBatch,_graphics,_stack,_input,content.Load<SpriteFont>("File"),content.Load<Texture2D>("spritemap"),OnPlaySound);
-            _battleManager = new BattleManager(_player, _mob, _battleReporter, _input);
+
+            _battleManager = new BattleManager(_player, _mob, _battleReporter, _input,_playerCard,_currentEnemyCard);
 
             font = content.Load<SpriteFont>("File");
             _spriteMap = content.Load<Texture2D>("spritemap");
@@ -194,13 +200,21 @@ namespace Monomon.Views.Samples
             _currentEnemyCard.SetHealth( _mob.Health);
             _playerCard.SetHealth( _player.Health);
             _playerCard.SetXp(_player.Xp);
+
+
             ListView.DrawUIList(_currentList, new Vector2(UIValues.PlayerHudX, UIValues.PlayerHudY+100),_spriteBatch,font);
-            BattleCardView.Draw(_spriteBatch, new Vector2(UIValues.OponentHudX, 10), font, _spriteMap, _currentEnemyCard);
-            BattleCardView.Draw(_spriteBatch, new Vector2(UIValues.PlayerHudX, UIValues.PlayerHudY), font, _spriteMap, _playerCard);
+            BattleCardView.Draw(_spriteBatch, new Vector2(_currentEnemyCard.X,_currentEnemyCard.Y), font, _spriteMap, _currentEnemyCard);
+            BattleCardView.Draw(_spriteBatch, new Vector2(_playerCard.X,_playerCard.Y), font, _spriteMap, _playerCard);
 
-            _spriteBatch.Draw(_spriteMap, new Rectangle(UIValues.OponentHudX+240,UIValues.PlayerHudY-128,80,128), new Rectangle(0,90,72,128), Color.White);
+            _playerCard.PortraitSrc = new Rectangle(72, 90, 96, 128);
+            _playerCard.PortraitOffsetX = -112;
+            _playerCard.PortraitOffsetY = -32;
 
-            _spriteBatch.Draw(_spriteMap, new Rectangle(UIValues.PlayerHudX-56*2,UIValues.PlayerHudY-32,96,128), new Rectangle(72,90,96,128), Color.White);
+            _currentEnemyCard.PortraitSrc = new Rectangle(0, 90, 72, 112);
+            _currentEnemyCard.PortraitOffsetX = 240;
+            _currentEnemyCard.PortraitOffsetY = 32;
+
+
             //DrawBattleLog();
         }
 
