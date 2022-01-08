@@ -10,9 +10,11 @@ namespace Monomon.State
     {
         public TimedState(SceneView view,int timeoutMs, IINputHandler input) : base(view, input)
         {
+            _skipped = false;
             timeout = timeoutMs;
         }
 
+        private bool _skipped;
         private float timeout;
 
         public override void Render(double param)
@@ -26,13 +28,25 @@ namespace Monomon.State
             timeout -= time*1000.0f;
             if (timeout <= 0)
                 Completed = true;
+
+            if(_input.IsKeyPressed(KeyName.Select) && !_skipped)
+            {
+                if(_scene is MessageScene msg)
+                {
+                    msg.Update(1.0f);
+                    timeout -= timeout * 0.7f;
+                }
+            }
         }
     }
 
     public class ConfirmState : SceneState
     {
+        private bool _skipped;
+
         public ConfirmState(SceneView view,IINputHandler input) : base(view, input)
         {
+            _skipped = false;
         }
 
         public override void Render(double param)
@@ -43,7 +57,20 @@ namespace Monomon.State
         public override void Update(float time)
         {
             if (_input.IsKeyPressed(KeyName.Select))
-                Completed = true;
+            {
+                if (_scene is MessageScene msg)
+                {
+                    if (_skipped)
+                        Completed = true;
+
+                    msg.Update(1.0f);
+                    _skipped = true;
+                }
+                else
+                { 
+                    Completed = true; 
+                }
+            }
 
             _scene.Update((float)time);
         }
