@@ -101,7 +101,7 @@ namespace Monomon
                                     () => 
                                     {
                                         _stack.Pop();// pop xpupdate animation
-                                        _stack.Pop();// pop battle state
+                                        //_stack.Pop();// pop battle state
                                     });
 
                                 });
@@ -123,6 +123,7 @@ namespace Monomon
                     oponentCard.PortraitOffsetY = (int)(ey + Math.Sin(3.14 * arg.lerp)*20);
                 }, () => {
                 }, 0, 1, .3f);
+
                 _stack.Push(hitAnim, () =>
                 {
                     _stack.Pop();

@@ -43,7 +43,7 @@ namespace Monomon.Views.Samples
         private SoundEffect _battleHurtEffect;
         private SoundEffect _battleXpUpEffect;
 
-        public BattleSample(GraphicsDevice gd, IINputHandler input,StateStack<double> stack) : base(gd)
+        public BattleSample(GraphicsDevice gd, IINputHandler input, StateStack<double> stack) : base(gd)
         {
             _input = input;
             _player = new Mobmon("Player", 20, new MonStatus(4, 2, 3));
@@ -55,10 +55,12 @@ namespace Monomon.Views.Samples
                 new UIItem<string>("Item", x => { _currentList = itemList;}),
                 new UIItem<string>("Mon"),
                 new UIItem<string>("Run"),
-            }, x => {
+            }, x =>
+            {
 
                 OnMenuMove();
-            }, x => {
+            }, x =>
+            {
                 //TODO can we remove this callback?
                 OnMenuSelect();
             });
@@ -77,24 +79,32 @@ namespace Monomon.Views.Samples
                     _currentList = _list;
                 }),
                 new UIItem<string>("Growl", x => {}),
-            }, x => {
+            }, x =>
+            {
                 OnMenuMove();
-            }, x => {
+            }, x =>
+            {
                 OnMenuSelect();
             });
 
-                itemList = new UIList<string>(new List<UIItem<string>>() {
+            itemList = new UIList<string>(new List<UIItem<string>>() {
                 new UIItem<string>("Potion", x => {}),
                 new UIItem<string>("Mana Potion", x => {}),
                 new UIItem<string>("Back", x => {_currentList = _list; }),
-            }, x => {
+            }, x =>
+            {
                 OnMenuMove();
             },
-            x => {OnMenuSelect(); 
-            });
+        x =>
+        {
+            OnMenuSelect();
+        });
 
             _currentList = _list;
 
+        }
+        private void InitBattle()
+        {
             _currentEnemyCard = new BattleCardViewModel(_mob.Name, _mob.MaxHealth, _mob.Health, 2);
             _currentEnemyCard.X = UIValues.OponentHudX;
             _currentEnemyCard.Y = 10;
@@ -109,18 +119,20 @@ namespace Monomon.Views.Samples
             _playerCard.PortraitOffsetX = -112;
             _playerCard.PortraitOffsetY = -32;
 
+            _battleReporter = new BattleReporter(_spriteBatch, _graphics, _stack, _input, font, _spriteMap, OnPlaySound);
+
+            _battleManager = new BattleManager(_player, _mob, _battleReporter, _input, _playerCard, _currentEnemyCard);
+
+            _battleManager.Start();
         }
 
         public override void LoadScene(ContentManager content)
         {
-            _battleReporter = new BattleReporter(_spriteBatch,_graphics,_stack,_input,content.Load<SpriteFont>("File"),content.Load<Texture2D>("spritemap"),OnPlaySound);
-
-            _battleManager = new BattleManager(_player, _mob, _battleReporter, _input,_playerCard,_currentEnemyCard);
 
             font = content.Load<SpriteFont>("File");
             _spriteMap = content.Load<Texture2D>("spritemap");
-            //_menuMoveEffect = content.Load<SoundEffect>("menuMoveChirpy");
-            //_menuSelectEffect = content.Load<SoundEffect>("menuSelectSimple");
+
+            InitBattle();
 
             _menuMoveEffect = content.Load<SoundEffect>("menuSelectSimple");
             _menuSelectEffect = content.Load<SoundEffect>("menuMoveChirpy");
@@ -128,8 +140,6 @@ namespace Monomon.Views.Samples
             _battleTackleEffect = content.Load<SoundEffect>("tackle");
             _battleHurtEffect = content.Load<SoundEffect>("hurtChirpy");
             _battleXpUpEffect = content.Load<SoundEffect>("XpUp");
-
-            _battleManager.Start();
         }
 
         private void OnPlaySound(Sounds sound)
@@ -173,11 +183,35 @@ namespace Monomon.Views.Samples
                 }
             }
 
+            if (_battleManager.BattleOver())
+            {
+                SelectChoice(new List<string> {"Yes","No"}, selection => {
+                    if (selection == "Yes")
+                    {
+                        _mob = new Mobmon("Mon2", 16, new MonStatus(5, 5, 5));
+                        _currentEnemyCard = new BattleCardViewModel(_mob.Name, _mob.MaxHealth, _mob.Health, 5);
+
+                        InitBattle();
+                    }
+                    _stack.Pop(); 
+                });
+            }
+
+
 
             UpdateBattleCard(_mob, _currentEnemyCard, (float)time);
             UpdateBattleCard(_player, _playerCard, (float)time);
-
         }
+
+        private void SelectChoice(List<string> choices, Action<string> onSelected)
+        {
+            _stack.Push(
+                new ConfirmState(
+                    new ChoiceScene(_graphics, choices, font, _spriteMap,onSelected),
+                    _input),
+                () => { });
+        }
+
         private void UpdateBattleCard(Mobmon mob, BattleCardViewModel card, float t)
         {
             card.CurrentHealth = mob.Health;
@@ -204,14 +238,14 @@ namespace Monomon.Views.Samples
 
         private void DrawBattle()
         {
-            _currentEnemyCard.SetHealth( _mob.Health);
-            _playerCard.SetHealth( _player.Health);
+            _currentEnemyCard.SetHealth(_mob.Health);
+            _playerCard.SetHealth(_player.Health);
             _playerCard.SetXp(_player.Xp);
 
 
-            ListView.DrawUIList(_currentList, new Vector2(UIValues.PlayerHudX, UIValues.PlayerHudY+100),_spriteBatch,font);
-            BattleCardView.Draw(_spriteBatch, new Vector2(_currentEnemyCard.X,_currentEnemyCard.Y), font, _spriteMap, _currentEnemyCard);
-            BattleCardView.Draw(_spriteBatch, new Vector2(_playerCard.X,_playerCard.Y), font, _spriteMap, _playerCard);
+            ListView.DrawUIList(_currentList, new Vector2(UIValues.PlayerHudX, UIValues.PlayerHudY + 100), _spriteBatch, font);
+            BattleCardView.Draw(_spriteBatch, new Vector2(_currentEnemyCard.X, _currentEnemyCard.Y), font, _spriteMap, _currentEnemyCard);
+            BattleCardView.Draw(_spriteBatch, new Vector2(_playerCard.X, _playerCard.Y), font, _spriteMap, _playerCard);
 
 
 
