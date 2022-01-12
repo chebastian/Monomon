@@ -101,7 +101,6 @@ namespace Monomon
                                     () => 
                                     {
                                         _stack.Pop();// pop xpupdate animation
-                                        //_stack.Pop();// pop battle state
                                     });
 
                                 });
