@@ -66,10 +66,23 @@ namespace Monomon.State
                     msg.Update(1.0f);
                     _skipped = true;
                 }
+                else if (_scene is ChoiceScene choice)
+                {
+                    choice.List.Select();
+                    Completed = true;
+                }
                 else
                 { 
                     Completed = true; 
                 }
+            }
+
+            if(_scene is ChoiceScene choice2)
+            {
+                if (_input.IsKeyPressed(KeyName.Down))
+                    choice2.List.SelectNext();
+                else if (_input.IsKeyPressed(KeyName.Up))
+                    choice2.List.SelectPrevious();
             }
 
             _scene.Update((float)time);
