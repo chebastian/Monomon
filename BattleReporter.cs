@@ -68,13 +68,13 @@ namespace Monomon
             {
                 _oponent.Health = health - message.damage;
                 hasFainted = _oponent.Health <= 0;
-            }, 0.0f, Math.Min(message.damage,health) , 1.0f,EasingFunc.EaseOutCirc);
+            }, 0.0f, Math.Min(message.damage,health) , 1.0f,EasingFunc.EaseOutCube);
 
             var xp = attacker.Xp;
             var xpUpdate = new TweenState((arg) => attacker.Xp = (float)(xp + arg.lerp), () =>
             {
                 attacker.Xp = xp + 20;
-            }, 0.0f, 20, 1.0f,EasingFunc.EaseOutCirc);
+            }, 0.0f, 20, 1.0f,EasingFunc.EaseOutCube);
 
             var offset = oponentCard.PortraitOffsetY;
             var dropPoirtrait = new TweenState((arg) => { oponentCard.PortraitOffsetY = ((int)(offset + arg.lerp)); oponentCard.Dying = true; }, () =>

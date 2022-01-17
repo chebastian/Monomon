@@ -93,7 +93,7 @@ namespace Monomon.Views.Scenes
             {
                 EasingFunc.Lerp => Lerp,
                 EasingFunc.EaseInBack => EaseInBack,
-                EasingFunc.EaseOutCube => EaseOutCirc,
+                EasingFunc.EaseOutCube => EaseOutCube,
                 _ => throw new ArgumentOutOfRangeException()
             };
         }
@@ -119,7 +119,7 @@ namespace Monomon.Views.Scenes
             return c3 * x * x * x - c1 * x * x;
         }
 
-        float EaseOutCirc(float x)
+        float EaseOutCube(float x)
         {
             return (float) 1f - (float)Math.Pow(1-x, 3);
         }
