@@ -185,31 +185,69 @@ namespace Monomon.Views.Samples
 
             if (_battleManager.BattleOver())
             {
-                SelectChoice(new List<string> {"Yes","No"}, selection => {
-                    if (selection == "Yes")
-                    {
+                var yesChoice = new Choice("Yes", () => { 
                         _mob = new Mobmon("Mon2", 16, new MonStatus(5, 5, 5));
                         _currentEnemyCard = new BattleCardViewModel(_mob.Name, _mob.MaxHealth, _mob.Health, 5);
-
                         InitBattle();
-                    }
-                    _stack.Pop(); 
+                        _stack.Pop();
                 });
+                var no = new Choice("Yes", () => {
+                    _stack.Pop();
+                    _stack.Pop();
+                });
+                SelectChoice("Do you want to continue?", yesChoice, no );
             }
-
-
 
             UpdateBattleCard(_mob, _currentEnemyCard, (float)time);
             UpdateBattleCard(_player, _playerCard, (float)time);
         }
 
-        private void SelectChoice(List<string> choices, Action<string> onSelected)
+        public record Choice(string name, Action action);
+        private void SelectChoice(string message, params Choice[] choices)
+        {
+            if (choices.Select(x => x.name).Distinct().ToList().Count != choices.Length)
+                throw new ArgumentException("Choices must be unique");
+
+            _stack.Push(
+                new TimedState(
+                    new MessageScene(_graphics,message, font, _spriteMap),
+                    1000,
+                    _input),
+                () =>
+                {
+                    _stack.Push(
+                        new ConfirmState(
+                            new ChoiceScene(_graphics, choices.Select(x => x.name).ToList(), font, _spriteMap, selection => { 
+                                var choosen = choices.Where(item => item.name == selection).FirstOrDefault();
+                                if (choosen != null)
+                                    choosen.action();
+                            }),
+                            _input),
+                        () => {
+                            _stack.Pop(); // pop the timed state
+                        });
+                });
+
+        }
+
+        private void SelectChoice(string message, List<string> choices, Action<string> onSelected)
         {
             _stack.Push(
-                new ConfirmState(
-                    new ChoiceScene(_graphics, choices, font, _spriteMap,onSelected),
+                new TimedState(
+                    new MessageScene(_graphics,message, font, _spriteMap),
+                    1000,
                     _input),
-                () => { });
+                () =>
+                {
+                    _stack.Push(
+                        new ConfirmState(
+                            new ChoiceScene(_graphics, choices, font, _spriteMap, onSelected),
+                            _input),
+                        () => {
+                            _stack.Pop(); // stack the timed state
+                        });
+                });
+
         }
 
         private void UpdateBattleCard(Mobmon mob, BattleCardViewModel card, float t)
