@@ -63,6 +63,13 @@ namespace Monomon.Views.Scenes
         }
     }
 
+    public enum EasingFunc
+    {
+        Lerp,
+        EaseInBack,
+        EaseOutCirc, 
+    }
+
     public class TweenState : State.State<double>
     {
         private readonly Action<(double time, double lerp)> _update;
@@ -71,8 +78,9 @@ namespace Monomon.Views.Scenes
         private readonly float target;
         private readonly float inTime;
         private float totalTime;
+        private Func<float, float> _ease;
 
-        public TweenState(Action<(double time, double lerp)> update, Action completed, float start, float target, float inTime)
+        public TweenState(Action<(double time, double lerp)> update, Action completed, float start, float target, float inTime, EasingFunc easingFunc = EasingFunc.Lerp)
         {
             _update = update;
             this.completed = completed;
@@ -80,6 +88,14 @@ namespace Monomon.Views.Scenes
             this.target = target;
             this.inTime = inTime;
             totalTime = 0.0f;
+
+            _ease = easingFunc switch
+            {
+                EasingFunc.Lerp => Lerp,
+                EasingFunc.EaseInBack => EaseInBack,
+                EasingFunc.EaseOutCirc => EaseOutCirc,
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
 
         public override void Render(double param)
@@ -87,14 +103,32 @@ namespace Monomon.Views.Scenes
         }
         float Lerp(float firstFloat, float secondFloat, float by)
         {
-            return firstFloat * (1 - by) + secondFloat * by;
+            return firstFloat * (1.0f - by) + secondFloat * by;
+        }
+
+        float Lerp(float x)
+        {
+            return x;
+        }
+
+        float EaseInBack(float x)
+        {
+            float c1 = 1.70158f;
+            float c3 = c1 + 1;
+
+            return c3 * x * x * x - c1 * x * x;
+        }
+
+        float EaseOutCirc(float x)
+        {
+            //return (float)Math.Sqrt(1 - Math.Pow(x - 1, 2));
+            return (float) 1.0f - (float)Math.Pow(x - 1, 4);
         }
 
         public override void Update(float time)
         {
             totalTime += time;
-            var result = Lerp(start, target, totalTime / inTime);
-            _update((time,result));
+            _update((time,Lerp(start,target,_ease(totalTime/inTime))));
             if (totalTime >= inTime)
             {
                 completed();
