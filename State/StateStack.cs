@@ -47,7 +47,7 @@ namespace Monomon.State
         {
             try
             {
-                foreach (var state in _states)
+                foreach (var state in _states.Reverse())
                     state.state.Render(param); 
             }
             catch when (true)
