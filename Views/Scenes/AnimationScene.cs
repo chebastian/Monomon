@@ -67,7 +67,7 @@ namespace Monomon.Views.Scenes
     {
         Lerp,
         EaseInBack,
-        EaseOutCirc, 
+        EaseOutCube, 
     }
 
     public class TweenState : State.State<double>
@@ -93,7 +93,7 @@ namespace Monomon.Views.Scenes
             {
                 EasingFunc.Lerp => Lerp,
                 EasingFunc.EaseInBack => EaseInBack,
-                EasingFunc.EaseOutCirc => EaseOutCirc,
+                EasingFunc.EaseOutCube => EaseOutCirc,
                 _ => throw new ArgumentOutOfRangeException()
             };
         }
@@ -121,8 +121,7 @@ namespace Monomon.Views.Scenes
 
         float EaseOutCirc(float x)
         {
-            //return (float)Math.Sqrt(1 - Math.Pow(x - 1, 2));
-            return (float) 1.0f - (float)Math.Pow(x - 1, 4);
+            return (float) 1f - (float)Math.Pow(1-x, 3);
         }
 
         public override void Update(float time)
