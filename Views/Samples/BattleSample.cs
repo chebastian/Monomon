@@ -185,17 +185,24 @@ namespace Monomon.Views.Samples
 
             if (_battleManager.BattleOver())
             {
-                var yesChoice = new Choice("Yes", () => { 
-                        _mob = new Mobmon("Mon2", 16, new MonStatus(5, 5, 5));
+                var result = _battleManager.GetOutcome();
+
+                if (result == BattleOutcome.Win)
+                {
+                    var yesChoice = new Choice("Yes", () =>
+                    {
+                        _mob = new Mobmon("Mon2", 8, new MonStatus(5, 5, 5));
                         _currentEnemyCard = new BattleCardViewModel(_mob.Name, _mob.MaxHealth, _mob.Health, 5);
                         InitBattle();
                         _stack.Pop();
-                });
-                var no = new Choice("Yes", () => {
-                    _stack.Pop();
-                    _stack.Pop();
-                });
-                SelectChoice("Do you want to continue?", yesChoice, no );
+                    });
+                    var no = new Choice("No", () =>
+                    {
+                        _stack.Pop();
+                        _stack.Pop();
+                    });
+                    SelectChoice("Do you want to continue?", yesChoice, no);
+                }
             }
 
             UpdateBattleCard(_mob, _currentEnemyCard, (float)time);
@@ -210,20 +217,22 @@ namespace Monomon.Views.Samples
 
             _stack.Push(
                 new TimedState(
-                    new MessageScene(_graphics,message, font, _spriteMap),
+                    new MessageScene(_graphics, message, font, _spriteMap),
                     1000,
                     _input),
                 () =>
                 {
                     _stack.Push(
                         new ConfirmState(
-                            new ChoiceScene(_graphics, choices.Select(x => x.name).ToList(), font, _spriteMap, selection => { 
+                            new ChoiceScene(_graphics, choices.Select(x => x.name).ToList(), font, _spriteMap, selection =>
+                            {
                                 var choosen = choices.Where(item => item.name == selection).FirstOrDefault();
                                 if (choosen != null)
                                     choosen.action();
                             }),
                             _input),
-                        () => {
+                        () =>
+                        {
                             _stack.Pop(); // pop the timed state
                         });
                 });
@@ -234,7 +243,7 @@ namespace Monomon.Views.Samples
         {
             _stack.Push(
                 new TimedState(
-                    new MessageScene(_graphics,message, font, _spriteMap),
+                    new MessageScene(_graphics, message, font, _spriteMap),
                     1000,
                     _input),
                 () =>
@@ -243,7 +252,8 @@ namespace Monomon.Views.Samples
                         new ConfirmState(
                             new ChoiceScene(_graphics, choices, font, _spriteMap, onSelected),
                             _input),
-                        () => {
+                        () =>
+                        {
                             _stack.Pop(); // stack the timed state
                         });
                 });
