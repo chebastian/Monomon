@@ -41,37 +41,7 @@ namespace Monomon.Views.Scenes
 
         protected override void OnDraw(SpriteBatch batch)
         {
-            ListView.DrawUIList(List, new Vector2(UIValues.PlayerHudX,UIValues.PlayerHudY), _spriteBatch, _font);
-            //int panelw = 350;
-            //int panelx = 100;
-            //int padding = 8;
-            //var renderString = FitString(message, panelw - (padding * 2));
-            //var height = Math.Max(_font.MeasureString(renderString).Y, 100);
-            //Panel.Draw(batch, _sprites, Panel.AltPanel, new Rectangle(panelx, UIValues.BattleMessageY, panelw, (int)(height + padding)));
-
-            //string FitString(string msg, int w)
-            //{
-            //    var words = msg.Substring(0, Math.Min(_charCount, msg.Length)).Split(' ').ToArray();
-            //    var builder = new StringBuilder();
-            //    var wordsAdded = 0;
-            //    var completeString = "";
-            //    while (words.Length > wordsAdded)
-            //    {
-            //        var nextString = $"{completeString} {words[wordsAdded]}";
-            //        if (_font.MeasureString(nextString).X > w)
-            //        {
-            //            completeString = $"{completeString} \n {words[wordsAdded]}";
-            //        }
-            //        else
-            //            completeString = nextString;
-
-            //        wordsAdded++;
-            //    }
-
-            //    return completeString;
-            //}
-
-            //batch.DrawString(_font, renderString, new Vector2(panelx + padding, UIValues.BattleMessageY + padding), Color.White);
+            ListView.DrawUIList(List, new Vector2(UIValues.PlayerHudX-50,UIValues.PlayerHudY+100), _spriteBatch, _font);
         }
     }
 }
