@@ -68,13 +68,18 @@ namespace Monomon
             {
                 _oponent.Health = health - message.damage;
                 hasFainted = _oponent.Health <= 0;
-            }, 0.0f, message.damage, 1.0f);
+            }, 0.0f, Math.Min(message.damage,health) , 1.0f,EasingFunc.EaseOutCirc);
 
             var xp = attacker.Xp;
             var xpUpdate = new TweenState((arg) => attacker.Xp = (float)(xp + arg.lerp), () =>
             {
                 attacker.Xp = xp + 20;
-            }, 0.0f, 20, 1.0f);
+            }, 0.0f, 20, 1.0f,EasingFunc.EaseOutCirc);
+
+            var offset = oponentCard.PortraitOffsetY;
+            var dropPoirtrait = new TweenState((arg) => { oponentCard.PortraitOffsetY = ((int)(offset + arg.lerp)); oponentCard.Dying = true; }, () =>
+            {
+            }, 0.0f, 80, 0.4f, EasingFunc.EaseInBack);
 
             //_soundCallback(Sounds.Attack_Tackle);
             _stack.Push(attackInfoState, () =>
@@ -102,9 +107,10 @@ namespace Monomon
                                     {
                                         _stack.Pop();// pop xpupdate animation
                                     });
-
                                 });
                             });
+
+                        _stack.Push(dropPoirtrait, () => { _stack.Pop(); });
                     }
                     else
                     {
