@@ -89,6 +89,7 @@ namespace Monomon.ViewModels
         public int PortraitOffsetX { get; internal set; }
         public int PortraitOffsetY { get; internal set; }
         public Rectangle PortraitSrc { get; internal set; }
+        public bool Dying { get; internal set; }
 
         private float _xp;
         private float _xpToNextLevel;
