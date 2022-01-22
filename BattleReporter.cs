@@ -76,10 +76,10 @@ namespace Monomon
                 attacker.Xp = xp + 20;
             }, 0.0f, 20, 1.0f,EasingFunc.EaseOutCube);
 
-            var offset = oponentCard.PortraitOffsetY;
-            var dropPoirtrait = new TweenState((arg) => { oponentCard.PortraitOffsetY = ((int)(offset + arg.lerp)); oponentCard.Dying = true; }, () =>
+            var offset = 0;
+            var dropPoirtrait = new TweenState((arg) => { oponentCard.PoirtrateAnimDelta =  ((int)(offset + arg.lerp)); oponentCard.Dying = true; }, () =>
             {
-            }, 0.0f, 80, 0.4f, EasingFunc.EaseInBack);
+            }, 0.0f, oponentCard.PortraitSrc.Height, 0.5f, EasingFunc.EaseInBack);
 
             //_soundCallback(Sounds.Attack_Tackle);
             _stack.Push(attackInfoState, () =>

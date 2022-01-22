@@ -27,11 +27,11 @@ namespace Monomon.Views.Battle
 
             ProgressbarView.Draw(batch, card.XpPercentage, 150, new Vector2(pos.X, pos.Y + 80), barSprites, spriteMap, Color.Blue);
 
-            batch.Draw(spriteMap, new Rectangle(card.X + card.PortraitOffsetX, card.Y + card.PortraitOffsetY, card.PortraitSrc.Width, card.PortraitSrc.Height), card.PortraitSrc, Color.White);
+            batch.Draw(spriteMap, new Rectangle(card.X + card.PortraitOffsetX, card.PoirtrateAnimDelta+ card.Y + card.PortraitOffsetY, card.PortraitSrc.Width, card.PortraitSrc.Height), card.PortraitSrc, Color.White);
             if(card.Dying)
             {
                 batch.Draw(spriteMap, 
-                    new Rectangle(card.X + card.PortraitOffsetX, card.Y + card.PortraitSrc.Height, card.PortraitSrc.Width, card.PortraitSrc.Height), 
+                    new Rectangle(card.X + card.PortraitOffsetX, card.Y + card.PortraitOffsetY + card.PortraitSrc.Height, card.PortraitSrc.Width, card.PortraitSrc.Height), 
                     new Rectangle(8,0,1,1),
                     Color.Black);
             }

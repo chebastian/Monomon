@@ -88,6 +88,7 @@ namespace Monomon.ViewModels
         public float XpPercentage { get; set; }
         public int PortraitOffsetX { get; internal set; }
         public int PortraitOffsetY { get; internal set; }
+        public int PoirtrateAnimDelta { get; internal set; }
         public Rectangle PortraitSrc { get; internal set; }
         public bool Dying { get; internal set; }
 
