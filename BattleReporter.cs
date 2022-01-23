@@ -62,8 +62,8 @@ namespace Monomon
         {
             var attackInfoState = TimedMessage($"{message.attacker} used {message.name}");
 
-            BeginStateSequence();
-            AddState(attackInfoState);
+            _stack.BeginStateSequence();
+            _stack.AddState(attackInfoState);
 
             var ey = oponentCard.PortraitOffsetY;
             var hitAnim = new TweenState((arg) =>
@@ -82,8 +82,8 @@ namespace Monomon
                 _soundCallback(Sounds.Attack_Tackle);
             }, 0, 1, .3f);
 
-            AddState(attackAnimation);
-            AddState(hitAnim, () => { });
+            _stack.AddState(attackAnimation);
+            _stack.AddState(hitAnim, () => { });
 
             var health = _oponent.Health;
             var hasFainted = false;
@@ -93,7 +93,7 @@ namespace Monomon
                 hasFainted = _oponent.Health <= 0;
             }, 0.0f, Math.Min(message.damage, health), 1.0f, EasingFunc.EaseOutCube);
 
-            AddState(healthbarUpdateState, () => { 
+            _stack.AddState(healthbarUpdateState, () => { 
                 _oponent.Health = health - message.damage;
             });
 
@@ -104,45 +104,22 @@ namespace Monomon
                {
                }, 0.0f, oponentCard.PortraitSrc.Height, 0.5f, EasingFunc.EaseInBack);
 
-                AddState(dropPoirtrait,null, () => _soundCallback(Sounds.TakeDamage));
-                AddState(ConfirmMessage($"{_oponent.Name} has fainted"));
-                AddState(ConfirmMessage("XP Gained"));
+                _stack.AddState(dropPoirtrait,null, () => _soundCallback(Sounds.TakeDamage));
+                _stack.AddState(ConfirmMessage($"{_oponent.Name} has fainted"));
+                _stack.AddState(ConfirmMessage("XP Gained"));
                 var xp = attacker.Xp;
                 var xpUpdate = new TweenState((arg) => attacker.Xp = (float)(xp + arg.lerp), () =>
                 {
                     attacker.Xp = xp + 20;
                 }, 0.0f, 20, 1.0f, EasingFunc.EaseOutCube);
 
-                AddState(xpUpdate,null,() => _soundCallback(Sounds.XpUP));
+                _stack.AddState(xpUpdate,null,() => _soundCallback(Sounds.XpUP));
             }
 
-            EndStateSecence(() => {
+            _stack.EndStateSecence(() => {
                 if(!hasFainted) //continue will swap to next round, if we dont we will prompt for which turn to go next
                     continueWith();
             });
-        }
-
-        private void BeginStateSequence()
-        {
-            _states = new List<StateTransition<double>>();
-        }
-
-        private void EndStateSecence(Action end)
-        {
-            _states.Reverse();
-            _stack.Push(_states.First().state, () => {
-                _states.First()?.onExit();
-                _stack.Pop();
-                end();
-            },_states.First().onEnter);
-
-            foreach (var state in _states.Skip(1))
-                _stack.Push(state.state, () => { state.onExit(); _stack.Pop(); }, state.onEnter);
-        }
-
-        private void AddState(State<double> state, Action? onExit = null, Action? onEnter = null)
-        {
-            _states.Add(new StateTransition<double>(state, onEnter ?? new Action(() => { }), onExit ?? new Action(() => { })));
         }
     }
 }
