@@ -14,7 +14,7 @@ namespace Monomon.State
         public bool Completed { get; protected set; }
     }
 
-    public record StateTransition<R>(State<R> state, Action? onEnter, Action? onExit);
+    public record StateTransition<R>(State<R> state, Action onEnter, Action onExit);
     public class StateStack<RenderArgs>
     {
         private Stack<StateTransition<RenderArgs>> _states;
