@@ -60,8 +60,6 @@ namespace Monomon
 
         public void OnAttack(BattleMessage message, Mons.Mobmon attacker, Mons.Mobmon _oponent, Action continueWith, BattleCardViewModel attackerCard, BattleCardViewModel oponentCard)
         {
-            //oldAttack(message,attacker,_oponent,continueWith,attackerCard,oponentCard);
-
             var attackInfoState = TimedMessage($"{message.attacker} used {message.name}");
 
             BeginStateSequence();
@@ -133,10 +131,11 @@ namespace Monomon
         {
             _states.Reverse();
             _stack.Push(_states.First().state, () => {
-                _states.First().onExit();
+                _states.First()?.onExit();
                 _stack.Pop();
                 end();
             },_states.First().onEnter);
+
             foreach (var state in _states.Skip(1))
                 _stack.Push(state.state, () => { state.onExit(); _stack.Pop(); }, state.onEnter);
         }
@@ -144,152 +143,6 @@ namespace Monomon
         private void AddState(State<double> state, Action? onExit = null, Action? onEnter = null)
         {
             _states.Add(new StateTransition<double>(state, onEnter ?? new Action(() => { }), onExit ?? new Action(() => { })));
-        }
-
-        public class ConditionalState : State<double>
-        {
-            private bool? _condition;
-
-            public ConditionalState(State<double> whenTrue, State<double> whenFalse, Func<bool> condition)
-            {
-                TrueState = whenTrue;
-                FalseState = whenFalse;
-                Condition = condition;
-                _condition = null;
-            }
-
-            public State<double> TrueState { get; }
-            public State<double> FalseState { get; }
-            public Func<bool> Condition { get; }
-
-            private bool IsTrue()
-            {
-                if(_condition == null)
-                {
-                    _condition = Condition();
-                }
-
-                return (bool)_condition;
-            }
-
-            public override void Render(double param)
-            {
-                (IsTrue() ? TrueState : FalseState).Render(param);
-            }
-
-            public override void Update(float time)
-            {
-                (IsTrue() ? TrueState : FalseState).Update(time);
-            }
-        }
-
-        private class StateSequence
-        {
-            List<State<double>> _states;
-            public StateSequence Setup(State<double> state)
-            {
-                _states.Add(state);
-                return this;
-            }
-
-            public StateSequence Then(State<double> state)
-            {
-                _states.Add(state);
-                return this;
-            } 
-        }
-
-        public void oldAttack(BattleMessage message, Mons.Mobmon attacker, Mons.Mobmon _oponent, Action continueWith, BattleCardViewModel attackerCard, BattleCardViewModel oponentCard)
-        {
-            var attackInfoState = TimedMessage($"{message.attacker} choose {message.name}");
-            var attackMessageState = TimedMessage($"{message.attacker} attacked {message.receiver} for {message.damage} points of damage!");
-
-            var health = _oponent.Health;
-            var hasFainted = false;
-            var healthbarUpdateState = new TweenState((arg) => _oponent.Health = (float)(health - arg.lerp), () =>
-            {
-                _oponent.Health = health - message.damage;
-                hasFainted = _oponent.Health <= 0;
-            }, 0.0f, Math.Min(message.damage, health), 1.0f, EasingFunc.EaseOutCube);
-
-            var xp = attacker.Xp;
-            var xpUpdate = new TweenState((arg) => attacker.Xp = (float)(xp + arg.lerp), () =>
-            {
-                attacker.Xp = xp + 20;
-            }, 0.0f, 20, 1.0f, EasingFunc.EaseOutCube);
-
-            var offset = 0;
-            var dropPoirtrait = new TweenState((arg) => { oponentCard.PoirtrateAnimDelta = ((int)(offset + arg.lerp)); oponentCard.Dying = true; }, () =>
-           {
-           }, 0.0f, oponentCard.PortraitSrc.Height, 0.5f, EasingFunc.EaseInBack);
-
-            //_soundCallback(Sounds.Attack_Tackle);
-            _stack.Push(attackInfoState, () =>
-            {
-                //Remove ourself the attack info state
-                _stack.Pop();
-                _stack.Push(healthbarUpdateState, () =>
-                {
-                    //Remove ourself, the attack message state
-                    _stack.Pop();
-                    if (hasFainted)
-                    {
-                        _soundCallback(Sounds.TakeDamage);
-
-
-                        _stack.Push(ConfirmMessage($"{_oponent.Name} has fainted"),
-                            () =>
-                            {
-                                _stack.Pop();// pop this message
-                                _stack.Push(ConfirmMessage($"XP Gained"), () =>
-                                {
-                                    _stack.Pop();
-                                    _soundCallback(Sounds.XpUP);
-                                    _stack.Push(xpUpdate,
-                                    () =>
-                                    {
-                                        _stack.Pop();// pop xpupdate animation
-                                    });
-                                });
-                            });
-
-                        _stack.Push(dropPoirtrait, () => { _stack.Pop(); });
-                    }
-                    else
-                    {
-                        _stack.Push(attackMessageState, () =>
-                        {
-                            _stack.Pop();
-                            continueWith();
-                        });
-                    }
-                });
-
-                var ey = oponentCard.PortraitOffsetY;
-                var hitAnim = new TweenState((arg) =>
-                {
-                    oponentCard.PortraitOffsetY = (int)(ey + Math.Sin(3.14 * arg.lerp) * 20);
-                }, () =>
-                {
-                }, 0, 1, .3f);
-
-                _stack.Push(hitAnim, () =>
-                {
-                    _stack.Pop();
-                });
-                var y = attackerCard.PortraitOffsetY;
-                var attackAnimation = new TweenState((arg) =>
-                {
-                    attackerCard.PortraitOffsetY = (int)(y + Math.Sin(3.14 * arg.lerp) * -40);
-                }, () =>
-                {
-                    _soundCallback(Sounds.Attack_Tackle);
-                }, 0, 1, .3f);
-                _stack.Push(attackAnimation, () =>
-                {
-                    _stack.Pop();
-                });
-            });
         }
     }
 }
