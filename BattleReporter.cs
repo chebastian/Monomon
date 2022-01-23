@@ -62,7 +62,7 @@ namespace Monomon
         {
             //oldAttack(message,attacker,_oponent,continueWith,attackerCard,oponentCard);
 
-            var attackInfoState = TimedMessage($"{message.attacker} choose {message.name}");
+            var attackInfoState = TimedMessage($"{message.attacker} used {message.name}");
 
             BeginStateSequence();
             AddState(attackInfoState);
@@ -99,8 +99,27 @@ namespace Monomon
                 _oponent.Health = health - message.damage;
             });
 
+            if(health - message.damage <= 0)
+            {
+                var offset = 0;
+                var dropPoirtrait = new TweenState((arg) => { oponentCard.PoirtrateAnimDelta = ((int)(offset + arg.lerp)); oponentCard.Dying = true; }, () =>
+               {
+               }, 0.0f, oponentCard.PortraitSrc.Height, 0.5f, EasingFunc.EaseInBack);
+
+                AddState(dropPoirtrait);
+                AddState(ConfirmMessage($"{_oponent.Name} has fainted"));
+                AddState(ConfirmMessage("XP Gained"));
+                var xp = attacker.Xp;
+                var xpUpdate = new TweenState((arg) => attacker.Xp = (float)(xp + arg.lerp), () =>
+                {
+                    attacker.Xp = xp + 20;
+                }, 0.0f, 20, 1.0f, EasingFunc.EaseOutCube);
+                AddState(xpUpdate);
+            }
+
             EndStateSecence(() => {
-                continueWith();
+                if(!hasFainted) //continue will swap to next round, if we dont we will prompt for which turn to go next
+                    continueWith();
             });
         }
 
@@ -125,7 +144,44 @@ namespace Monomon
         {
             _states.Add((state,complete == null ? () => { } : complete));
         }
-        
+
+        public class ConditionalState : State<double>
+        {
+            private bool? _condition;
+
+            public ConditionalState(State<double> whenTrue, State<double> whenFalse, Func<bool> condition)
+            {
+                TrueState = whenTrue;
+                FalseState = whenFalse;
+                Condition = condition;
+                _condition = null;
+            }
+
+            public State<double> TrueState { get; }
+            public State<double> FalseState { get; }
+            public Func<bool> Condition { get; }
+
+            private bool IsTrue()
+            {
+                if(_condition == null)
+                {
+                    _condition = Condition();
+                }
+
+                return (bool)_condition;
+            }
+
+            public override void Render(double param)
+            {
+                (IsTrue() ? TrueState : FalseState).Render(param);
+            }
+
+            public override void Update(float time)
+            {
+                (IsTrue() ? TrueState : FalseState).Update(time);
+            }
+        }
+
         private class StateSequence
         {
             List<State<double>> _states;
