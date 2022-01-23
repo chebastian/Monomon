@@ -18,6 +18,7 @@ namespace Monomon.State
     public class StateStack<RenderArgs>
     {
         private Stack<StateTransition<RenderArgs>> _states;
+        private List<StateTransition<RenderArgs>> _sequence;
 
         public StateStack()
         {
@@ -27,6 +28,32 @@ namespace Monomon.State
         public void Push(State<RenderArgs> s,Action onCompleted, Action? onEnter = null)
         {
             _states.Push(new StateTransition<RenderArgs>(s, onEnter ?? (() => { }), onCompleted));
+        }
+        
+        public void BeginStateSequence()
+        {
+            _sequence = new List<StateTransition<RenderArgs>>();
+        }
+
+        public void EndStateSecence(Action end)
+        {
+            _sequence.Reverse();
+            var lastState = _sequence.First();
+            Push(lastState.state, () => {
+                lastState.onExit();
+                Pop();
+                end();
+            },_sequence.First().onEnter);
+
+            foreach (var state in _sequence.Skip(1))
+                Push(state.state, () => { state.onExit(); Pop(); }, state.onEnter);
+
+            _sequence.Clear();
+        }
+
+        public void AddState(State<RenderArgs> state, Action? onExit = null, Action? onEnter = null)
+        {
+            _sequence.Add(new StateTransition<RenderArgs>(state, onEnter ?? new Action(() => { }), onExit ?? new Action(() => { })));
         }
 
         public void Update(float time)
