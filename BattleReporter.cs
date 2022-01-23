@@ -7,11 +7,12 @@ using Monomon.ViewModels;
 using Monomon.Views.Scenes;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Monomon
 {
     public enum Sounds
-    { 
+    {
         Attack_Tackle,
         TakeDamage,
         XpUP,
@@ -26,6 +27,7 @@ namespace Monomon
         private SpriteFont _font;
         private IINputHandler _input;
         private GraphicsDevice _gd;
+        private List<(State<double> state, Action action)> _states;
 
         public List<string> Messages { get; set; }
         public BattleReporter(SpriteBatch batch, GraphicsDevice gd, State.StateStack<double> stack, IINputHandler input, SpriteFont font, Texture2D sprites, Action<Sounds> soundCallback)
@@ -47,17 +49,100 @@ namespace Monomon
         }
 
         TimedState TimedMessage(string message)
-        { 
-            return new TimedState(new MessageScene(_gd,message,_font,_sprites), 2500, _input);
+        {
+            return new TimedState(new MessageScene(_gd, message, _font, _sprites), 2500, _input);
         }
 
         ConfirmState ConfirmMessage(string message)
-        { 
-            return new ConfirmState(new MessageScene(_gd,message,_font,_sprites,true), _input);
+        {
+            return new ConfirmState(new MessageScene(_gd, message, _font, _sprites, true), _input);
         }
 
+        public void OnAttack(BattleMessage message, Mons.Mobmon attacker, Mons.Mobmon _oponent, Action continueWith, BattleCardViewModel attackerCard, BattleCardViewModel oponentCard)
+        {
+            //oldAttack(message,attacker,_oponent,continueWith,attackerCard,oponentCard);
 
-        public void OnAttack(BattleMessage message,Mons.Mobmon attacker, Mons.Mobmon _oponent, Action continueWith, BattleCardViewModel attackerCard, BattleCardViewModel oponentCard)
+            var attackInfoState = TimedMessage($"{message.attacker} choose {message.name}");
+
+            BeginStateSequence();
+            AddState(attackInfoState);
+
+            var ey = oponentCard.PortraitOffsetY;
+            var hitAnim = new TweenState((arg) =>
+            {
+                oponentCard.PortraitOffsetY = (int)(ey + Math.Sin(3.14 * arg.lerp) * 20);
+            }, () =>
+            {
+            }, 0, 1, .3f);
+
+            var y = attackerCard.PortraitOffsetY;
+            var attackAnimation = new TweenState((arg) =>
+            {
+                attackerCard.PortraitOffsetY = (int)(y + Math.Sin(3.14 * arg.lerp) * -40);
+            }, () =>
+            {
+                _soundCallback(Sounds.Attack_Tackle);
+            }, 0, 1, .3f);
+
+            AddState(attackAnimation);
+            AddState(hitAnim, () => { });
+
+            var health = _oponent.Health;
+            var hasFainted = false;
+            var healthbarUpdateState = new TweenState((arg) => _oponent.Health = (float)(health - arg.lerp), () =>
+            {
+                _oponent.Health = health - message.damage;
+                hasFainted = _oponent.Health <= 0;
+            }, 0.0f, Math.Min(message.damage, health), 1.0f, EasingFunc.EaseOutCube);
+
+            AddState(healthbarUpdateState, () => { 
+                _oponent.Health = health - message.damage;
+            });
+
+            EndStateSecence(() => {
+                continueWith();
+            });
+        }
+
+        private void BeginStateSequence()
+        {
+            _states = new List<(State<double>, Action)>();
+        }
+
+        private void EndStateSecence(Action end)
+        {
+            _states.Reverse();
+            _stack.Push(_states.First().state, () => {
+                _states.First().action();
+                _stack.Pop();
+                end();
+            });
+            foreach (var state in _states.Skip(1))
+                _stack.Push(state.state, () => { state.action(); _stack.Pop(); });
+        }
+
+        private void AddState(State<double> state, Action complete = null)
+        {
+            _states.Add((state,complete == null ? () => { } : complete));
+        }
+        
+        private class StateSequence
+        {
+            List<State<double>> _states;
+            public StateSequence Setup(State<double> state)
+            {
+                _states.Add(state);
+                return this;
+            }
+
+            public StateSequence Then(State<double> state)
+            {
+                _states.Add(state);
+                return this;
+            } 
+        }
+
+        public void oldAttack(BattleMessage message, Mons.Mobmon attacker, Mons.Mobmon _oponent, Action continueWith, BattleCardViewModel attackerCard, BattleCardViewModel oponentCard)
         {
             var attackInfoState = TimedMessage($"{message.attacker} choose {message.name}");
             var attackMessageState = TimedMessage($"{message.attacker} attacked {message.receiver} for {message.damage} points of damage!");
@@ -68,18 +153,18 @@ namespace Monomon
             {
                 _oponent.Health = health - message.damage;
                 hasFainted = _oponent.Health <= 0;
-            }, 0.0f, Math.Min(message.damage,health) , 1.0f,EasingFunc.EaseOutCube);
+            }, 0.0f, Math.Min(message.damage, health), 1.0f, EasingFunc.EaseOutCube);
 
             var xp = attacker.Xp;
             var xpUpdate = new TweenState((arg) => attacker.Xp = (float)(xp + arg.lerp), () =>
             {
                 attacker.Xp = xp + 20;
-            }, 0.0f, 20, 1.0f,EasingFunc.EaseOutCube);
+            }, 0.0f, 20, 1.0f, EasingFunc.EaseOutCube);
 
             var offset = 0;
-            var dropPoirtrait = new TweenState((arg) => { oponentCard.PoirtrateAnimDelta =  ((int)(offset + arg.lerp)); oponentCard.Dying = true; }, () =>
-            {
-            }, 0.0f, oponentCard.PortraitSrc.Height, 0.5f, EasingFunc.EaseInBack);
+            var dropPoirtrait = new TweenState((arg) => { oponentCard.PoirtrateAnimDelta = ((int)(offset + arg.lerp)); oponentCard.Dying = true; }, () =>
+           {
+           }, 0.0f, oponentCard.PortraitSrc.Height, 0.5f, EasingFunc.EaseInBack);
 
             //_soundCallback(Sounds.Attack_Tackle);
             _stack.Push(attackInfoState, () =>
@@ -96,14 +181,15 @@ namespace Monomon
 
 
                         _stack.Push(ConfirmMessage($"{_oponent.Name} has fainted"),
-                            () => 
+                            () =>
                             {
                                 _stack.Pop();// pop this message
-                                _stack.Push(ConfirmMessage($"XP Gained"), () => { 
+                                _stack.Push(ConfirmMessage($"XP Gained"), () =>
+                                {
                                     _stack.Pop();
                                     _soundCallback(Sounds.XpUP);
                                     _stack.Push(xpUpdate,
-                                    () => 
+                                    () =>
                                     {
                                         _stack.Pop();// pop xpupdate animation
                                     });
@@ -119,14 +205,15 @@ namespace Monomon
                             _stack.Pop();
                             continueWith();
                         });
-
                     }
                 });
 
                 var ey = oponentCard.PortraitOffsetY;
-                var hitAnim = new TweenState((arg) => {
-                    oponentCard.PortraitOffsetY = (int)(ey + Math.Sin(3.14 * arg.lerp)*20);
-                }, () => {
+                var hitAnim = new TweenState((arg) =>
+                {
+                    oponentCard.PortraitOffsetY = (int)(ey + Math.Sin(3.14 * arg.lerp) * 20);
+                }, () =>
+                {
                 }, 0, 1, .3f);
 
                 _stack.Push(hitAnim, () =>
@@ -134,9 +221,11 @@ namespace Monomon
                     _stack.Pop();
                 });
                 var y = attackerCard.PortraitOffsetY;
-                var attackAnimation = new TweenState((arg) => {
-                    attackerCard.PortraitOffsetY = (int)(y + Math.Sin(3.14 * arg.lerp)*-40);
-                }, () => {
+                var attackAnimation = new TweenState((arg) =>
+                {
+                    attackerCard.PortraitOffsetY = (int)(y + Math.Sin(3.14 * arg.lerp) * -40);
+                }, () =>
+                {
                     _soundCallback(Sounds.Attack_Tackle);
                 }, 0, 1, .3f);
                 _stack.Push(attackAnimation, () =>
