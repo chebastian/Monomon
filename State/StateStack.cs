@@ -14,18 +14,19 @@ namespace Monomon.State
         public bool Completed { get; protected set; }
     }
 
+    public record StateTransition<R>(State<R> state, Action? onEnter, Action? onExit);
     public class StateStack<RenderArgs>
     {
-        private Stack<(State<RenderArgs> state, Action onExit)> _states;
+        private Stack<StateTransition<RenderArgs>> _states;
 
         public StateStack()
         {
-            _states = new Stack<(State<RenderArgs>, Action)>();
+            _states = new Stack<Monomon.State.StateTransition<RenderArgs>>();
         }
 
-        public void Push(State<RenderArgs> s,Action onCompleted)
+        public void Push(State<RenderArgs> s,Action onCompleted, Action? onEnter = null)
         {
-            _states.Push((s,onCompleted));
+            _states.Push(new StateTransition<RenderArgs>(s, onEnter ?? (() => { }), onCompleted));
         }
 
         public void Update(float time)
@@ -41,6 +42,7 @@ namespace Monomon.State
         public void Pop()
         {
             _states.Pop();
+            _states.Peek().onEnter();
         }
         
         public void Render(RenderArgs param)

@@ -27,7 +27,7 @@ namespace Monomon
         private SpriteFont _font;
         private IINputHandler _input;
         private GraphicsDevice _gd;
-        private List<(State<double> state, Action action)> _states;
+        private List<StateTransition<double>> _states;
 
         public List<string> Messages { get; set; }
         public BattleReporter(SpriteBatch batch, GraphicsDevice gd, State.StateStack<double> stack, IINputHandler input, SpriteFont font, Texture2D sprites, Action<Sounds> soundCallback)
@@ -106,7 +106,7 @@ namespace Monomon
                {
                }, 0.0f, oponentCard.PortraitSrc.Height, 0.5f, EasingFunc.EaseInBack);
 
-                AddState(dropPoirtrait);
+                AddState(dropPoirtrait,null, () => _soundCallback(Sounds.TakeDamage));
                 AddState(ConfirmMessage($"{_oponent.Name} has fainted"));
                 AddState(ConfirmMessage("XP Gained"));
                 var xp = attacker.Xp;
@@ -114,7 +114,8 @@ namespace Monomon
                 {
                     attacker.Xp = xp + 20;
                 }, 0.0f, 20, 1.0f, EasingFunc.EaseOutCube);
-                AddState(xpUpdate);
+
+                AddState(xpUpdate,null,() => _soundCallback(Sounds.XpUP));
             }
 
             EndStateSecence(() => {
@@ -125,24 +126,24 @@ namespace Monomon
 
         private void BeginStateSequence()
         {
-            _states = new List<(State<double>, Action)>();
+            _states = new List<StateTransition<double>>();
         }
 
         private void EndStateSecence(Action end)
         {
             _states.Reverse();
             _stack.Push(_states.First().state, () => {
-                _states.First().action();
+                _states.First().onExit();
                 _stack.Pop();
                 end();
-            });
+            },_states.First().onEnter);
             foreach (var state in _states.Skip(1))
-                _stack.Push(state.state, () => { state.action(); _stack.Pop(); });
+                _stack.Push(state.state, () => { state.onExit(); _stack.Pop(); }, state.onEnter);
         }
 
-        private void AddState(State<double> state, Action complete = null)
+        private void AddState(State<double> state, Action? onExit = null, Action? onEnter = null)
         {
-            _states.Add((state,complete == null ? () => { } : complete));
+            _states.Add(new StateTransition<double>(state, onEnter ?? new Action(() => { }), onExit ?? new Action(() => { })));
         }
 
         public class ConditionalState : State<double>
