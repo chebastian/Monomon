@@ -27,7 +27,6 @@ namespace Monomon
         private SpriteFont _font;
         private IINputHandler _input;
         private GraphicsDevice _gd;
-        private List<StateTransition<double>> _states;
 
         public List<string> Messages { get; set; }
         public BattleReporter(SpriteBatch batch, GraphicsDevice gd, State.StateStack<double> stack, IINputHandler input, SpriteFont font, Texture2D sprites, Action<Sounds> soundCallback)
@@ -93,18 +92,19 @@ namespace Monomon
                 hasFainted = _oponent.Health <= 0;
             }, 0.0f, Math.Min(message.damage, health), 1.0f, EasingFunc.EaseOutCube);
 
-            _stack.AddState(healthbarUpdateState, () => { 
+            _stack.AddState(healthbarUpdateState, () =>
+            {
                 _oponent.Health = health - message.damage;
             });
 
-            if(health - message.damage <= 0)
+            if (health - message.damage <= 0)
             {
                 var offset = 0;
                 var dropPoirtrait = new TweenState((arg) => { oponentCard.PoirtrateAnimDelta = ((int)(offset + arg.lerp)); oponentCard.Dying = true; }, () =>
                {
                }, 0.0f, oponentCard.PortraitSrc.Height, 0.5f, EasingFunc.EaseInBack);
 
-                _stack.AddState(dropPoirtrait,null, () => _soundCallback(Sounds.TakeDamage));
+                _stack.AddState(dropPoirtrait, null, () => _soundCallback(Sounds.TakeDamage));
                 _stack.AddState(ConfirmMessage($"{_oponent.Name} has fainted"));
                 _stack.AddState(ConfirmMessage("XP Gained"));
                 var xp = attacker.Xp;
@@ -113,11 +113,12 @@ namespace Monomon
                     attacker.Xp = xp + 20;
                 }, 0.0f, 20, 1.0f, EasingFunc.EaseOutCube);
 
-                _stack.AddState(xpUpdate,null,() => _soundCallback(Sounds.XpUP));
+                _stack.AddState(xpUpdate, null, () => _soundCallback(Sounds.XpUP));
             }
 
-            _stack.EndStateSecence(() => {
-                if(!hasFainted) //continue will swap to next round, if we dont we will prompt for which turn to go next
+            _stack.EndStateSecence(() =>
+            {
+                if (!hasFainted) //continue will swap to next round, if we dont we will prompt for which turn to go next
                     continueWith();
             });
         }
