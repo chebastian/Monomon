@@ -206,12 +206,9 @@ namespace Monomon.Views.Samples
                         _mob = new Mobmon("Mon2", 8, new MonStatus(5, 5, 5));
                         _currentEnemyCard = new BattleCardViewModel(_mob.Name, _mob.MaxHealth, _mob.Health, 5);
                         InitBattle();
-                        _stack.Pop();
                     });
                     var no = new Choice("No", () =>
                     {
-                        _stack.Pop();
-                        _stack.Pop();
                     });
                     SelectChoice("Do you want to continue?", yesChoice, no);
                 }
@@ -238,6 +235,8 @@ namespace Monomon.Views.Samples
                         new ConfirmState(
                             new ChoiceScene(_graphics, choices.Select(x => x.name).ToList(), font, _spriteMap, selection =>
                             {
+                                _stack.Pop(); // pop the timed state
+                                _stack.Pop(); // pop the confirm state
                                 var choosen = choices.Where(item => item.name == selection).FirstOrDefault();
                                 if (choosen != null)
                                     choosen.action();
@@ -245,7 +244,6 @@ namespace Monomon.Views.Samples
                             _input),
                         () =>
                         {
-                            _stack.Pop(); // pop the timed state
                         });
                 });
 
