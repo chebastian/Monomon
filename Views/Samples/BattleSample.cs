@@ -125,6 +125,16 @@ namespace Monomon.Views.Samples
             _battleManager = new BattleManager(_player, _mob, _battleReporter, _input, _playerCard, _currentEnemyCard);
 
             _battleManager.Start();
+
+            var offset = _currentEnemyCard.PortraitOffsetX;
+            _currentEnemyCard.PortraitOffsetX = 800; 
+            var dx = _currentEnemyCard.X;
+
+            var slideIn = new TweenState((arg) => {
+                _currentEnemyCard.PortraitOffsetX = (int)arg.lerp;
+            }, () => { }, 800, offset, 2.0f);
+
+            _stack.Push(slideIn, () => _stack.Pop());
         }
 
         public override void LoadScene(ContentManager content)
