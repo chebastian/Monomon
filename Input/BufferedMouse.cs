@@ -29,7 +29,6 @@ namespace Monomon.Input
     public class BufferedMouse : IMouseHandler
     {
         private MouseState _oldState;
-        private bool _clicked;
         private bool _released;
         (BufferedMouseState left, BufferedMouseState right) _state;
 
