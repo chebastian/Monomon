@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 
 namespace Monomon
 {
+#nullable disable
 
     public class Game1 : Game
     {
@@ -26,7 +27,6 @@ namespace Monomon
         private SpriteBatch _spriteBatch;
         private SpriteFont font;
         private UIList<string> _sceneList;
-        private string _selection;
         private SceneView _currentScene;
         private StateStack<double> _stateStack;
 
