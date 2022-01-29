@@ -17,7 +17,7 @@ namespace Monomon.Views
     public record NineSquare(SpriteCollection top, SpriteCollection mid, SpriteCollection bottom);
     public class ProgressbarView
     {
-        public static void Draw(SpriteBatch batch, float percentage, int fullW, Vector2 pos, SpriteCollection sprites, Texture2D tex, Color color)
+        public static void Draw(SpriteBatch batch, float percentage, int fullW, Vector2 pos, SpriteCollection sprites,SpriteCollection emptyCollection, Texture2D tex, Color color)
         {
             var sz = Math.Max(sprites.first.Width, fullW * percentage);
 
@@ -28,10 +28,10 @@ namespace Monomon.Views
 
             for (var i = sprites.first.Width; i < fullW; i++)
             { 
-                batch.Draw(tex, new Rectangle((int)pos.X + i,(int)pos.Y,1,sprites.mid.Height+2), sprites.mid, Color.White);
+                batch.Draw(tex, new Rectangle((int)pos.X + i,(int)pos.Y,1,emptyCollection.mid.Height+2), emptyCollection.mid, Color.White);
 
                 if (i < fullW * percentage)
-                    batch.Draw(tex, new Rectangle((int)pos.X + i, (int)pos.Y + 2, 1, sprites.mid.Height - 2), sprites.mid, color);
+                    batch.Draw(tex, new Rectangle((int)pos.X + i, (int)pos.Y, 1, sprites.mid.Height), sprites.mid, Color.White);
             }
 
             batch.Draw(tex, last, sprites.end, Color.White);
