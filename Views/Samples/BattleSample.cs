@@ -43,6 +43,7 @@ namespace Monomon.Views.Samples
         private SoundEffect _battleTackleEffect;
         private SoundEffect _battleHurtEffect;
         private SoundEffect _battleXpUpEffect;
+        private Texture2D _palette;
 
         public BattleSample(GraphicsDevice gd, IINputHandler input, StateStack<double> stack) : base(gd)
         {
@@ -140,6 +141,16 @@ namespace Monomon.Views.Samples
 
         public override void LoadScene(ContentManager content)
         {
+
+            _effect = content.Load<Effect>("Indexed");
+
+            //Init effect
+            {
+                _palette = content.Load<Texture2D>("paletteMini"); 
+                _effect?.Parameters["time"].SetValue(0.2f);
+                _effect?.Parameters["swap"].SetValue(1.0f); 
+                _effect?.Parameters["palette"].SetValue(_palette);
+            }
 
             font = content.Load<SpriteFont>("File");
             _spriteMap = content.Load<Texture2D>("spritemap");
