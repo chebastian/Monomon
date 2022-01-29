@@ -143,14 +143,15 @@ namespace Monomon.Views.Samples
             font = content.Load<SpriteFont>("File");
             _spriteMap = content.Load<Texture2D>("spritemap");
 
-            InitBattle();
-
             _menuMoveEffect = content.Load<SoundEffect>("menuSelectSimple");
             _menuSelectEffect = content.Load<SoundEffect>("menuMoveChirpy");
 
             _battleTackleEffect = content.Load<SoundEffect>("tackle");
             _battleHurtEffect = content.Load<SoundEffect>("hurtChirpy");
             _battleXpUpEffect = content.Load<SoundEffect>("XpUp");
+
+            InitBattle();
+
         }
 
         private void OnPlaySound(Sounds sound)
