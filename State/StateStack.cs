@@ -14,7 +14,22 @@ namespace Monomon.State
         public bool Completed { get; protected set; }
     }
 
-    public record StateTransition<R>(State<R> state, Action onEnter, Action onExit);
+    //public record StateTransition<R>(State<R> state, Action onEnter, Action onExit);
+    public class StateTransition<R>
+    {
+        public readonly State<R> state;
+        public readonly Action onEnter;
+        public readonly Action onExit;
+        public bool initialized = false;
+
+        public StateTransition(State<R> state, Action onEnter, Action onExit)
+        {
+            this.state = state;
+            this.onEnter = onEnter;
+            this.onExit = onExit;
+        }
+    }
+
     public class StateStack<RenderArgs>
     {
         private Stack<StateTransition<RenderArgs>> _states;
@@ -23,6 +38,7 @@ namespace Monomon.State
         public StateStack()
         {
             _states = new Stack<Monomon.State.StateTransition<RenderArgs>>();
+            _sequence = new List<StateTransition<RenderArgs>>();
         }
 
         public void Push(State<RenderArgs> s,Action onCompleted, Action? onEnter = null)
@@ -59,6 +75,12 @@ namespace Monomon.State
         public void Update(float time)
         {
             var top = _states.Peek();
+            if (!top.initialized)
+            {
+                top.onEnter();
+                top.initialized = true;
+            }
+
             top.state.Update(time);
             if(top.state.Completed)
             {
@@ -69,7 +91,7 @@ namespace Monomon.State
         public void Pop()
         {
             _states.Pop();
-            _states.Peek().onEnter();
+            //_states.Peek().onEnter();
         }
         
         public void Render(RenderArgs param)
@@ -77,7 +99,14 @@ namespace Monomon.State
             try
             {
                 foreach (var state in _states.Reverse())
+                {
+                    if(!state.initialized)
+                    {
+                        state.initialized = true;
+                        state.onEnter();
+                    }
                     state.state.Render(param); 
+                }
             }
             catch when (true)
             {
