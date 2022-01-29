@@ -67,6 +67,7 @@ namespace Monomon.Views.Scenes
     {
         Lerp,
         EaseInBack,
+        EaseOutBack,
         EaseOutCube, 
     }
 
@@ -94,6 +95,7 @@ namespace Monomon.Views.Scenes
                 EasingFunc.Lerp => Lerp,
                 EasingFunc.EaseInBack => EaseInBack,
                 EasingFunc.EaseOutCube => EaseOutCube,
+                EasingFunc.EaseOutBack => EaseOutBack,
                 _ => throw new ArgumentOutOfRangeException()
             };
         }
@@ -122,6 +124,14 @@ namespace Monomon.Views.Scenes
         float EaseOutCube(float x)
         {
             return (float) 1f - (float)Math.Pow(1-x, 3);
+        }
+        
+        float EaseOutBack(float x)
+        {
+            float c1 = 1.70158f;
+            float c3 = c1 + 1;
+
+            return (float)(1.0 + c3 * Math.Pow(x - 1.0, 3.0) + c1 * Math.Pow(x - 1.0, 2.0));
         }
 
         public override void Update(float time)
