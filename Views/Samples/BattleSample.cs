@@ -47,7 +47,7 @@ namespace Monomon.Views.Samples
         public BattleSample(GraphicsDevice gd, IINputHandler input, StateStack<double> stack) : base(gd)
         {
             _input = input;
-            _player = new Mobmon("Player", 20, new MonStatus(4, 2, 3));
+            _player = new Mobmon("Player", 3, new MonStatus(4, 2, 3));
             _mob = new Mobmon("Mob", 9, new MonStatus(2, 2, 3));
             _stack = stack;
 
@@ -104,6 +104,7 @@ namespace Monomon.Views.Samples
             _currentList = _list;
 
         }
+
         private void InitBattle()
         {
             _currentEnemyCard = new BattleCardViewModel(_mob.Name, _mob.MaxHealth, _mob.Health, 2);
@@ -132,7 +133,7 @@ namespace Monomon.Views.Samples
 
             var slideIn = new TweenState((arg) => {
                 _currentEnemyCard.PortraitOffsetX = (int)arg.lerp;
-            }, () => { }, 800, offset, 2.0f);
+            }, () => { }, 800, offset, 1.2f, EasingFunc.EaseOutBack);
 
             _stack.Push(slideIn, () => _stack.Pop());
         }
