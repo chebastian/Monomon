@@ -18,6 +18,7 @@ namespace Monomon.Input
         Select,
         Back,
         Quit,
+        Option,
     }
 
     public interface IINputHandler : IMouseHandler
@@ -141,6 +142,7 @@ namespace Monomon.Input
                 KeyName.Select => new[] { Keys.A },
                 KeyName.Back => new[]   { Keys.S },
                 KeyName.Quit => new[]   { Keys.C },
+                KeyName.Option => new[]   { Keys.O },
                 _ => throw new ArgumentOutOfRangeException(),
             };
 
