@@ -44,6 +44,11 @@ namespace Monomon.Views.Samples
         private SoundEffect _battleHurtEffect;
         private SoundEffect _battleXpUpEffect;
         private Texture2D _palette;
+        private Effect _fadeEffect;
+        private Texture2D fadeTexture;
+        private bool fading;
+        private float _fadeTime;
+        private static float _currentPalette = 0.2f;
 
         public BattleSample(GraphicsDevice gd, IINputHandler input, StateStack<double> stack) : base(gd)
         {
@@ -108,6 +113,7 @@ namespace Monomon.Views.Samples
 
         private void InitBattle()
         {
+            fading = true;
             _currentEnemyCard = new BattleCardViewModel(_mob.Name, _mob.MaxHealth, _mob.Health, 2);
             _currentEnemyCard.X = UIValues.OponentHudX;
             _currentEnemyCard.Y = 10;
@@ -136,20 +142,41 @@ namespace Monomon.Views.Samples
                 _currentEnemyCard.PortraitOffsetX = (int)arg.lerp;
             }, () => { }, 800, offset, 1.2f, EasingFunc.EaseOutBack);
 
+            var fade = new TweenState(arg =>
+            {
+                UpdateFade((float)(1.0-arg.lerp));
+                if(arg.lerp >= 0.8f)
+                {
+                }
+            }, () => { }, 0.0f, 1.0f, 1.4f, EasingFunc.Lerp);
+
             _stack.Push(slideIn, () => _stack.Pop());
+            _stack.Push(fade, () => _stack.Pop());
         }
 
         public override void LoadScene(ContentManager content)
         {
 
             _effect = content.Load<Effect>("Indexed");
+            _fadeEffect = content.Load<Effect>("Fade");
 
             //Init effect
             {
                 _palette = content.Load<Texture2D>("paletteMini"); 
-                _effect?.Parameters["time"].SetValue(0.2f);
+                _effect?.Parameters["time"].SetValue(_currentPalette);
                 _effect?.Parameters["swap"].SetValue(1.0f); 
                 _effect?.Parameters["palette"].SetValue(_palette);
+            }
+
+            //Init fade
+            {
+                 fadeTexture = content.Load<Texture2D>("fadeCircleOut");
+                _fadeEffect.Parameters["flip"].SetValue(false);
+                _fadeEffect.Parameters["fadeAmount"].SetValue(0.0f);
+                _fadeEffect.Parameters["fadeTexture"].SetValue(fadeTexture);
+                _fadeEffect.Parameters["paletteTexture"].SetValue(_palette);
+                //_fadeEffect.Parameters["paletteY"].SetValue(0.2f); 
+                _fadeEffect?.Parameters["paletteY"].SetValue(_currentPalette);
             }
 
             font = content.Load<SpriteFont>("File");
@@ -214,7 +241,11 @@ namespace Monomon.Views.Samples
                 for(var i = 6; i < paletteH; i++)
                 {
                     var y = delta * (float)i;
-                    choice.Add(new Choice($"#{i}", () => _effect?.Parameters["time"].SetValue(y)));
+                    choice.Add(new Choice($"#{i}", () =>
+                    {
+                        _currentPalette = y;
+                        _effect?.Parameters["time"].SetValue(y);
+                    }));
                 }
 
                 SelectChoice("Select palette", choice.ToArray() );
@@ -330,10 +361,24 @@ namespace Monomon.Views.Samples
             BattleCardView.Draw(batch, new Vector2(_currentEnemyCard.X, _currentEnemyCard.Y), font, _spriteMap, _currentEnemyCard);
             BattleCardView.Draw(batch, new Vector2(_playerCard.X, _playerCard.Y), font, _spriteMap, _playerCard);
 
-
+            batch.End();
+            batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearWrap, null, null, _fadeEffect);
+            DrawEffect(batch);
+            batch.End();
+            batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearWrap, null, null, _effect);
 
             //DrawBattleLog();
         }
 
+        private void UpdateFade(float dt)
+        {
+            _fadeTime = dt;
+            _fadeEffect.Parameters["fadeAmount"].SetValue(_fadeTime);
+        }
+
+        private void DrawEffect(SpriteBatch batch)
+        {
+            batch.Draw(fadeTexture, new Rectangle(0,0,800,600), Color.White);
+        }
     }
 }
