@@ -29,7 +29,10 @@ namespace Monomon.Views.Gui
             {
                 var c = item.x.Selected ? Color.Red : Color.White;
 
-                batch.DrawString(font, item.x.Item.ToString(), new Vector2(pos.X+padding, y+padding), c);
+                var x = pos.X + padding + (item.x.Selected ? padding : 0);
+                batch.DrawString(font, item.x.Item.ToString(), new Vector2(x, y+padding), c);
+                if(item.x.Selected)
+                    batch.DrawString(font,">",new Vector2(pos.X+padding,y+padding), c);
                 y += 20;
             }
         }
