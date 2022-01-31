@@ -206,6 +206,19 @@ namespace Monomon.Views.Samples
                     _currentList.Select();
                 }
             }
+             if(_input.IsKeyPressed(KeyName.Option))
+            {
+                var paletteH = 16;
+                var choice = new List<Choice>();
+                var delta = 1.0f / (float)paletteH;
+                for(var i = 6; i < paletteH; i++)
+                {
+                    var y = delta * (float)i;
+                    choice.Add(new Choice($"#{i}", () => _effect?.Parameters["time"].SetValue(y)));
+                }
+
+                SelectChoice("Select palette", choice.ToArray() );
+            }
 
             if (_battleManager.BattleOver())
             {
