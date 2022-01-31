@@ -49,6 +49,7 @@ namespace Monomon.Views.Samples
         private bool fading;
         private float _fadeTime;
         private static float _currentPalette = 0.2f;
+        private bool ready;
 
         public BattleSample(GraphicsDevice gd, IINputHandler input, StateStack<double> stack) : base(gd)
         {
@@ -135,23 +136,37 @@ namespace Monomon.Views.Samples
             _battleManager.Start();
 
             var offset = _currentEnemyCard.PortraitOffsetX;
-            _currentEnemyCard.PortraitOffsetX = 800; 
+            _currentEnemyCard.PortraitOffsetX = 800;
             var dx = _currentEnemyCard.X;
 
-            var slideIn = new TweenState((arg) => {
+            var slideIn = new TweenState((arg) =>
+            {
                 _currentEnemyCard.PortraitOffsetX = (int)arg.lerp;
             }, () => { }, 800, offset, 1.2f, EasingFunc.EaseOutBack);
 
+            ready = false;
             var fade = new TweenState(arg =>
             {
-                UpdateFade((float)(1.0-arg.lerp));
-                if(arg.lerp >= 0.8f)
+                ready = true;
+                _fadeEffect.Parameters["flip"].SetValue(false);
+                UpdateFade((float)(1.0 - arg.lerp));
+                if (arg.lerp >= 0.8f)
+                {
+                }
+            }, () => { }, 0.0f, 1.0f, 1.4f, EasingFunc.Lerp);
+
+            var fadeIn = new TweenState(arg =>
+            {
+                _fadeEffect.Parameters["flip"].SetValue(true);
+                UpdateFade((float)(1.0f - arg.lerp));
+                if (arg.lerp >= 0.8f)
                 {
                 }
             }, () => { }, 0.0f, 1.0f, 1.4f, EasingFunc.Lerp);
 
             _stack.Push(slideIn, () => _stack.Pop());
             _stack.Push(fade, () => _stack.Pop());
+            _stack.Push(fadeIn, () => _stack.Pop());
         }
 
         public override void LoadScene(ContentManager content)
@@ -162,15 +177,15 @@ namespace Monomon.Views.Samples
 
             //Init effect
             {
-                _palette = content.Load<Texture2D>("paletteMini"); 
+                _palette = content.Load<Texture2D>("paletteMini");
                 _effect?.Parameters["time"].SetValue(_currentPalette);
-                _effect?.Parameters["swap"].SetValue(1.0f); 
+                _effect?.Parameters["swap"].SetValue(1.0f);
                 _effect?.Parameters["palette"].SetValue(_palette);
             }
 
             //Init fade
             {
-                 fadeTexture = content.Load<Texture2D>("fadeCircleOut");
+                fadeTexture = content.Load<Texture2D>("fadeCircleOut");
                 _fadeEffect.Parameters["flip"].SetValue(false);
                 _fadeEffect.Parameters["fadeAmount"].SetValue(0.0f);
                 _fadeEffect.Parameters["fadeTexture"].SetValue(fadeTexture);
@@ -233,12 +248,12 @@ namespace Monomon.Views.Samples
                     _currentList.Select();
                 }
             }
-             if(_input.IsKeyPressed(KeyName.Option))
+            if (_input.IsKeyPressed(KeyName.Option))
             {
                 var paletteH = 16;
                 var choice = new List<Choice>();
                 var delta = 1.0f / (float)paletteH;
-                for(var i = 6; i < paletteH; i++)
+                for (var i = 6; i < paletteH; i++)
                 {
                     var y = delta * (float)i;
                     choice.Add(new Choice($"#{i}", () =>
@@ -248,7 +263,7 @@ namespace Monomon.Views.Samples
                     }));
                 }
 
-                SelectChoice("Select palette", choice.ToArray() );
+                SelectChoice("Select palette", choice.ToArray());
             }
 
             if (_battleManager.BattleOver())
@@ -352,14 +367,17 @@ namespace Monomon.Views.Samples
 
         private void DrawBattle(SpriteBatch batch)
         {
+            if (ready)
+            {
+                ListView.DrawUIList(_currentList, new Vector2(UIValues.PlayerHudX, UIValues.PlayerHudY + 100), batch, font);
+                BattleCardView.Draw(batch, new Vector2(_currentEnemyCard.X, _currentEnemyCard.Y), font, _spriteMap, _currentEnemyCard);
+                BattleCardView.Draw(batch, new Vector2(_playerCard.X, _playerCard.Y), font, _spriteMap, _playerCard);
+            }
             _currentEnemyCard.SetHealth(_mob.Health);
             _playerCard.SetHealth(_player.Health);
             _playerCard.SetXp(_player.Xp);
 
 
-            ListView.DrawUIList(_currentList, new Vector2(UIValues.PlayerHudX, UIValues.PlayerHudY + 100), batch, font);
-            BattleCardView.Draw(batch, new Vector2(_currentEnemyCard.X, _currentEnemyCard.Y), font, _spriteMap, _currentEnemyCard);
-            BattleCardView.Draw(batch, new Vector2(_playerCard.X, _playerCard.Y), font, _spriteMap, _playerCard);
 
             batch.End();
             batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearWrap, null, null, _fadeEffect);
@@ -378,7 +396,7 @@ namespace Monomon.Views.Samples
 
         private void DrawEffect(SpriteBatch batch)
         {
-            batch.Draw(fadeTexture, new Rectangle(0,0,800,600), Color.White);
+            batch.Draw(fadeTexture, new Rectangle(0, 0, 800, 600), Color.White);
         }
     }
 }
