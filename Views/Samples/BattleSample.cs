@@ -303,7 +303,7 @@ namespace Monomon.Views.Samples
 
         protected override void OnDraw(SpriteBatch batch)
         {
-            DrawBattle();
+            DrawBattle(batch);
         }
 
         private void DrawBattleResult(BattleOutcome battleOutcome)
@@ -319,16 +319,16 @@ namespace Monomon.Views.Samples
                 _spriteBatch.DrawString(font, _battleReporter.Messages.Last(), new Vector2(200, 100), Color.White);
         }
 
-        private void DrawBattle()
+        private void DrawBattle(SpriteBatch batch)
         {
             _currentEnemyCard.SetHealth(_mob.Health);
             _playerCard.SetHealth(_player.Health);
             _playerCard.SetXp(_player.Xp);
 
 
-            ListView.DrawUIList(_currentList, new Vector2(UIValues.PlayerHudX, UIValues.PlayerHudY + 100), _spriteBatch, font);
-            BattleCardView.Draw(_spriteBatch, new Vector2(_currentEnemyCard.X, _currentEnemyCard.Y), font, _spriteMap, _currentEnemyCard);
-            BattleCardView.Draw(_spriteBatch, new Vector2(_playerCard.X, _playerCard.Y), font, _spriteMap, _playerCard);
+            ListView.DrawUIList(_currentList, new Vector2(UIValues.PlayerHudX, UIValues.PlayerHudY + 100), batch, font);
+            BattleCardView.Draw(batch, new Vector2(_currentEnemyCard.X, _currentEnemyCard.Y), font, _spriteMap, _currentEnemyCard);
+            BattleCardView.Draw(batch, new Vector2(_playerCard.X, _playerCard.Y), font, _spriteMap, _playerCard);
 
 
 
