@@ -36,10 +36,10 @@ namespace Monomon.Views.Battle
             batch.Draw(spriteMap, new Rectangle(card.X + card.PortraitOffsetX, card.PoirtrateAnimDelta+ card.Y + card.PortraitOffsetY, card.PortraitSrc.Width, card.PortraitSrc.Height), card.PortraitSrc, Color.White);
             if(card.Dying)
             {
-                batch.Draw(spriteMap, 
-                    new Rectangle(card.X + card.PortraitOffsetX, card.Y + card.PortraitOffsetY + card.PortraitSrc.Height, card.PortraitSrc.Width, card.PortraitSrc.Height), 
-                    new Rectangle(8,0,1,1),
-                    Color.Black);
+                batch.Draw(spriteMap,
+                    new Rectangle(card.X + card.PortraitOffsetX, card.Y + card.PortraitOffsetY + card.PortraitSrc.Height, card.PortraitSrc.Width, card.PortraitSrc.Height),
+                    new Rectangle(0,0,1,1),
+                    Color.White);
             }
         }
     }
