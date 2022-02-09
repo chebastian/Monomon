@@ -29,6 +29,8 @@ namespace Monomon
         private UIList<string> _sceneList;
         private SceneView _currentScene;
         private StateStack<double> _stateStack;
+        private Effect paletteEffect;
+        private Texture2D _palette;
 
         public Game1()
         {
@@ -45,6 +47,16 @@ namespace Monomon
             _input = new Monomon.Input.BufferInputHandler();
             _spriteBatch = new SpriteBatch(_graphics.GraphicsDevice);
             font = Content.Load<SpriteFont>("File");
+            paletteEffect = Content.Load<Effect>("Indexed");
+
+            //Init effect
+            {
+                _palette = Content.Load<Texture2D>("paletteMini"); 
+                paletteEffect.Parameters["time"].SetValue(0.0f);
+                paletteEffect.Parameters["swap"].SetValue(1.0f); 
+                paletteEffect.Parameters["palette"].SetValue(_palette);
+            }
+
 
             _sceneList = new UIList<string>(new List<UIItem<string>>() {
                 new UIItem<string>("Battle test",x => {
@@ -115,10 +127,7 @@ namespace Monomon
         {
             GraphicsDevice.Clear(Color.Black);
 
-            _spriteBatch.Begin();
-
-            //DrawUIList(_sceneList, new Vector2(0, 0));
-            //_currentScene.Draw(gameTime.ElapsedGameTime.TotalSeconds);
+            _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, paletteEffect);
 
             _stateStack.Render(gameTime.ElapsedGameTime.TotalSeconds);
 
