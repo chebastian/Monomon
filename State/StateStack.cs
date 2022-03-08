@@ -100,11 +100,6 @@ namespace Monomon.State
             {
                 foreach (var state in _states.Reverse())
                 {
-                    if(!state.initialized)
-                    {
-                        state.initialized = true;
-                        state.onEnter();
-                    }
                     state.state.Render(param); 
                 }
             }

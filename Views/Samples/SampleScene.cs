@@ -82,11 +82,11 @@ namespace Monomon.Views.Samples
 
         private void SwapScene(SceneView newScene)
         {
-            //newScene.LoadScene(_content);
             _stack.Push(new SceneState(newScene, _input), () =>
             {
                 _stack.Pop();
-            },() => newScene.LoadScene(_content));
+            },() => { });
+            newScene.LoadScene(_content);
         }
 
         public override void Update(double time)
