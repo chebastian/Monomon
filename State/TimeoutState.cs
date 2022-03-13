@@ -1,4 +1,5 @@
-﻿using Monomon.Input;
+﻿using MonoGameBase.Input;
+using Monomon.Input;
 using Monomon.Views.Scenes;
 using System;
 using System.Threading;

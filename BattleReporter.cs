@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGameBase.Input;
 using Monomon.Battle;
 using Monomon.Input;
 using Monomon.State;

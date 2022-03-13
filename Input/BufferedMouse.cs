@@ -6,29 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Monomon.Input
+namespace MonoGameProj.Input
 {
-    public enum BufferedMouseState
-    {
-        Clicked,
-        Released,
-        Down,
-        Up
-    };
-
-    public enum MouseButton
-    {
-        Left, Mid, Right
-    }
-
-    public interface IMouseHandler
-    {
-        (BufferedMouseState left, BufferedMouseState right) MouseButtonState();
-    }
-
+    using MonoGameBase.Input;
     public class BufferedMouse : IMouseHandler
     {
         private MouseState _oldState;
+        private bool _clicked;
         private bool _released;
         (BufferedMouseState left, BufferedMouseState right) _state;
 

@@ -103,10 +103,10 @@ namespace Monomon
 
 
             _input.Update();
-            if(_input.IsKeyPressed(Keys.F11))
-            {
-                _graphics.ToggleFullScreen();
-            }
+            //if(_input.IsKeyPressed(MonoGameBase.Input.KeyName.))
+            //{
+            //    _graphics.ToggleFullScreen();
+            //}
             //if (_input.IsKeyPressed(Keys.Down))
             //    _sceneList.SelectNext();
             //if (_input.IsKeyPressed(Keys.Up))
