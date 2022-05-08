@@ -40,6 +40,9 @@ namespace Monomon.Views.Samples
             font = content.Load<SpriteFont>("File");
             var sprites = content.Load<Texture2D>("spritemap");
             _sceneList = new UIList<string>(new List<UIItem<string>>() {
+                new UIItem<string>("Level test",x => {
+                    SwapScene(new LevelSample(GraphicsDevice,_input,_stack));
+                }),
                 new UIItem<string>("Battle test",x => {
                     SwapScene(new BattleSample(GraphicsDevice,_input,_stack));
                 }),

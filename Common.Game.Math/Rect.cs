@@ -59,6 +59,11 @@
             return new Vec2(a.X * scalar, a.Y * scalar);
         }
 
+        public static Vec2 operator *(Vec2 a, double scalar)
+        {
+            return new Vec2((float)(a.X * scalar), (float)(a.Y * scalar));
+        }
+
 
         public static Vec2 operator -(Vec2 a, Vec2 b)
         {

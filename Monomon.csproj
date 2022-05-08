@@ -43,4 +43,9 @@
     <ProjectReference Include="Common.Game.Math\Common.Game.Math.csproj" />
     <ProjectReference Include="MonogameBase\MonogameBase.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="Levels\initLevel.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
