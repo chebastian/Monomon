@@ -58,7 +58,7 @@ namespace Monomon
             return new ConfirmState(new MessageScene(_gd, message, _font, _sprites, true), _input);
         }
 
-        public void OnAttack(BattleMessage message, Mons.Mobmon attacker, Mons.Mobmon _oponent, Action continueWith, BattleCardViewModel attackerCard, BattleCardViewModel oponentCard)
+        public void OnAttack(BattleMessage message, Mons.Mobmon attacker, Mons.Mobmon _oponent, Action continueWith, BattleCardViewModel attackerCard, BattleCardViewModel oponentCard, bool isPlayer)
         {
             var attackInfoState = TimedMessage($"{message.attacker} used {message.name}");
 
@@ -107,14 +107,17 @@ namespace Monomon
 
                 _stack.AddState(dropPoirtrait, null, () => _soundCallback(Sounds.TakeDamage));
                 _stack.AddState(ConfirmMessage($"{_oponent.Name} has fainted"));
-                _stack.AddState(ConfirmMessage("XP Gained"));
-                var xp = attacker.Xp;
-                var xpUpdate = new TweenState((arg) => attacker.Xp = (float)(xp + arg.lerp), () =>
+                if (isPlayer)
                 {
-                    attacker.Xp = xp + 20;
-                }, 0.0f, 20, 1.0f, EasingFunc.EaseOutCube);
+                    _stack.AddState(ConfirmMessage("XP Gained"));
+                    var xp = attacker.Xp;
+                    var xpUpdate = new TweenState((arg) => attacker.Xp = (float)(xp + arg.lerp), () =>
+                    {
+                        attacker.Xp = xp + 20;
+                    }, 0.0f, 20, 1.0f, EasingFunc.EaseOutCube);
 
-                _stack.AddState(xpUpdate, null, () => _soundCallback(Sounds.XpUP));
+                    _stack.AddState(xpUpdate, null, () => _soundCallback(Sounds.XpUP)); 
+                }
             }
 
             _stack.EndStateSecence(() =>
