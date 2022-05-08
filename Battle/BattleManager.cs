@@ -116,7 +116,7 @@ namespace Monomon.Battle
             var msg = new BattleMessage(_attacker.Name, _oponent.Name, attackCommand.attackType.ToString(), attackCommand.stat.attack);
             _reporter.OnAttack(msg,_attacker,_oponent, () => {
                 NextTurn();
-            },_attackerCard,_oponentCard);
+            },_attackerCard,_oponentCard,_attacker == _player);
         }
 
         Task Swipe(AttackCommand attackCommand, Turn t)
