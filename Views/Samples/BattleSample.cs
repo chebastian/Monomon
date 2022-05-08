@@ -283,6 +283,18 @@ namespace Monomon.Views.Samples
                     });
                     SelectChoice("Do you want to continue?", yesChoice, no);
                 }
+                else
+                {
+                    var yesChoice = new Choice("Yes", () =>
+                    {
+                        _player = new Mobmon("Player", 3, new MonStatus(4, 2, 3));
+                        InitBattle();
+                    });
+                    var no = new Choice("No", () =>
+                    {
+                    });
+                    SelectChoice("You lost, continue with another mon?", yesChoice, no);
+                }
             }
 
             UpdateBattleCard(_mob, _currentEnemyCard, (float)time);
