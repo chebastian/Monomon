@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonogameBase;
 using MonogameBase.Camera;
+using MonoGameBase.Collision;
 using MonoGameBase.Input;
 using MonoGameBase.Level;
 using Monomon.State;
@@ -14,6 +15,53 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+namespace MonoGameBase.Collision
+{
+    public class CollisionResult
+    {
+        public CollisionResult(Vec2 velocity, List<(Rect, Vec2, float)> cols)
+        {
+            ResultingVelocity = velocity;
+            Collisions = cols;
+        }
+
+
+        public Vec2 ResultingVelocity { get; }
+        public List<(Rect r, Vec2 n, float t)> Collisions { get; }
+        public static CollisionResult HandleCollision(TileMap map,Rect colliderA, Vec2 velA, List<Rect> rects)
+        {
+            var normalizedDir = velA.Normalize();
+            var collisionsResult = Rect.ResolveCollisions(colliderA, rects, velA, (normalizedDir.X, normalizedDir.Y));
+            var vel = new Vec2(velA.X, velA.Y);
+            foreach (var item in collisionsResult.collision)
+            {
+                if (item.n.X == 0 && item.n.Y == 0)
+                {
+                    var tileIdx = map.ToTileIndex((int)item.r.X, (int)item.r.Y);
+                    var normals = map.TileOpenSides(tileIdx.x, tileIdx.y);
+                    var dots = normals.Select(x => (n: x, dot: Vector2.Dot(new Vector2(x.X, x.Y), new Vector2(normalizedDir.X, normalizedDir.Y)))).ToList();
+
+                    if (dots.Any())
+                    {
+                        var minDot = dots.Min(x => x.dot);
+                        var minItem = dots.First(x => x.dot == minDot);
+                        if (minDot < 0)
+                        {
+                            item.n.X = minItem.n.X;
+                            item.n.Y = minItem.n.Y;
+                        }
+                    }
+                }
+
+                vel += item.n * new Vec2(Math.Abs(vel.X), Math.Abs(vel.Y)) * (1.0f - item.t);
+                collisionsResult.resultingVelocity = vel;
+            }
+
+            return new CollisionResult(collisionsResult.resultingVelocity, collisionsResult.collision);
+        }
+    }
+}
 
 namespace Monomon.Views.Samples
 {
@@ -82,59 +130,14 @@ namespace Monomon.Views.Samples
             var playerRect = new Rect(_player.Pos.X, _player.Pos.Y, 16, 16);
 
             var tiles = _map.GetTilesInside(playerRect.MinkowskiSum(new Rect(0,0,16,16))).Where(x => x.type == TileType.Wall).Select(x => x.rect).ToList();
-            var info = HandleCollision(playerRect, vel, tiles);
+            var info = CollisionResult.HandleCollision(_map,playerRect, vel, tiles);
             if (info.Collisions.Any())
                 _player.Pos += info.ResultingVelocity;
             else
                 _player.Pos += vel;
         }
 
-        public List<Vec2> TileOpenSides(int x, int y)
-        {
-            var dirs = new List<(int x, int y)>() {
-            (-1,0),
-            (0,-1),
-            (1,0),
-            (0,1),
-            };
 
-            var res = dirs.Select(dir => (dir, solid: _map.GetTileAt(x + dir.x, y + dir.y) != TileType.None));
-
-
-            return res.Where(dir => !dir.solid).Select(dir => new Vec2(dir.dir.x, dir.dir.y)).ToList();
-        }
-
-        public CollisionResult HandleCollision(Rect colliderA, Vec2 velA, List<Rect> rects)
-        {
-            var normalizedDir = velA.Normalize();
-            var collisionsResult = Rect.ResolveCollisions(colliderA, rects, velA, (normalizedDir.X, normalizedDir.Y));
-            var vel = new Vec2(velA.X, velA.Y);
-            foreach (var item in collisionsResult.collision)
-            {
-                if (item.n.X == 0 && item.n.Y == 0)
-                {
-                    var tileIdx = _map.ToTileIndex((int)item.r.X, (int)item.r.Y);
-                    var normals = TileOpenSides(tileIdx.x, tileIdx.y);
-                    var dots = normals.Select(x => (n: x, dot: Vector2.Dot(new Vector2(x.X, x.Y), new Vector2(normalizedDir.X, normalizedDir.Y)))).ToList();
-
-                    if (dots.Any())
-                    {
-                        var minDot = dots.Min(x => x.dot);
-                        var minItem = dots.First(x => x.dot == minDot);
-                        if (minDot < 0)
-                        {
-                            item.n.X = minItem.n.X;
-                            item.n.Y = minItem.n.Y;
-                        }
-                    }
-                }
-
-                vel += item.n * new Vec2(Math.Abs(vel.X), Math.Abs(vel.Y)) * (1.0f - item.t);
-                collisionsResult.resultingVelocity = vel;
-            }
-
-            return new CollisionResult(collisionsResult.resultingVelocity, collisionsResult.collision);
-        }
 
 
 
@@ -194,17 +197,5 @@ namespace Monomon.Views.Samples
         }
     }
 
-    public class CollisionResult
-    {
-        public CollisionResult(Vec2 velocity, List<(Rect, Vec2, float)> cols)
-        {
-            ResultingVelocity = velocity;
-            Collisions = cols;
-        }
-
-
-        public Vec2 ResultingVelocity { get; }
-        public List<(Rect r, Vec2 n, float t)> Collisions { get; }
-    }
 
 }

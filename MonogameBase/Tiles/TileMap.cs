@@ -231,5 +231,19 @@ namespace MonogameBase
 
         private TileType[][] _tiles;
         public TileType[][] Tiles { get => _tiles; }
+        public List<Vec2> TileOpenSides(int x, int y)
+        {
+            var dirs = new List<(int x, int y)>() {
+            (-1,0),
+            (0,-1),
+            (1,0),
+            (0,1),
+            };
+
+            var res = dirs.Select(dir => (dir, solid: GetTileAt(x + dir.x, y + dir.y) != TileType.None));
+
+
+            return res.Where(dir => !dir.solid).Select(dir => new Vec2(dir.dir.x, dir.dir.y)).ToList();
+        }
     }
 }
