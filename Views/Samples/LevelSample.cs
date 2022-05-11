@@ -32,6 +32,7 @@ namespace Monomon.Views.Samples
         private IINputHandler input;
         private StateStack<double> stack;
         private Texture2D _tileSprites;
+        private Texture2D _playerSprites;
         private TileMap _map;
         private SerializedLevelData? _levelData;
 
@@ -60,6 +61,7 @@ namespace Monomon.Views.Samples
 
 
             _tileSprites = content.Load<Texture2D>("levelMap");
+            _playerSprites = content.Load<Texture2D>("player");
 
         }
 
@@ -86,6 +88,8 @@ namespace Monomon.Views.Samples
                 _player.Pos += info.ResultingVelocity;
             else
                 _player.Pos += vel;
+
+            _player.Vel = vel;
         }
 
         public Rect Window = new Rect(0, 0, 400, 200);
@@ -121,11 +125,27 @@ namespace Monomon.Views.Samples
             }
 
             var playerCamPos = ToWindowPosition(_player.Pos);
-            _spriteBatch.Draw(_tileSprites,
+            _spriteBatch.Draw(_playerSprites,
                 new Rectangle((int)playerCamPos.X, (int)playerCamPos.Y, 16, 16),
-                new Rectangle(0,0,16,16),
+                SourceForDir(_player.Vel),
                 Color.White
                 );
+
+            static Rectangle SourceForDir(Vec2 inDir)
+            {
+                var dx = inDir.Normalize();
+
+                int frameX = dx switch
+                {
+                    var dir when dir.X > 0 => 2,
+                    var dir when dir.X < 0 => 3,
+                    var dir when dir.Y > 0 => 4,
+                    var dir when dir.Y < 0 => 1,
+                    _ => 0
+                };
+
+                return new Rectangle(frameX*16, 0, 16, 16);
+            }
 
 
             Vector2 ToWindowPosition(Vec2 pos)
