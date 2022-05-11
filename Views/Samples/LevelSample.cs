@@ -74,7 +74,10 @@ namespace Monomon.Views.Samples
             dy = input.IsKeyDown(KeyName.Up) ? -1.0 : dy;
             dy = input.IsKeyDown(KeyName.Down) ? 1.0 : dy;
 
-            windowPos = _player.Pos + new Vec2(-150,-100);
+            var winPos = _player.Pos + new Vec2(-(Window.Width * 0.5f), -(Window.Height * 0.5f));
+            Window.X = winPos.X;
+            Window.Y = winPos.Y;
+
             var vel = new Vec2((float)((dx * 200.0) * time), (float)((dy * 200.0) * time));
             var playerRect = new Rect(_player.Pos.X, _player.Pos.Y, 16, 16);
 
@@ -136,10 +139,10 @@ namespace Monomon.Views.Samples
 
 
 
+        public Rect Window = new Rect(0, 0, 400, 200);
         protected override void OnDraw(SpriteBatch batch)
         {
             var renderpos = (x: 200, y: 0);
-            var window = (X: windowPos.X, Y: windowPos.Y, Width: 300, Height: 200);
             var Constants = (TileW: 16, TileH: 16, SpriteMapW: 27);
             static (Rectangle src, int x, int y) GetUvCoords(Rect rect, Rect src, Rect win)
             {
@@ -148,7 +151,7 @@ namespace Monomon.Views.Samples
             }
 
 
-            foreach (var tile in _map.GetTilesInside(new Rect(window.X, window.Y, window.Width, window.Height)))
+            foreach (var tile in _map.GetTilesInside(new Rect(Window.X, Window.Y, Window.Width, Window.Height)))
             {
                 //_spriteBatch.Draw(_floorTexture, new Vector2(winPos.x  + (tile.rect.X - .X), winPos.y + (tile.rect.Y - window.Y)), new Rectangle((int)(tileindex.X * TileW), (int)tileindex.Y * TileH, Constants.TileW, Constants.TileH), Color.White);
                 var tilepos = (x: tile.rect.X / (Constants.TileW), y: tile.rect.Y / (Constants.TileH));
@@ -179,7 +182,7 @@ namespace Monomon.Views.Samples
 
             Vector2 ToWindowPosition(Vec2 pos)
             {
-                var wv = CameraHelper.ToWindowPosition(pos, new Vec2(window.X, window.Y));
+                var wv = CameraHelper.ToWindowPosition(pos, new Vec2(Window.X, Window.Y));
                 return new Vector2(wv.X + renderpos.x, wv.Y + renderpos.y);
             }
 
