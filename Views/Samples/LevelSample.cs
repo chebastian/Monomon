@@ -74,11 +74,12 @@ namespace Monomon.Views.Samples
             dy = input.IsKeyDown(KeyName.Up) ? -1.0 : dy;
             dy = input.IsKeyDown(KeyName.Down) ? 1.0 : dy;
 
-//            windowPos = _player.Pos;// + new Vec2(-150,100);
+            windowPos = _player.Pos + new Vec2(-150,-100);
             var vel = new Vec2((float)((dx * 200.0) * time), (float)((dy * 200.0) * time));
             var playerRect = new Rect(_player.Pos.X, _player.Pos.Y, 16, 16);
 
-            var info = HandleCollision(playerRect, vel, _map.GetTilesInside(playerRect).Select(x => x.rect).ToList());
+            var tiles = _map.GetTilesInside(playerRect.MinkowskiSum(new Rect(0,0,16,16))).Where(x => x.type == TileType.Wall).Select(x => x.rect).ToList();
+            var info = HandleCollision(playerRect, vel, tiles);
             if (info.Collisions.Any())
                 _player.Pos += info.ResultingVelocity;
             else
@@ -137,7 +138,7 @@ namespace Monomon.Views.Samples
 
         protected override void OnDraw(SpriteBatch batch)
         {
-            var renderpos = (x: 0, y: 0);
+            var renderpos = (x: 200, y: 0);
             var window = (X: windowPos.X, Y: windowPos.Y, Width: 300, Height: 200);
             var Constants = (TileW: 16, TileH: 16, SpriteMapW: 27);
             static (Rectangle src, int x, int y) GetUvCoords(Rect rect, Rect src, Rect win)
