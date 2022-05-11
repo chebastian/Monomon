@@ -17,6 +17,17 @@ using System.Threading.Tasks;
 
 namespace Monomon.Views.Samples
 {
+    public class Player
+    {
+        public Player()
+        {
+            Pos = new Vec2();
+            Vel = new Vec2();
+        }
+        public Vec2 Pos { get; set; }
+        public Vec2 Vel { get; set; }
+    }
+
     public class LevelSample : SceneView
     {
         private IINputHandler input;
@@ -24,6 +35,8 @@ namespace Monomon.Views.Samples
         private Texture2D _tileSprites;
         private TileMap _map;
         private SerializedLevelData? _levelData;
+
+        private Player _player;
 
         private Vec2 windowPos;
 
@@ -35,6 +48,8 @@ namespace Monomon.Views.Samples
         {
             this.input = input;
             this.stack = stack;
+            _player = new Player();
+            _player.Pos = new Vec2(128, 100);
             windowPos = new Vec2(0, 0);
         }
 
@@ -59,12 +74,70 @@ namespace Monomon.Views.Samples
             dy = input.IsKeyDown(KeyName.Up) ? -1.0 : dy;
             dy = input.IsKeyDown(KeyName.Down) ? 1.0 : dy;
 
-            windowPos += (new Vec2((float)dx, (float)dy) * 200.0) * time;
+//            windowPos = _player.Pos;// + new Vec2(-150,100);
+            var vel = new Vec2((float)((dx * 200.0) * time), (float)((dy * 200.0) * time));
+            var playerRect = new Rect(_player.Pos.X, _player.Pos.Y, 16, 16);
+
+            var info = HandleCollision(playerRect, vel, _map.GetTilesInside(playerRect).Select(x => x.rect).ToList());
+            if (info.Collisions.Any())
+                _player.Pos += info.ResultingVelocity;
+            else
+                _player.Pos += vel;
         }
+
+        public List<Vec2> TileOpenSides(int x, int y)
+        {
+            var dirs = new List<(int x, int y)>() {
+            (-1,0),
+            (0,-1),
+            (1,0),
+            (0,1),
+            };
+
+            var res = dirs.Select(dir => (dir, solid: _map.GetTileAt(x + dir.x, y + dir.y) != TileType.None));
+
+
+            return res.Where(dir => !dir.solid).Select(dir => new Vec2(dir.dir.x, dir.dir.y)).ToList();
+        }
+
+        public CollisionResult HandleCollision(Rect colliderA, Vec2 velA, List<Rect> rects)
+        {
+            var normalizedDir = velA.Normalize();
+            var collisionsResult = Rect.ResolveCollisions(colliderA, rects, velA, (normalizedDir.X, normalizedDir.Y));
+            var vel = new Vec2(velA.X, velA.Y);
+            foreach (var item in collisionsResult.collision)
+            {
+                if (item.n.X == 0 && item.n.Y == 0)
+                {
+                    var tileIdx = _map.ToTileIndex((int)item.r.X, (int)item.r.Y);
+                    var normals = TileOpenSides(tileIdx.x, tileIdx.y);
+                    var dots = normals.Select(x => (n: x, dot: Vector2.Dot(new Vector2(x.X, x.Y), new Vector2(normalizedDir.X, normalizedDir.Y)))).ToList();
+
+                    if (dots.Any())
+                    {
+                        var minDot = dots.Min(x => x.dot);
+                        var minItem = dots.First(x => x.dot == minDot);
+                        if (minDot < 0)
+                        {
+                            item.n.X = minItem.n.X;
+                            item.n.Y = minItem.n.Y;
+                        }
+                    }
+                }
+
+                vel += item.n * new Vec2(Math.Abs(vel.X), Math.Abs(vel.Y)) * (1.0f - item.t);
+                collisionsResult.resultingVelocity = vel;
+            }
+
+            return new CollisionResult(collisionsResult.resultingVelocity, collisionsResult.collision);
+        }
+
+
+
 
         protected override void OnDraw(SpriteBatch batch)
         {
-            var renderpos = (x: 200,y: 200);
+            var renderpos = (x: 0, y: 0);
             var window = (X: windowPos.X, Y: windowPos.Y, Width: 300, Height: 200);
             var Constants = (TileW: 16, TileH: 16, SpriteMapW: 27);
             static (Rectangle src, int x, int y) GetUvCoords(Rect rect, Rect src, Rect win)
@@ -74,7 +147,7 @@ namespace Monomon.Views.Samples
             }
 
 
-            foreach (var tile in _map.GetTilesInside(new Rect(window.X,window.Y,window.Width,window.Height)))
+            foreach (var tile in _map.GetTilesInside(new Rect(window.X, window.Y, window.Width, window.Height)))
             {
                 //_spriteBatch.Draw(_floorTexture, new Vector2(winPos.x  + (tile.rect.X - .X), winPos.y + (tile.rect.Y - window.Y)), new Rectangle((int)(tileindex.X * TileW), (int)tileindex.Y * TileH, Constants.TileW, Constants.TileH), Color.White);
                 var tilepos = (x: tile.rect.X / (Constants.TileW), y: tile.rect.Y / (Constants.TileH));
@@ -95,6 +168,13 @@ namespace Monomon.Views.Samples
                 }
             }
 
+            var playerCamPos = ToWindowPosition(_player.Pos);
+            _spriteBatch.Draw(_tileSprites,
+                new Rectangle((int)playerCamPos.X, (int)playerCamPos.Y, 16, 16),
+                new Rectangle(0,0,16,16),
+                Color.White
+                );
+
 
             Vector2 ToWindowPosition(Vec2 pos)
             {
@@ -109,4 +189,18 @@ namespace Monomon.Views.Samples
 
         }
     }
+
+    public class CollisionResult
+    {
+        public CollisionResult(Vec2 velocity, List<(Rect, Vec2, float)> cols)
+        {
+            ResultingVelocity = velocity;
+            Collisions = cols;
+        }
+
+
+        public Vec2 ResultingVelocity { get; }
+        public List<(Rect r, Vec2 n, float t)> Collisions { get; }
+    }
+
 }
