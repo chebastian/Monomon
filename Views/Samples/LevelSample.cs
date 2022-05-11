@@ -18,17 +18,8 @@ using System.Threading.Tasks;
 
 namespace MonoGameBase.Collision
 {
-    public class CollisionResult
+    public static class CollisionHelper
     {
-        public CollisionResult(Vec2 velocity, List<(Rect, Vec2, float)> cols)
-        {
-            ResultingVelocity = velocity;
-            Collisions = cols;
-        }
-
-
-        public Vec2 ResultingVelocity { get; }
-        public List<(Rect r, Vec2 n, float t)> Collisions { get; }
         public static CollisionResult HandleCollision(TileMap map,Rect colliderA, Vec2 velA, List<Rect> rects)
         {
             var normalizedDir = velA.Normalize();
@@ -60,6 +51,19 @@ namespace MonoGameBase.Collision
 
             return new CollisionResult(collisionsResult.resultingVelocity, collisionsResult.collision);
         }
+    }
+
+    public class CollisionResult
+    {
+        public CollisionResult(Vec2 velocity, List<(Rect, Vec2, float)> cols)
+        {
+            ResultingVelocity = velocity;
+            Collisions = cols;
+        }
+
+
+        public Vec2 ResultingVelocity { get; }
+        public List<(Rect r, Vec2 n, float t)> Collisions { get; }
     }
 }
 
@@ -130,7 +134,7 @@ namespace Monomon.Views.Samples
             var playerRect = new Rect(_player.Pos.X, _player.Pos.Y, 16, 16);
 
             var tiles = _map.GetTilesInside(playerRect.MinkowskiSum(new Rect(0,0,16,16))).Where(x => x.type == TileType.Wall).Select(x => x.rect).ToList();
-            var info = CollisionResult.HandleCollision(_map,playerRect, vel, tiles);
+            var info = CollisionHelper.HandleCollision(_map,playerRect, vel, tiles);
             if (info.Collisions.Any())
                 _player.Pos += info.ResultingVelocity;
             else
