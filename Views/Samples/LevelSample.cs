@@ -56,7 +56,7 @@ namespace Monomon.Views.Samples
         public override void LoadScene(ContentManager content)
         {
             _map = new TileMap();
-            _levelData = System.Text.Json.JsonSerializer.Deserialize<SerializedLevelData>(File.ReadAllText("./Levels/initLevel.json"));
+            _levelData = System.Text.Json.JsonSerializer.Deserialize<SerializedLevelData>(File.ReadAllText("./Levels/grass.json"));
             _map.CreateLevel(_levelData.VisibleTiles, _levelData.Tiles);
 
 
