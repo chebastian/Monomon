@@ -33,6 +33,8 @@ namespace Monomon.Views.Samples
         private StateStack<double> stack;
         private Texture2D _tileSprites;
         private Texture2D _playerSprites;
+        private Effect paletteEffect;
+        private RenderTarget2D _renderTarget;
         private TileMap _map;
         private SerializedLevelData? _levelData;
 
@@ -55,6 +57,7 @@ namespace Monomon.Views.Samples
 
         public override void LoadScene(ContentManager content)
         {
+            _renderTarget = new RenderTarget2D(_graphics, 160, 144);
             _map = new TileMap();
             _levelData = System.Text.Json.JsonSerializer.Deserialize<SerializedLevelData>(File.ReadAllText("./Levels/grass.json"));
             _map.CreateLevel(_levelData.VisibleTiles, _levelData.Tiles);
@@ -62,6 +65,17 @@ namespace Monomon.Views.Samples
 
             _tileSprites = content.Load<Texture2D>("levelMap");
             _playerSprites = content.Load<Texture2D>("player");
+
+            paletteEffect = content.Load<Effect>("Indexed");
+
+            //Init effect
+            {
+                _palette = content.Load<Texture2D>("paletteMini"); 
+                paletteEffect.Parameters["time"].SetValue(0.0f);
+                paletteEffect.Parameters["swap"].SetValue(1.0f); 
+                paletteEffect.Parameters["palette"].SetValue(_palette);
+            }
+
 
         }
 
@@ -92,10 +106,17 @@ namespace Monomon.Views.Samples
             _player.Vel = vel;
         }
 
-        public Rect Window = new Rect(0, 0, 400, 200);
+        public Rect Window = new Rect(0, 0, 160, 144);
+        private Texture2D _palette;
+
         protected override void OnDraw(SpriteBatch batch)
         {
-            var renderpos = (x: 200, y: 0);
+            batch.End();
+            _graphics.SetRenderTarget(_renderTarget);
+            _graphics.Clear(Color.White);
+            batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, paletteEffect);
+
+            var renderpos = (x: 0, y: 0);
             var Constants = (TileW: 16, TileH: 16, SpriteMapW: 27);
             static (Rectangle src, int x, int y) GetUvCoords(Rect rect, Rect src, Rect win)
             {
@@ -158,6 +179,14 @@ namespace Monomon.Views.Samples
             {
                 return win.Intersects(pos);
             }
+
+            var zoom = 2;
+            batch.End();
+            batch.Begin(samplerState: SamplerState.PointWrap);
+            _graphics.SetRenderTarget(null);
+            batch.Draw(_renderTarget, new Rectangle(0,0,_renderTarget.Width*zoom,_renderTarget.Height*zoom), Color.White);
+            batch.End();
+            batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, paletteEffect);
 
         }
     }
