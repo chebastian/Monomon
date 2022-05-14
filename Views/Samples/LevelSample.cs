@@ -22,9 +22,41 @@ namespace Monomon.Views.Samples
         {
             Pos = new Vec2();
             Vel = new Vec2();
+            Target = new Vec2();
+            Dist = 0.0f;
         }
         public Vec2 Pos { get; set; }
         public Vec2 Vel { get; set; }
+        public Vec2 Target { get; set; }
+        public float Dist { get; set; }
+
+        public void SetTarget(Vec2 target)
+        {
+            if(Dist<= 0.0f && target.X != 0 || target.Y != 0)
+            {
+                Target = target + Pos;
+                Dist = 0.0f;
+            }
+        }
+
+        public void Advance(float d, float t)
+        {
+            if (Target.X == 0 && Target.Y == 0) 
+                return;
+
+            Dist += t;
+            if (Dist >= 1)
+            {
+                Target = new Vec2(0, 0);
+                Dist = 0.0f;
+            }
+
+            if (Target.X == 0 && Target.Y == 0) 
+                return;
+
+            if(Dist <= 1)
+                Pos = Pos.Quad(Target, Dist);
+        }
     }
 
     public class LevelSample : SceneView
@@ -51,7 +83,7 @@ namespace Monomon.Views.Samples
             this.input = input;
             this.stack = stack;
             _player = new Player();
-            _player.Pos = new Vec2(128, 100);
+            _player.Pos = new Vec2(128, 128);
             windowPos = new Vec2(0, 0);
         }
 
@@ -75,35 +107,33 @@ namespace Monomon.Views.Samples
                 paletteEffect.Parameters["swap"].SetValue(1.0f); 
                 paletteEffect.Parameters["palette"].SetValue(_palette);
             }
-
-
         }
 
         public override void Update(double time)
         {
-            var dx = 0.0;
-            dx = input.IsKeyDown(KeyName.Left) ? -1.0 : dx;
-            dx = input.IsKeyDown(KeyName.Right) ? 1.0 : dx;
-
-            var dy = 0.0;
-            dy = input.IsKeyDown(KeyName.Up) ? -1.0 : dy;
-            dy = input.IsKeyDown(KeyName.Down) ? 1.0 : dy;
+            var dx = input.GetX();
+            var dy = input.GetY();
 
             var winPos = _player.Pos + new Vec2(-(Window.Width * 0.5f), -(Window.Height * 0.5f));
             Window.X = winPos.X;
             Window.Y = winPos.Y;
 
-            var vel = new Vec2((float)((dx * 200.0) * time), (float)((dy * 200.0) * time));
+            _player.SetTarget(new Vec2(dx * 16, dy * 16));
+            _player.Advance((float)(time * 64.0f), (float)time);
+
+            var speed = 64.0;
+            var vel = new Vec2((float)((dx * speed) * time), (float)((dy * speed) * time));
             var playerRect = new Rect(_player.Pos.X, _player.Pos.Y, 16, 16);
 
             var tiles = _map.GetTilesInside(playerRect.MinkowskiSum(new Rect(0,0,16,16))).Where(x => x.type == TileType.Wall).Select(x => x.rect).ToList();
             var info = CollisionHelper.HandleCollision(_map,playerRect, vel, tiles);
-            if (info.Collisions.Any())
-                _player.Pos += info.ResultingVelocity;
-            else
-                _player.Pos += vel;
 
-            _player.Vel = vel;
+            //if (info.Collisions.Any())
+            //    _player.Pos += info.ResultingVelocity;
+            //else
+            //    _player.Pos += vel;
+
+            //_player.Vel = vel;
         }
 
         public Rect Window = new Rect(0, 0, 160, 144);
@@ -112,6 +142,7 @@ namespace Monomon.Views.Samples
         protected override void OnDraw(SpriteBatch batch)
         {
             batch.End();
+
             _graphics.SetRenderTarget(_renderTarget);
             _graphics.Clear(Color.White);
             batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, paletteEffect);

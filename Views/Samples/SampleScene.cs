@@ -82,6 +82,7 @@ namespace Monomon.Views.Samples
             }, x => { }, x => { });
 
             _content = content;
+            SwapScene(new LevelSample(GraphicsDevice,_input,_stack));
         }
 
         private void SwapScene(SceneView newScene)
