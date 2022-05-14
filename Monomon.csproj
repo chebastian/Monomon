@@ -44,6 +44,9 @@
     <ProjectReference Include="MonogameBase\MonogameBase.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <None Update="Levels\grass.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Levels\initLevel.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
