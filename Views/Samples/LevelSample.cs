@@ -9,6 +9,7 @@ using MonoGameBase.Input;
 using MonoGameBase.Level;
 using Monomon.State;
 using Monomon.Views.Scenes;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -32,30 +33,36 @@ namespace Monomon.Views.Samples
 
         public void SetTarget(Vec2 target)
         {
-            if(Dist<= 0.0f && target.X != 0 || target.Y != 0)
+            var playerCenter = Pos + new Vec2(8, 8);
+            var tileBegin = ((int)(playerCenter.X / 16)*16,((int)playerCenter.Y / 16)*16); 
+
+            if (Dist <= 0.0f && (target.X != 0 || target.Y != 0))
             {
-                Target = target + Pos;
+                Debug.WriteLine("hit");
+                Target = target + new Vec2(tileBegin.Item1,tileBegin.Item2);
                 Dist = 0.0f;
             }
         }
 
         public void Advance(float d, float t)
         {
-            if (Target.X == 0 && Target.Y == 0) 
+            if (Target.X == 0 && Target.Y == 0)
                 return;
 
-            Dist += t;
+            Dist += d;
+            Dist = System.MathF.Min(Dist, 1.0f);
             if (Dist >= 1)
             {
+                Pos = Pos.Quad(Target, Dist);
                 Target = new Vec2(0, 0);
                 Dist = 0.0f;
             }
 
-            if (Target.X == 0 && Target.Y == 0) 
+            if (Target.X == 0 && Target.Y == 0)
                 return;
 
-            if(Dist <= 1)
-                Pos = Pos.Quad(Target, Dist);
+            if (Dist <= 1)
+                Pos = Pos.Lerp(Target, Dist);
         }
     }
 
@@ -102,9 +109,9 @@ namespace Monomon.Views.Samples
 
             //Init effect
             {
-                _palette = content.Load<Texture2D>("paletteMini"); 
+                _palette = content.Load<Texture2D>("paletteMini");
                 paletteEffect.Parameters["time"].SetValue(0.0f);
-                paletteEffect.Parameters["swap"].SetValue(1.0f); 
+                paletteEffect.Parameters["swap"].SetValue(1.0f);
                 paletteEffect.Parameters["palette"].SetValue(_palette);
             }
         }
@@ -118,22 +125,29 @@ namespace Monomon.Views.Samples
             Window.X = winPos.X;
             Window.Y = winPos.Y;
 
-            _player.SetTarget(new Vec2(dx * 16, dy * 16));
-            _player.Advance((float)(time * 64.0f), (float)time);
 
-            var speed = 64.0;
-            var vel = new Vec2((float)((dx * speed) * time), (float)((dy * speed) * time));
+            var vel = new Vec2(dx * 16, dy * 16) * time;
+
+
+            var speed = 16.0;
             var playerRect = new Rect(_player.Pos.X, _player.Pos.Y, 16, 16);
 
-            var tiles = _map.GetTilesInside(playerRect.MinkowskiSum(new Rect(0,0,16,16))).Where(x => x.type == TileType.Wall).Select(x => x.rect).ToList();
-            var info = CollisionHelper.HandleCollision(_map,playerRect, vel, tiles);
+            if (dx == 0 && dy == 0)
+            {
+                var oldVel = _player.Vel.Normalize();
+                _player.Advance((float)((time * speed / 16.0f)),(float)time);
+                _player.SetTarget(new Vec2(System.MathF.Sign(oldVel.X) * 16, System.MathF.Sign(oldVel.Y) * 16));
+            }
 
-            //if (info.Collisions.Any())
-            //    _player.Pos += info.ResultingVelocity;
-            //else
-            //    _player.Pos += vel;
+            var tiles = _map.GetTilesInside(playerRect.MinkowskiSum(new Rect(0, 0, 16, 16))).Where(x => x.type == TileType.Wall).Select(x => x.rect).ToList();
+            var info = CollisionHelper.HandleCollision(_map, playerRect, vel, tiles);
 
-            //_player.Vel = vel;
+            if (info.Collisions.Any())
+                _player.Pos += info.ResultingVelocity;
+            else
+                _player.Pos += vel;
+
+            _player.Vel = vel;
         }
 
         public Rect Window = new Rect(0, 0, 160, 144);
@@ -196,7 +210,7 @@ namespace Monomon.Views.Samples
                     _ => 0
                 };
 
-                return new Rectangle(frameX*16, 0, 16, 16);
+                return new Rectangle(frameX * 16, 0, 16, 16);
             }
 
 
@@ -215,7 +229,7 @@ namespace Monomon.Views.Samples
             batch.End();
             batch.Begin(samplerState: SamplerState.PointWrap);
             _graphics.SetRenderTarget(null);
-            batch.Draw(_renderTarget, new Rectangle(0,0,_renderTarget.Width*zoom,_renderTarget.Height*zoom), Color.White);
+            batch.Draw(_renderTarget, new Rectangle(0, 0, _renderTarget.Width * zoom, _renderTarget.Height * zoom), Color.White);
             batch.End();
             batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, paletteEffect);
 
