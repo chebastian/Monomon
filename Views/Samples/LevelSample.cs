@@ -38,6 +38,7 @@ namespace Monomon.Views.Samples
             Vel = new Vec2();
             Target = new Vec2();
             Dist = 0.0f;
+            OgPos = new Vec2();
         }
         public Vec2 Pos { get; set; }
         public Vec2 Vel { get; set; }
