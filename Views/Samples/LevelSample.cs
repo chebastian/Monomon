@@ -121,7 +121,7 @@ namespace Monomon.Views.Samples
 
         private Vec2 windowPos;
 
-        public Vec2 ToPositionOnGrid(Vec2 pos)
+        public Vec2 ToGridTopLeft(Vec2 pos)
         {
             return new Vec2(((int)(pos.X / 16)) * 16,((int)( pos.Y / 16))*16);
         }
@@ -175,8 +175,11 @@ namespace Monomon.Views.Samples
                 var bothPressed = (_dx != 00 && _dy != 0.0);
                 _dy = bothPressed ? 0 : _dy;
 
-                if(_player.Dist == 0.0f)
-                    _player.WalkInDirection(ToPositionOnGrid(_player.Center + new Vec2(_dx * Constants.TileW, _dy * Constants.TileH)));
+                var targetOnGrid = ToGridTopLeft(_player.Center + new Vec2(_dx * Constants.TileW, _dy * Constants.TileH));
+                var tileAtTarget = _map.GetTileAt((int)targetOnGrid.X/Constants.TileW, (int)targetOnGrid.Y/Constants.TileH);
+
+                if(_player.Dist == 0.0f && tileAtTarget != TileType.Wall)
+                    _player.WalkInDirection(targetOnGrid);
             }
 
             _player.Update((float)time);
@@ -184,12 +187,12 @@ namespace Monomon.Views.Samples
             var tiles = _map.GetTilesInside(playerRect.MinkowskiSum(new Rect(0, 0, 16, 16))).Where(x => x.type == TileType.Wall).Select(x => x.rect).ToList();
             var info = CollisionHelper.HandleCollision(_map, playerRect, vel, tiles);
 
-            if (info.Collisions.Any())
-                _player.Pos += info.ResultingVelocity;
-            else
-                _player.Pos += vel;
+            //if (info.Collisions.Any())
+            //    _player.Pos += info.ResultingVelocity;
+            //else
+            //    _player.Pos += vel;
 
-            _player.Vel = vel;
+            //_player.Vel = vel;
         }
 
         public Rect Window = new Rect(0, 0, 160, 144);
@@ -235,8 +238,8 @@ namespace Monomon.Views.Samples
                 Color.White
                 );
 
-            MarkTile(ToPositionOnGrid( _player.Center));
-            MarkTile(ToPositionOnGrid( _player.Center + new Vec2(_dx*Constants.TileW,_dy*Constants.TileH)));
+            MarkTile(ToGridTopLeft( _player.Center));
+            MarkTile(ToGridTopLeft( _player.Center + new Vec2(_dx*Constants.TileW,_dy*Constants.TileH)));
 
             void MarkTile(Vec2 gridPos)
             {
