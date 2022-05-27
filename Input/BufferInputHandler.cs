@@ -19,13 +19,23 @@ namespace Monomon.Input
         private GamePadState _padState;
         private List<KeyName> _padDown;
         private IEnumerable<Keys> _pressed;
-        private IEnumerable<Keys> _removed;
         BufferedMouse _mouse = new BufferedMouse();
         private IEnumerable<KeyName> _padWasPressed;
         private IEnumerable<KeyName> _padPressed;
         private float _cursorX;
         private float _cursorY;
         private bool _mouseMove;
+
+        public BufferInputHandler()
+        {
+            _pressed = new List<Keys>();
+            _wasPressed = new Keys[] { };
+            _keys = new Keys[] { };
+            _padState = GamePadState.Default;
+            _padDown = new List<KeyName> { };
+            _padWasPressed = new List<KeyName>();
+            _padPressed = new List<KeyName>();
+        }
 
         private Keys[] GetPressedKeys()
         {
@@ -60,8 +70,6 @@ namespace Monomon.Input
 
 
             _pressed = newKeys;
-
-            _removed = _wasPressed == null ? new List<Keys>() : _wasPressed.Except(pressed);
 
             _wasPressed = pressed;
             _padWasPressed = pressedKeyNames;
@@ -133,7 +141,8 @@ namespace Monomon.Input
             return keys.ToArray();
         }
 
-        public Keys[] KeyMap(KeyName key) => key switch {
+        public Keys[] KeyMap(KeyName key) => key switch
+        {
             KeyName.Left => new[] { Keys.Left, Keys.J },
             KeyName.Right => new[] { Keys.Right, Keys.K },
             KeyName.Up => new[] { Keys.Up, Keys.K },
@@ -160,9 +169,9 @@ namespace Monomon.Input
 
             KeyName.Editor_SaveLevel => new[] { Keys.S },
             KeyName.Editor_LoadLevel => new[] { Keys.L },
-            KeyName.Editor_ReloadLevel => new[] { Keys.K,Keys.RightControl },
-            KeyName.Editor_SaveLevelAs => new[] { Keys.S,Keys.RightControl },
-
+            KeyName.Editor_ReloadLevel => new[] { Keys.K, Keys.RightControl },
+            KeyName.Editor_SaveLevelAs => new[] { Keys.S, Keys.RightControl },
+            _ => throw new NotImplementedException(),
         };
 
         private ButtonState[] GamePadMap(KeyName keyname)

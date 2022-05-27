@@ -103,7 +103,7 @@ namespace Monomon.State
                     state.state.Render(param); 
                 }
             }
-            catch when (true)
+            catch
             {
                 throw;
             }

@@ -55,6 +55,11 @@ namespace Monomon.Views.Samples
 
         protected override void OnDraw(SpriteBatch batch)
         {
+            if (font == null)
+                throw new ArgumentNullException("font cannot be null");
+            if (_spriteMap == null)
+                throw new ArgumentNullException("spritemap cannot be null");
+
             BattleCardView.Draw(batch, new Vector2(100, 100), font, _spriteMap, _card);
             BattleCardView.Draw(batch, new Vector2(100, 200), font, _spriteMap, _lowHealth);
             BattleCardView.Draw(batch, new Vector2(100, 300), font, _spriteMap, _moving); 

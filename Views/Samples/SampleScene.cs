@@ -26,22 +26,20 @@ namespace Monomon.Views.Samples
 
         public GraphicsDevice GraphicsDevice { get; }
 
-        public SampleScene(GraphicsDevice gd, StateStack<double> stack, IINputHandler input)
+        public SampleScene(GraphicsDevice gd, StateStack<double> stack, IINputHandler input, ContentManager content)
             : base(gd)
 
         {
+            _content = content;
             _input = input;
             _stack = stack;
             GraphicsDevice = gd;
-        }
-
-        public override void LoadScene(ContentManager content)
-        {
             font = content.Load<SpriteFont>("File");
             var sprites = content.Load<Texture2D>("spritemap");
+
             _sceneList = new UIList<string>(new List<UIItem<string>>() {
                 new UIItem<string>("Level test",x => {
-                    SwapScene(new LevelSample(GraphicsDevice,_input,_stack));
+                    SwapScene(new LevelSample(GraphicsDevice,_input,_stack,content));
                 }),
                 new UIItem<string>("Battle test",x => {
                     SwapScene(new BattleSample(GraphicsDevice,_input,_stack));
@@ -81,8 +79,12 @@ namespace Monomon.Views.Samples
                 }),
             }, x => { }, x => { });
 
+        }
+
+        public override void LoadScene(ContentManager content)
+        {
             _content = content;
-            SwapScene(new LevelSample(GraphicsDevice,_input,_stack));
+            //SwapScene(new LevelSample(GraphicsDevice,_input,_stack,content));
         }
 
         private void SwapScene(SceneView newScene)

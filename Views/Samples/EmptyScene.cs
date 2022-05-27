@@ -12,7 +12,6 @@ namespace Monomon.Views.Samples
 {
     class EmptyScene : SceneView
     {
-        private SpriteFont font;
 
         public EmptyScene(GraphicsDevice gd) : base(gd)
         {
@@ -20,7 +19,6 @@ namespace Monomon.Views.Samples
 
         public override void LoadScene(ContentManager content)
         {
-            font = content.Load<SpriteFont>("File");
         }
 
         public override void Update(double time)
@@ -29,7 +27,6 @@ namespace Monomon.Views.Samples
 
         protected override void OnDraw(SpriteBatch batch)
         {
-            batch.DrawString(font,"Empty",new Vector2(100,100), Color.White);
         }
     }
 }

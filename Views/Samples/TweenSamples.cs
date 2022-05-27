@@ -14,26 +14,18 @@ namespace Monomon.Views.Samples
 {
     public class TweenSamples : SceneView
     {
-        private Action _reset;
         private BattleCardViewModel _card;
         private TweenState _first;
         private TweenState _second;
         private TweenState _third;
-        private SpriteFont font;
-        private Texture2D sprites;
+        private SpriteFont? font;
+        private Texture2D? sprites;
         private float speed = 1.5f;
         private BattleCardViewModel _card2;
         private BattleCardViewModel _card3;
 
         public TweenSamples(GraphicsDevice gd) : base(gd)
-        {
-
-        }
-
-        public override void LoadScene(ContentManager content)
-        {
-            font = content.Load<SpriteFont>("File");
-            sprites = content.Load<Texture2D>("spritemap");
+        { 
             _card = new BattleCardViewModel("", 5, 2, 2);
             _card.X = 250;
             _card.Y = 10;
@@ -59,11 +51,17 @@ namespace Monomon.Views.Samples
             _second = new TweenState(x => UpdateCard(_card2,x.time,x.lerp), OnReset, 0.0f, 50.0f, speed, EasingFunc.EaseOutCube);
             _third = new TweenState(x => UpdateCard(_card3,x.time,x.lerp), OnReset, 0.0f, 50.0f, speed, EasingFunc.EaseOutBack);
         }
+
+        
+
+        public override void LoadScene(ContentManager content)
+        {
+            font = content.Load<SpriteFont>("File");
+            sprites = content.Load<Texture2D>("spritemap");
+
+        }
         private void OnReset()
         {
-            _first = new TweenState(x => UpdateCard(_card,x.time,x.lerp), OnReset, 0.0f, 50.0f, speed, EasingFunc.EaseInBack);
-            _second = new TweenState(x => UpdateCard(_card2,x.time,x.lerp), OnReset, 0.0f, 50.0f, speed, EasingFunc.EaseOutCube);
-            _third = new TweenState(x => UpdateCard(_card3,x.time,x.lerp), OnReset, 0.0f, 50.0f, speed, EasingFunc.EaseOutBack);
         }
 
         private void UpdateCard(BattleCardViewModel vm, double time, double lerp)
@@ -85,11 +83,11 @@ namespace Monomon.Views.Samples
 
         protected override void OnDraw(SpriteBatch batch)
         {
-            BattleCardView.Draw(batch, new Microsoft.Xna.Framework.Vector2(0, 0), font, sprites, _card);
-            BattleCardView.Draw(batch, new Microsoft.Xna.Framework.Vector2(0, 0), font, sprites, _card2);
-            BattleCardView.Draw(batch, new Microsoft.Xna.Framework.Vector2(0, 0), font, sprites, _card3);
+            BattleCardView.Draw(batch, new Microsoft.Xna.Framework.Vector2(0, 0), font!, sprites!, _card);
+            BattleCardView.Draw(batch, new Microsoft.Xna.Framework.Vector2(0, 0), font!, sprites!, _card2);
+            BattleCardView.Draw(batch, new Microsoft.Xna.Framework.Vector2(0, 0), font!, sprites!, _card3);
 
-            Gui.Panel.Draw(batch, sprites, Gui.Panel.BasePanel, new Rectangle(300+60, 10, 2, 500));
+            Gui.Panel.Draw(batch, sprites!, Gui.Panel.BasePanel, new Rectangle(300+60, 10, 2, 500));
         }
     }
 }

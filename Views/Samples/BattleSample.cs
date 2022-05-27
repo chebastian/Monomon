@@ -37,8 +37,8 @@ namespace Monomon.Views.Samples
         private BattleReporter _battleReporter;
         private BattleCardViewModel _currentEnemyCard;
         private BattleCardViewModel _playerCard;
-        private SpriteFont? font;
-        private Texture2D? _spriteMap;
+        private SpriteFont font;
+        private Texture2D _spriteMap;
         private SoundEffect _menuMoveEffect;
         private SoundEffect _menuSelectEffect;
         private SoundEffect _battleTackleEffect;
@@ -47,7 +47,6 @@ namespace Monomon.Views.Samples
         private Texture2D _palette;
         private Effect _fadeEffect;
         private Texture2D fadeTexture;
-        private bool fading;
         private float _fadeTime;
         private static float _currentPalette = 0.2f;
         private bool ready;
@@ -115,7 +114,6 @@ namespace Monomon.Views.Samples
 
         private void InitBattle()
         {
-            fading = true;
             _currentEnemyCard = new BattleCardViewModel(_mob.Name, _mob.MaxHealth, _mob.Health, 2);
             _currentEnemyCard.X = UIValues.OponentHudX;
             _currentEnemyCard.Y = 10;

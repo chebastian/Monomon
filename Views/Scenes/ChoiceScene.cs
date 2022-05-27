@@ -15,7 +15,6 @@ namespace Monomon.Views.Scenes
     {
         private SpriteFont _font;
         private Texture2D _sprites;
-        private int _charCount;
         private float _totalTime;
         public UIList<string> List;
 
@@ -24,7 +23,6 @@ namespace Monomon.Views.Scenes
             _font = font;
             _sprites = sprites;
 
-            _charCount = 0;
             _totalTime = 0.0f;
             List = new UIList<string>(choices.Select(item => new UIItem<string>(item)).ToList(), x => { }, onSelection);
         }
@@ -36,7 +34,6 @@ namespace Monomon.Views.Scenes
         public override void Update(double time)
         {
             _totalTime += (float)time;
-            //_charCount = (int)(Math.Min(1.0f, _totalTime) * message.Length);
         }
 
         protected override void OnDraw(SpriteBatch batch)

@@ -115,37 +115,28 @@ namespace Monomon.Views.Samples
         private Effect paletteEffect;
         private RenderTarget2D _renderTarget;
         private TileMap _map;
-        private SerializedLevelData? _levelData;
+        private SerializedLevelData _levelData;
 
         private Player _player;
 
         private Vec2 windowPos;
-
-        public LevelSample(GraphicsDevice gd) : base(gd)
-        {
-        }
 
         public Vec2 ToPositionOnGrid(Vec2 pos)
         {
             return new Vec2(((int)(pos.X / 16)) * 16,((int)( pos.Y / 16))*16);
         }
 
-        public LevelSample(GraphicsDevice gd, IINputHandler input, StateStack<double> stack) : this(gd)
+        public LevelSample(GraphicsDevice gd, IINputHandler input, StateStack<double> stack,ContentManager content) : base(gd)
         {
             this.input = input;
             this.stack = stack;
             _player = new Player();
             _player.Pos = new Vec2(128, 128);
             windowPos = new Vec2(0, 0);
-        }
-
-        public override void LoadScene(ContentManager content)
-        {
             _renderTarget = new RenderTarget2D(_graphics, 160, 144);
             _map = new TileMap();
-            _levelData = System.Text.Json.JsonSerializer.Deserialize<SerializedLevelData>(File.ReadAllText("./Levels/grass.json"));
+            _levelData = System.Text.Json.JsonSerializer.Deserialize<SerializedLevelData>(File.ReadAllText("./Levels/grass.json")) ?? throw new ArgumentNullException("level");
             _map.CreateLevel(_levelData.VisibleTiles, _levelData.Tiles);
-
 
             _tileSprites = content.Load<Texture2D>("levelMap");
             _playerSprites = content.Load<Texture2D>("player");
@@ -159,6 +150,10 @@ namespace Monomon.Views.Samples
                 paletteEffect.Parameters["swap"].SetValue(1.0f);
                 paletteEffect.Parameters["palette"].SetValue(_palette);
             }
+        }
+
+        public override void LoadScene(ContentManager content)
+        {
         }
 
         public override void Update(double time)
@@ -211,11 +206,6 @@ namespace Monomon.Views.Samples
             batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, paletteEffect);
 
             var renderpos = (x: 0, y: 0);
-            static (Rectangle src, int x, int y) GetUvCoords(Rect rect, Rect src, Rect win)
-            {
-                return (new Rectangle((int)src.X, (int)src.Y, (int)src.Width, (int)src.Height), (int)rect.X, (int)rect.Y);
-
-            }
 
             foreach (var tile in _map.GetTilesInside(new Rect(Window.X, Window.Y, Window.Width, Window.Height)))
             {
@@ -297,11 +287,6 @@ namespace Monomon.Views.Samples
             {
                 var wv = CameraHelper.ToWindowPosition(pos, new Vec2(Window.X, Window.Y));
                 return new Vector2(wv.X + renderpos.x, wv.Y + renderpos.y);
-            }
-
-            static bool IsVisible(Rect pos, Rect win)
-            {
-                return win.Intersects(pos);
             }
 
             var zoom = 2;

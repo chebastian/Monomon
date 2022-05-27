@@ -70,7 +70,7 @@ namespace Monomon
             }, x => { }, x => { });
 
             //_currentScene = new BattleCardSample(GraphicsDevice);
-            _currentScene = new SampleScene(GraphicsDevice, _stateStack, _input);
+            _currentScene = new SampleScene(GraphicsDevice, _stateStack, _input,Content);
 
             _stateStack.Push(new SceneState(_currentScene,_input),
                 () => { });
