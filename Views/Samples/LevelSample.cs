@@ -9,6 +9,7 @@ using MonoGameBase.Input;
 using MonoGameBase.Level;
 using Monomon.State;
 using Monomon.Views.Scenes;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -30,6 +31,8 @@ namespace Monomon.Views.Samples
         public Vec2 Vel { get; set; }
         public Vec2 Target { get; set; }
         public float Dist { get; set; }
+
+        public Vec2 Center => Pos + new Vec2(8, 8);
 
         public void SetTarget(Vec2 target)
         {
@@ -64,6 +67,10 @@ namespace Monomon.Views.Samples
             if (Dist <= 1)
                 Pos = Pos.Lerp(Target, Dist);
         }
+
+        internal void WalkInDirection(int dx, int dy)
+        {
+        }
     }
 
     public class LevelSample : SceneView
@@ -83,6 +90,11 @@ namespace Monomon.Views.Samples
 
         public LevelSample(GraphicsDevice gd) : base(gd)
         {
+        }
+
+        public Vec2 ToPositionOnGrid(Vec2 pos)
+        {
+            return new Vec2(((int)(pos.X / 16)) * 16,((int)( pos.Y / 16))*16);
         }
 
         public LevelSample(GraphicsDevice gd, IINputHandler input, StateStack<double> stack) : this(gd)
@@ -118,26 +130,29 @@ namespace Monomon.Views.Samples
 
         public override void Update(double time)
         {
-            var dx = input.GetX();
-            var dy = input.GetY();
+            _dx = input.GetX();
+            _dy = input.GetY();
 
             var winPos = _player.Pos + new Vec2(-(Window.Width * 0.5f), -(Window.Height * 0.5f));
             Window.X = winPos.X;
             Window.Y = winPos.Y;
 
 
-            var vel = new Vec2(dx * 16, dy * 16) * time;
-
-
+            var vel = new Vec2(_dx * 16, _dy * 16) * time; 
             var speed = 16.0;
+
             var playerRect = new Rect(_player.Pos.X, _player.Pos.Y, 16, 16);
 
-            if (dx == 0 && dy == 0)
+            if(_dx != 0 || _dy != 0)
             {
-                var oldVel = _player.Vel.Normalize();
-                _player.Advance((float)((time * speed / 16.0f)),(float)time);
-                _player.SetTarget(new Vec2(System.MathF.Sign(oldVel.X) * 16, System.MathF.Sign(oldVel.Y) * 16));
+                _player.WalkInDirection(_dx, _dy);
             }
+            //if (dx == 0 && dy == 0)
+            //{
+            //    var oldVel = _player.Vel.Normalize();
+            //    _player.Advance((float)((time * speed / 16.0f)),(float)time);
+            //    _player.SetTarget(new Vec2(System.MathF.Sign(oldVel.X) * 16, System.MathF.Sign(oldVel.Y) * 16));
+            //}
 
             var tiles = _map.GetTilesInside(playerRect.MinkowskiSum(new Rect(0, 0, 16, 16))).Where(x => x.type == TileType.Wall).Select(x => x.rect).ToList();
             var info = CollisionHelper.HandleCollision(_map, playerRect, vel, tiles);
@@ -152,6 +167,8 @@ namespace Monomon.Views.Samples
 
         public Rect Window = new Rect(0, 0, 160, 144);
         private Texture2D _palette;
+        private int _dx;
+        private int _dy;
 
         protected override void OnDraw(SpriteBatch batch)
         {
@@ -196,6 +213,37 @@ namespace Monomon.Views.Samples
                 SourceForDir(_player.Vel),
                 Color.White
                 );
+
+            MarkTile(ToPositionOnGrid( _player.Center));
+            MarkTile(ToPositionOnGrid( _player.Center + new Vec2(_dx*Constants.TileW,_dy*Constants.TileH)));
+
+            void MarkTile(Vec2 gridPos)
+            {
+                var pcenter = ToWindowPosition(gridPos);
+                _spriteBatch.Draw(_playerSprites,
+                    new Rectangle((int)pcenter.X, (int)pcenter.Y, 2, 2),
+                    new Rectangle(0,0,1,1),
+                    Color.Black 
+                    );
+
+                _spriteBatch.Draw(_playerSprites,
+                    new Rectangle((int)pcenter.X + Constants.TileW, (int)pcenter.Y, 2, 2),
+                    new Rectangle(0,0,1,1),
+                    Color.Black 
+                    );
+
+                _spriteBatch.Draw(_playerSprites,
+                    new Rectangle((int)pcenter.X + Constants.TileW, (int)pcenter.Y + Constants.TileH, 2, 2),
+                    new Rectangle(0,0,1,1),
+                    Color.Black 
+                    );
+
+                _spriteBatch.Draw(_playerSprites,
+                    new Rectangle((int)pcenter.X, (int)pcenter.Y + Constants.TileH, 2, 2),
+                    new Rectangle(0,0,1,1),
+                    Color.Black 
+                    );
+            }
 
             static Rectangle SourceForDir(Vec2 inDir)
             {
