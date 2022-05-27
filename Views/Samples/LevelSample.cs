@@ -171,7 +171,6 @@ namespace Monomon.Views.Samples
 
 
             var vel = new Vec2(_dx * 16, _dy * 16) * time;
-            var speed = 16.0;
 
             var playerRect = new Rect(_player.Pos.X, _player.Pos.Y, 16, 16);
 
@@ -183,12 +182,6 @@ namespace Monomon.Views.Samples
                 if(_player.Dist == 0.0f)
                     _player.WalkInDirection(ToPositionOnGrid(_player.Center + new Vec2(_dx * Constants.TileW, _dy * Constants.TileH)));
             }
-            //if (dx == 0 && dy == 0)
-            //{
-            //    var oldVel = _player.Vel.Normalize();
-            //    _player.Advance((float)((time * speed / 16.0f)),(float)time);
-            //    _player.SetTarget(new Vec2(System.MathF.Sign(oldVel.X) * 16, System.MathF.Sign(oldVel.Y) * 16));
-            //}
 
             _player.Update((float)time);
 
