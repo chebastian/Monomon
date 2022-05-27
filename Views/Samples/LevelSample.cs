@@ -16,8 +16,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+namespace Monomon.Data
+{
+    public static class Constants
+    {
+        public const int TileH = 16;
+        public const int TileW = 16;
+        public const int SpriteMapW = 27;
+    }
+}
+
 namespace Monomon.Views.Samples
 {
+    using Monomon.Data;
+
     public class Player
     {
         public Player()
@@ -31,8 +43,15 @@ namespace Monomon.Views.Samples
         public Vec2 Vel { get; set; }
         public Vec2 Target { get; set; }
         public float Dist { get; set; }
+        public Vec2 OgPos { get; private set; }
 
-        public Vec2 Center => Pos + new Vec2(8, 8);
+        public Vec2 Center
+        {
+            get
+            {
+                return Pos + new Vec2(Constants.TileW/2,Constants.TileH/2);
+            }
+        }
 
         public void SetTarget(Vec2 target)
         {
@@ -68,8 +87,21 @@ namespace Monomon.Views.Samples
                 Pos = Pos.Lerp(Target, Dist);
         }
 
-        internal void WalkInDirection(int dx, int dy)
+        internal void WalkInDirection(Vec2 target)
         {
+            Target = target;//new Vec2(Center.X + dx * Constants.TileW, Center.Y + dy* Constants.TileH);
+            Dist = 1.0f;
+            OgPos = Pos;
+        }
+
+        internal void Update(float dt)
+        {
+            if(Dist > 0.0)
+            {
+                Dist -= dt * 4.0f;
+                Dist = MathF.Max(0.0f, Dist);
+                Pos = OgPos.Lerp(Target, 1.0f - Dist); 
+            }
         }
     }
 
@@ -138,14 +170,18 @@ namespace Monomon.Views.Samples
             Window.Y = winPos.Y;
 
 
-            var vel = new Vec2(_dx * 16, _dy * 16) * time; 
+            var vel = new Vec2(_dx * 16, _dy * 16) * time;
             var speed = 16.0;
 
             var playerRect = new Rect(_player.Pos.X, _player.Pos.Y, 16, 16);
 
-            if(_dx != 0 || _dy != 0)
+            if (_dx != 0 || _dy != 0)
             {
-                _player.WalkInDirection(_dx, _dy);
+                var bothPressed = (_dx != 00 && _dy != 0.0);
+                _dy = bothPressed ? 0 : _dy;
+
+                if(_player.Dist == 0.0f)
+                    _player.WalkInDirection(ToPositionOnGrid(_player.Center + new Vec2(_dx * Constants.TileW, _dy * Constants.TileH)));
             }
             //if (dx == 0 && dy == 0)
             //{
@@ -153,6 +189,8 @@ namespace Monomon.Views.Samples
             //    _player.Advance((float)((time * speed / 16.0f)),(float)time);
             //    _player.SetTarget(new Vec2(System.MathF.Sign(oldVel.X) * 16, System.MathF.Sign(oldVel.Y) * 16));
             //}
+
+            _player.Update((float)time);
 
             var tiles = _map.GetTilesInside(playerRect.MinkowskiSum(new Rect(0, 0, 16, 16))).Where(x => x.type == TileType.Wall).Select(x => x.rect).ToList();
             var info = CollisionHelper.HandleCollision(_map, playerRect, vel, tiles);
@@ -179,7 +217,6 @@ namespace Monomon.Views.Samples
             batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, paletteEffect);
 
             var renderpos = (x: 0, y: 0);
-            var Constants = (TileW: 16, TileH: 16, SpriteMapW: 27);
             static (Rectangle src, int x, int y) GetUvCoords(Rect rect, Rect src, Rect win)
             {
                 return (new Rectangle((int)src.X, (int)src.Y, (int)src.Width, (int)src.Height), (int)rect.X, (int)rect.Y);
@@ -210,7 +247,7 @@ namespace Monomon.Views.Samples
             var playerCamPos = ToWindowPosition(_player.Pos);
             _spriteBatch.Draw(_playerSprites,
                 new Rectangle((int)playerCamPos.X, (int)playerCamPos.Y, 16, 16),
-                SourceForDir(_player.Vel),
+                SourceForDir(_player.Target - _player.OgPos),
                 Color.White
                 );
 
