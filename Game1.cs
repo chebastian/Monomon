@@ -1,20 +1,38 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Monomon.Battle;
+using Monomon.Effects;
 using Monomon.Input;
-using Monomon.Mons;
 using Monomon.State;
 using Monomon.UI;
-using Monomon.ViewModels;
-using Monomon.Views;
 using Monomon.Views.Gui;
 using Monomon.Views.Samples;
 using Monomon.Views.Scenes;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
+namespace Monomon.Effects
+{
+    public class IndexedColorsEffect
+    {
+        private Effect paletteEffect;
+        private Texture2D _palette;
+        public IndexedColorsEffect(ContentManager content, Texture2D paletteTexture)
+        {
+            paletteEffect = content.Load<Effect>("Indexed");
+
+            _palette = paletteTexture;
+            paletteEffect.Parameters["time"].SetValue(0.0f);
+            paletteEffect.Parameters["swap"].SetValue(1.0f);
+            paletteEffect.Parameters["palette"].SetValue(_palette);
+        }
+
+        public void EffectBegin(SpriteBatch batch)
+        {
+            batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, paletteEffect);
+        }
+    }
+}
 
 namespace Monomon
 {
@@ -29,8 +47,7 @@ namespace Monomon
         private UIList<string> _sceneList;
         private SceneView _currentScene;
         private StateStack<double> _stateStack;
-        private Effect paletteEffect;
-        private Texture2D _palette;
+        private IndexedColorsEffect _paletteEffect;
 
         public Game1()
         {
@@ -47,15 +64,7 @@ namespace Monomon
             _input = new Monomon.Input.BufferInputHandler();
             _spriteBatch = new SpriteBatch(_graphics.GraphicsDevice);
             font = Content.Load<SpriteFont>("File");
-            paletteEffect = Content.Load<Effect>("Indexed");
-
-            //Init effect
-            {
-                _palette = Content.Load<Texture2D>("paletteMini"); 
-                paletteEffect.Parameters["time"].SetValue(0.0f);
-                paletteEffect.Parameters["swap"].SetValue(1.0f); 
-                paletteEffect.Parameters["palette"].SetValue(_palette);
-            }
+            _paletteEffect = new IndexedColorsEffect(Content,Content.Load<Texture2D>("paletteMini"));
 
 
             _sceneList = new UIList<string>(new List<UIItem<string>>() {
@@ -70,9 +79,9 @@ namespace Monomon
             }, x => { }, x => { });
 
             //_currentScene = new BattleCardSample(GraphicsDevice);
-            _currentScene = new SampleScene(GraphicsDevice, _stateStack, _input,Content);
+            _currentScene = new SampleScene(GraphicsDevice, _stateStack, _input, Content);
 
-            _stateStack.Push(new SceneState(_currentScene,_input),
+            _stateStack.Push(new SceneState(_currentScene, _input),
                 () => { });
             base.Initialize();
         }
@@ -81,8 +90,9 @@ namespace Monomon
         {
             _currentScene = scene;
             _currentScene.LoadScene(Content);
-            _stateStack.Push(new SceneState(scene,_input),() => {
-                _stateStack.Push(new SceneState(new EmptyScene(GraphicsDevice,Content), _input),()  => { });
+            _stateStack.Push(new SceneState(scene, _input), () =>
+            {
+                _stateStack.Push(new SceneState(new EmptyScene(GraphicsDevice, Content), _input), () => { });
             });
         }
 
@@ -126,8 +136,7 @@ namespace Monomon
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
-
-            _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, paletteEffect);
+            _paletteEffect.EffectBegin(_spriteBatch);
 
             _stateStack.Render(gameTime.ElapsedGameTime.TotalSeconds);
 
