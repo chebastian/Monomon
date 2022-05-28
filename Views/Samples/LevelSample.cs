@@ -29,6 +29,7 @@ namespace Monomon.Data
 namespace Monomon.Views.Samples
 {
     using Monomon.Data;
+    using System.Collections.Generic;
 
     public class Player
     {
@@ -110,6 +111,7 @@ namespace Monomon.Views.Samples
     {
         private IINputHandler input;
         private StateStack<double> stack;
+        private ContentManager _content;
         private Texture2D _tileSprites;
         private Texture2D _playerSprites;
         private Effect paletteEffect;
@@ -130,6 +132,7 @@ namespace Monomon.Views.Samples
         {
             this.input = input;
             this.stack = stack;
+            _content = content;
             _player = new Player();
             _player.Pos = new Vec2(128, 128);
             windowPos = new Vec2(0, 0);
@@ -177,6 +180,17 @@ namespace Monomon.Views.Samples
 
                 var targetOnGrid = ToGridTopLeft(_player.Center + new Vec2(_dx * Constants.TileW, _dy * Constants.TileH));
                 var tileAtTarget = _map.GetTileAt((int)targetOnGrid.X/Constants.TileW, (int)targetOnGrid.Y/Constants.TileH);
+                var tileAtFeet = _map.GetTile((int)_player.Center.X/Constants.TileW, (int)_player.Center.Y/Constants.TileH);
+                if (new List<uint>(){543,452,569}.Contains(tileAtFeet.visual))
+                { 
+                    if(Random.Shared.NextDouble() < 0.25)
+                    {
+                        var battle = new BattleSample(_graphics,input,stack);
+                        stack.Push(new SceneState(battle,input),() => { stack.Pop(); },() => { });
+                        battle.LoadScene(_content);
+                        return;
+                    }
+                }
 
                 if(_player.Dist == 0.0f && tileAtTarget != TileType.Wall)
                     _player.WalkInDirection(targetOnGrid);
