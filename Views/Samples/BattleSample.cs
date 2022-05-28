@@ -41,9 +41,6 @@ namespace Monomon.Views.Samples
         private SoundEffect _battleHurtEffect;
         private SoundEffect _battleXpUpEffect;
         private Texture2D _palette;
-        //private Effect _fadeEffect;
-        //private Texture2D fadeTexture;
-        //private float _fadeTime;
         private static float _currentPalette = 0.2f;
         private bool ready;
         private FadeEffect _fadeImpl;
@@ -140,29 +137,8 @@ namespace Monomon.Views.Samples
                 _currentEnemyCard.PortraitOffsetX = (int)arg.lerp;
             }, () => { }, 800, offset, 1.2f, EasingFunc.EaseOutBack);
 
-            //ready = false;
-            //var fade = new TweenState(arg =>
-            //{
-            //    ready = true;
-            //    _fadeEffect.Parameters["flip"].SetValue(false);
-            //    UpdateFade((float)(1.0 - arg.lerp));
-            //    if (arg.lerp >= 0.8f)
-            //    {
-            //    }
-            //}, () => { }, 0.0f, 1.0f, 1.4f, EasingFunc.Lerp);
-
-            //var fadeIn = new TweenState(arg =>
-            //{
-            //    _fadeEffect.Parameters["flip"].SetValue(true);
-            //    UpdateFade((float)(1.0f - arg.lerp));
-            //    if (arg.lerp >= 0.8f)
-            //    {
-            //    }
-            //}, () => { }, 0.0f, 1.0f, 1.4f, EasingFunc.Lerp);
 
             _stack.Push(slideIn, () => _stack.Pop());
-            //_stack.Push(fade, () => _stack.Pop());
-            //_stack.Push(fadeIn, () => _stack.Pop());
             _fadeImpl = new FadeEffect(_content.Load<Effect>("Fade"),
                                        _content.Load<Texture2D>("fadeCircleOut"),
                                        _content.Load<Texture2D>("paletteMini"),
@@ -175,7 +151,6 @@ namespace Monomon.Views.Samples
         {
 
             _effect = content.Load<Effect>("Indexed");
-            //_fadeEffect = content.Load<Effect>("Fade");
 
             //Init effect
             {
@@ -183,17 +158,6 @@ namespace Monomon.Views.Samples
                 _effect?.Parameters["time"].SetValue(_currentPalette);
                 _effect?.Parameters["swap"].SetValue(1.0f);
                 _effect?.Parameters["palette"].SetValue(_palette);
-            }
-
-            //Init fade
-            {
-                //fadeTexture = content.Load<Texture2D>("fadeCircleOut");
-                //_fadeEffect.Parameters["flip"].SetValue(false);
-                //_fadeEffect.Parameters["fadeAmount"].SetValue(0.0f);
-                //_fadeEffect.Parameters["fadeTexture"].SetValue(fadeTexture);
-                //_fadeEffect.Parameters["paletteTexture"].SetValue(_palette);
-                ////_fadeEffect.Parameters["paletteY"].SetValue(0.2f); 
-                //_fadeEffect?.Parameters["paletteY"].SetValue(_currentPalette);
             }
 
             font = content.Load<SpriteFont>("File");
@@ -374,24 +338,8 @@ namespace Monomon.Views.Samples
 
 
             batch.End();
-            //batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearWrap, null, null, _fadeEffect);
-            //DrawEffect(batch);
-            //batch.End();
             _fadeImpl.Draw(batch);
             batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearWrap, null, null, _effect);
-
-            //DrawBattleLog();
         }
-
-        //private void UpdateFade(float dt)
-        //{
-        //    _fadeTime = dt;
-        //    _fadeEffect.Parameters["fadeAmount"].SetValue(_fadeTime);
-        //}
-
-        //private void DrawEffect(SpriteBatch batch)
-        //{
-        //    batch.Draw(fadeTexture, new Rectangle(0, 0, 800, 600), Color.White);
-        //}
     }
 }
