@@ -201,6 +201,7 @@ namespace Monomon.Input
                 KeyName.Editor_ShowTiles => new[] {buttons.LeftShoulder },
                 KeyName.Editor_SwapHeading => new[] {buttons.RightStick },
                 KeyName.Editor_Undo => new[] {buttons.B },
+                KeyName.Option => new[] {buttons.RightShoulder},
 
                 //KeyName.Editor_SaveLevel => new[] {},
                 //KeyName.Editor_SaveLevelAs => new[] {},
