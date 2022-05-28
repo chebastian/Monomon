@@ -23,6 +23,7 @@ namespace Monomon
     {
         private readonly SpriteBatch batch;
         private readonly StateStack<double> _stack;
+        private ContentManager _content;
         private Action<Sounds> _soundCallback;
         private Texture2D _sprites;
         private SpriteFont _font;
@@ -30,8 +31,9 @@ namespace Monomon
         private GraphicsDevice _gd;
 
         public List<string> Messages { get; set; }
-        public BattleReporter(SpriteBatch batch, GraphicsDevice gd, State.StateStack<double> stack, IINputHandler input, SpriteFont font, Texture2D sprites, Action<Sounds> soundCallback)
+        public BattleReporter(SpriteBatch batch, GraphicsDevice gd, State.StateStack<double> stack, IINputHandler input, SpriteFont font, Texture2D sprites, Action<Sounds> soundCallback,ContentManager mgr)
         {
+            _content = mgr;
             _soundCallback = soundCallback;
             _sprites = sprites;
             _font = font;
@@ -50,12 +52,12 @@ namespace Monomon
 
         TimedState TimedMessage(string message)
         {
-            return new TimedState(new MessageScene(_gd, message, _font, _sprites), 2500, _input);
+            return new TimedState(new MessageScene(_gd, message, _font, _sprites,_content), 2500, _input);
         }
 
         ConfirmState ConfirmMessage(string message)
         {
-            return new ConfirmState(new MessageScene(_gd, message, _font, _sprites, true), _input);
+            return new ConfirmState(new MessageScene(_gd, message, _font, _sprites, _content,true), _input);
         }
 
         public void OnAttack(BattleMessage message, Mons.Mobmon attacker, Mons.Mobmon _oponent, Action continueWith, BattleCardViewModel attackerCard, BattleCardViewModel oponentCard, bool isPlayer)

@@ -13,7 +13,7 @@ namespace Monomon.Views.Scenes
         private Texture2D _tex;
         private AnimationPlayer player;
 
-        public AnimationScene(GraphicsDevice gd, Vector2 pos, Texture2D tex, List<Frame> anim) : base(gd)
+        public AnimationScene(GraphicsDevice gd, Vector2 pos, Texture2D tex, List<Frame> anim,ContentManager content) : base(gd,content)
         {
             _pos = pos;
             _tex = tex;
@@ -42,7 +42,7 @@ namespace Monomon.Views.Scenes
         private readonly Action<double> update;
         private readonly Action<SpriteBatch> render;
 
-        public TestScene(GraphicsDevice gd,Action<double> update, Action<SpriteBatch> render) : base(gd)
+        public TestScene(GraphicsDevice gd,Action<double> update, Action<SpriteBatch> render,ContentManager mgr) : base(gd,mgr)
         {
             this.update = update;
             this.render = render;

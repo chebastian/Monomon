@@ -62,10 +62,10 @@ namespace Monomon
                 new UIItem<string>("Battle test",x => {
                 }),
                 new UIItem<string>("BattleCard sample",x => {
-                    SwapScene(new BattleCardSample(GraphicsDevice));
+                    SwapScene(new BattleCardSample(GraphicsDevice,Content));
                 }),
                 new UIItem<string>("Empty",x => {
-                    SwapScene(new EmptyScene(GraphicsDevice));
+                    SwapScene(new EmptyScene(GraphicsDevice,Content));
                 }),
             }, x => { }, x => { });
 
@@ -82,7 +82,7 @@ namespace Monomon
             _currentScene = scene;
             _currentScene.LoadScene(Content);
             _stateStack.Push(new SceneState(scene,_input),() => {
-                _stateStack.Push(new SceneState(new EmptyScene(GraphicsDevice), _input),()  => { });
+                _stateStack.Push(new SceneState(new EmptyScene(GraphicsDevice,Content), _input),()  => { });
             });
         }
 

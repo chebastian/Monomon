@@ -24,7 +24,7 @@ namespace Monomon.Views.Samples
         private BattleCardViewModel _card2;
         private BattleCardViewModel _card3;
 
-        public TweenSamples(GraphicsDevice gd) : base(gd)
+        public TweenSamples(GraphicsDevice gd,ContentManager mgr) : base(gd,mgr)
         { 
             _card = new BattleCardViewModel("", 5, 2, 2);
             _card.X = 250;

@@ -18,7 +18,7 @@ namespace Monomon.Views.Scenes
         private float _totalTime;
         public UIList<string> List;
 
-        public ChoiceScene(GraphicsDevice gd, List<string> choices, SpriteFont font, Texture2D sprites, Action<string> onSelection) : base(gd)
+        public ChoiceScene(GraphicsDevice gd, List<string> choices, SpriteFont font, Texture2D sprites, Action<string> onSelection,ContentManager mgr) : base(gd,mgr)
         {
             _font = font;
             _sprites = sprites;

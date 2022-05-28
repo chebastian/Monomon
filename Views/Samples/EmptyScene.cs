@@ -13,7 +13,7 @@ namespace Monomon.Views.Samples
     class EmptyScene : SceneView
     {
 
-        public EmptyScene(GraphicsDevice gd) : base(gd)
+        public EmptyScene(GraphicsDevice gd,ContentManager mgr) : base(gd,mgr)
         {
         }
 

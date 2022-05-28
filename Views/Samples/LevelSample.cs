@@ -111,7 +111,6 @@ namespace Monomon.Views.Samples
     {
         private IINputHandler input;
         private StateStack<double> stack;
-        private ContentManager _content;
         private Texture2D _tileSprites;
         private Texture2D _playerSprites;
         private Effect paletteEffect;
@@ -128,7 +127,7 @@ namespace Monomon.Views.Samples
             return new Vec2(((int)(pos.X / 16)) * 16,((int)( pos.Y / 16))*16);
         }
 
-        public LevelSample(GraphicsDevice gd, IINputHandler input, StateStack<double> stack,ContentManager content) : base(gd)
+        public LevelSample(GraphicsDevice gd, IINputHandler input, StateStack<double> stack,ContentManager content) : base(gd, content)
         {
             this.input = input;
             this.stack = stack;
@@ -185,7 +184,7 @@ namespace Monomon.Views.Samples
                 { 
                     if(Random.Shared.NextDouble() < 0.25)
                     {
-                        var battle = new BattleSample(_graphics,input,stack);
+                        var battle = new BattleSample(_graphics,input,stack,_content);
                         stack.Push(new SceneState(battle,input),() => { stack.Pop(); },() => { });
                         battle.LoadScene(_content);
                         return;

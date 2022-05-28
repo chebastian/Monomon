@@ -19,7 +19,7 @@ namespace Monomon.Views.Scenes
         private int _charCount;
         private float _totalTime;
 
-        public MessageScene(GraphicsDevice gd, string message, SpriteFont font, Texture2D sprites, bool confirm = false) : base(gd)
+        public MessageScene(GraphicsDevice gd, string message, SpriteFont font, Texture2D sprites,ContentManager mgr, bool confirm = false) : base(gd,mgr)
         {
             _confirm = confirm;
             this.message = message;

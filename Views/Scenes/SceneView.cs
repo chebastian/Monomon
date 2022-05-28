@@ -11,12 +11,14 @@ namespace Monomon.Views.Scenes
 {
     public abstract class SceneView
     {
+        protected ContentManager _content;
         protected GraphicsDevice _graphics;
         protected SpriteBatch _spriteBatch;
         protected Effect? _effect;
 
-        public SceneView(GraphicsDevice gd)
+        public SceneView(GraphicsDevice gd, ContentManager content)
         {
+            _content = content;
             _graphics = gd;
             _spriteBatch = new SpriteBatch(_graphics);
             _effect = null;

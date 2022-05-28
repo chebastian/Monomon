@@ -20,17 +20,15 @@ namespace Monomon.Views.Samples
     {
         private SpriteFont font;
         private UIList<string> _sceneList;
-        private ContentManager _content;
         private IINputHandler _input;
         private StateStack<double> _stack;
 
         public GraphicsDevice GraphicsDevice { get; }
 
         public SampleScene(GraphicsDevice gd, StateStack<double> stack, IINputHandler input, ContentManager content)
-            : base(gd)
+            : base(gd,content)
 
         {
-            _content = content;
             _input = input;
             _stack = stack;
             GraphicsDevice = gd;
@@ -42,23 +40,23 @@ namespace Monomon.Views.Samples
                     SwapScene(new LevelSample(GraphicsDevice,_input,_stack,content));
                 }),
                 new UIItem<string>("Battle test",x => {
-                    SwapScene(new BattleSample(GraphicsDevice,_input,_stack));
+                    SwapScene(new BattleSample(GraphicsDevice,_input,_stack,_content));
                 }),
                 new UIItem<string>("Tween",x => {
-                    SwapScene(new TweenSamples(GraphicsDevice));
+                    SwapScene(new TweenSamples(GraphicsDevice,_content));
                 }),
                 new UIItem<string>("Message",x => {
-                    SwapScene(new MessageScene(GraphicsDevice,"First message",font,sprites));
+                    SwapScene(new MessageScene(GraphicsDevice,"First message",font,sprites,_content));
                 }),
                 new UIItem<string>("Long Message",x => {
-                    SwapScene(new MessageScene(GraphicsDevice,"First message aaa aa a aaa a aa aaaa aaa aaaa a aa aaa a aaaaaaa aaaaaaaaaaaaa aaa aaaaaaaaaaaaaaaaaaaaa aaa",font,sprites));
+                    SwapScene(new MessageScene(GraphicsDevice,"First message aaa aa a aaa a aa aaaa aaa aaaa a aa aaa a aaaaaaa aaaaaaaaaaaaa aaa aaaaaaaaaaaaaaaaaaaaa aaa",font,sprites,_content));
                 }),
                 new UIItem<string>("Long single worded message",x => {
-                    SwapScene(new MessageScene(GraphicsDevice,"first message aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",font,sprites));
+                    SwapScene(new MessageScene(GraphicsDevice,"first message aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",font,sprites,_content));
                 }),
                 new UIItem<string>("Timed message 2",x => {
 
-                    var scene =new MessageScene(GraphicsDevice,"Completes in for 2s...",font,sprites);
+                    var scene =new MessageScene(GraphicsDevice,"Completes in for 2s...",font,sprites,_content);
                     scene.LoadScene(content);
                     _stack.Push(new TimeoutState(scene,2000,_input,
                     onCancel: () => {
@@ -67,15 +65,15 @@ namespace Monomon.Views.Samples
                     onCompleted: () => 
                     {
                         _stack.Pop();
-                        SwapScene(new MessageScene(GraphicsDevice,"Completed!",font,sprites)); }
+                        SwapScene(new MessageScene(GraphicsDevice,"Completed!",font,sprites,_content)); }
                     );
             ;
                 }),
                 new UIItem<string>("BattleCard sample",x => {
-                    SwapScene(new BattleCardSample(GraphicsDevice));
+                    SwapScene(new BattleCardSample(GraphicsDevice,_content));
                 }),
                 new UIItem<string>("Empty",x => {
-                    SwapScene(new EmptyScene(GraphicsDevice));
+                    SwapScene(new EmptyScene(GraphicsDevice,_content));
                 }),
             }, x => { }, x => { });
 

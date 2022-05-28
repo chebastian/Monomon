@@ -11,6 +11,10 @@ namespace Monomon.Battle;
 
 public class BattleScene : SceneView
 {
+    public BattleScene(GraphicsDevice gd, ContentManager content) : base(gd, content)
+    {
+    }
+
     public override void LoadScene(ContentManager content)
     {
         throw new NotImplementedException();

@@ -22,7 +22,7 @@ namespace Monomon.Views.Samples
         private SpriteCollection progressSprites;
         private Task _task;
 
-        public BattleCardSample(GraphicsDevice gd) : base(gd)
+        public BattleCardSample(GraphicsDevice gd,ContentManager content) : base(gd,content)
         {
             _card = new BattleCardViewModel("Full health", 50, 50, 5);
             _lowHealth = new BattleCardViewModel("Low health", 50, 2, 5);
