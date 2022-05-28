@@ -13,8 +13,6 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Monomon.Data
 {
@@ -52,19 +50,19 @@ namespace Monomon.Views.Samples
         {
             get
             {
-                return Pos + new Vec2(Constants.TileW/2,Constants.TileH/2);
+                return Pos + new Vec2(Constants.TileW / 2, Constants.TileH / 2);
             }
         }
 
         public void SetTarget(Vec2 target)
         {
             var playerCenter = Pos + new Vec2(8, 8);
-            var tileBegin = ((int)(playerCenter.X / 16)*16,((int)playerCenter.Y / 16)*16); 
+            var tileBegin = ((int)(playerCenter.X / 16) * 16, ((int)playerCenter.Y / 16) * 16);
 
             if (Dist <= 0.0f && (target.X != 0 || target.Y != 0))
             {
                 Debug.WriteLine("hit");
-                Target = target + new Vec2(tileBegin.Item1,tileBegin.Item2);
+                Target = target + new Vec2(tileBegin.Item1, tileBegin.Item2);
                 Dist = 0.0f;
             }
         }
@@ -99,11 +97,11 @@ namespace Monomon.Views.Samples
 
         internal void Update(float dt)
         {
-            if(Dist > 0.0)
+            if (Dist > 0.0)
             {
                 Dist -= dt * 4.0f;
                 Dist = MathF.Max(0.0f, Dist);
-                Pos = OgPos.Lerp(Target, 1.0f - Dist); 
+                Pos = OgPos.Lerp(Target, 1.0f - Dist);
             }
         }
     }
@@ -127,10 +125,10 @@ namespace Monomon.Views.Samples
 
         public Vec2 ToGridTopLeft(Vec2 pos)
         {
-            return new Vec2(((int)(pos.X / 16)) * 16,((int)( pos.Y / 16))*16);
+            return new Vec2(((int)(pos.X / 16)) * 16, ((int)(pos.Y / 16)) * 16);
         }
 
-        public LevelSample(GraphicsDevice gd, IINputHandler input, StateStack<double> stack,ContentManager content) : base(gd, content)
+        public LevelSample(GraphicsDevice gd, IINputHandler input, StateStack<double> stack, ContentManager content) : base(gd, content)
         {
             this.input = input;
             this.stack = stack;
@@ -183,24 +181,31 @@ namespace Monomon.Views.Samples
                 _dy = bothPressed ? 0 : _dy;
 
                 var targetOnGrid = ToGridTopLeft(_player.Center + new Vec2(_dx * Constants.TileW, _dy * Constants.TileH));
-                var tileAtTarget = _map.GetTileAt((int)targetOnGrid.X/Constants.TileW, (int)targetOnGrid.Y/Constants.TileH);
-                var tileAtFeet = _map.GetTile((int)_player.Center.X/Constants.TileW, (int)_player.Center.Y/Constants.TileH);
-                if (new List<uint>(){543,452,569}.Contains(tileAtFeet.visual))
-                { 
-                    if(Random.Shared.NextDouble() < 0.25)
+                var tileAtTarget = _map.GetTileAt((int)targetOnGrid.X / Constants.TileW, (int)targetOnGrid.Y / Constants.TileH);
+                var tileAtFeet = _map.GetTile((int)_player.Center.X / Constants.TileW, (int)_player.Center.Y / Constants.TileH);
+                if (new List<uint>() { 543, 452, 569 }.Contains(tileAtFeet.visual))
+                {
+                    if (Random.Shared.NextDouble() < 0.25)
                     {
-                        var battle = new Monomon.Battle.BattleScene(_graphics,
-                                                                    _content,
-                                                                    input,
-                                                                    new FinishBattleHandler(stack),
-                                                                    new ConfirmMessageHandler(stack, _graphics, _font, _spriteMap, _content, input));
+                        // new battle scene
+                        //{
+                        //    var battle = new Monomon.Battle.BattleScene(_graphics,
+                        //                                                _content,
+                        //                                                input,
+                        //                                                new FinishBattleHandler(stack),
+                        //                                                new ConfirmMessageHandler(stack, _graphics, _font, _spriteMap, _content, input));
+                        //    stack.Push(new SceneState(battle, input), () => { }, () => { });
+                        //    battle.LoadScene(_content);
+                        //}
+                        var battle = new BattleSample(_graphics, input, stack, _content);
                         stack.Push(new SceneState(battle, input), () => { }, () => { });
                         battle.LoadScene(_content);
+
                         return;
                     }
                 }
 
-                if(_player.Dist == 0.0f && tileAtTarget != TileType.Wall)
+                if (_player.Dist == 0.0f && tileAtTarget != TileType.Wall)
                     _player.WalkInDirection(targetOnGrid);
             }
 
@@ -260,34 +265,34 @@ namespace Monomon.Views.Samples
                 Color.White
                 );
 
-            MarkTile(ToGridTopLeft( _player.Center));
-            MarkTile(ToGridTopLeft( _player.Center + new Vec2(_dx*Constants.TileW,_dy*Constants.TileH)));
+            MarkTile(ToGridTopLeft(_player.Center));
+            MarkTile(ToGridTopLeft(_player.Center + new Vec2(_dx * Constants.TileW, _dy * Constants.TileH)));
 
             void MarkTile(Vec2 gridPos)
             {
                 var pcenter = ToWindowPosition(gridPos);
                 _spriteBatch.Draw(_playerSprites,
                     new Rectangle((int)pcenter.X, (int)pcenter.Y, 2, 2),
-                    new Rectangle(0,0,1,1),
-                    Color.Black 
+                    new Rectangle(0, 0, 1, 1),
+                    Color.Black
                     );
 
                 _spriteBatch.Draw(_playerSprites,
                     new Rectangle((int)pcenter.X + Constants.TileW, (int)pcenter.Y, 2, 2),
-                    new Rectangle(0,0,1,1),
-                    Color.Black 
+                    new Rectangle(0, 0, 1, 1),
+                    Color.Black
                     );
 
                 _spriteBatch.Draw(_playerSprites,
                     new Rectangle((int)pcenter.X + Constants.TileW, (int)pcenter.Y + Constants.TileH, 2, 2),
-                    new Rectangle(0,0,1,1),
-                    Color.Black 
+                    new Rectangle(0, 0, 1, 1),
+                    Color.Black
                     );
 
                 _spriteBatch.Draw(_playerSprites,
                     new Rectangle((int)pcenter.X, (int)pcenter.Y + Constants.TileH, 2, 2),
-                    new Rectangle(0,0,1,1),
-                    Color.Black 
+                    new Rectangle(0, 0, 1, 1),
+                    Color.Black
                     );
             }
 
