@@ -189,6 +189,7 @@ namespace Monomon.Input
                 KeyName.Jump => new[] {buttons.A},
                 KeyName.Attack => new[] {buttons.X},
                 KeyName.Drop => new[] { dpad.Down },
+                KeyName.Back => new[] { buttons.B },
 
                 KeyName.Select => new[] {buttons.A },
                 KeyName.Editor_ToggleEditor => new[] {buttons.Start },
