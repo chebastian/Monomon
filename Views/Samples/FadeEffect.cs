@@ -5,7 +5,7 @@ using Monomon.Views.Scenes;
 using System;
 #nullable disable
 
-namespace Monomon.Views.Samples
+namespace Monomon.Effects
 {
     class FadeEffect
     {
