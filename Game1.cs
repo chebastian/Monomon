@@ -55,7 +55,7 @@ namespace Monomon
             }, x => { }, x => { });
 
             //_currentScene = new BattleCardSample(GraphicsDevice);
-            _currentScene = new SampleScene(GraphicsDevice, _stateStack, _input, Content);
+            _currentScene = new SampleScene(GraphicsDevice, _stateStack, _input, Content,_paletteEffect);
 
             _stateStack.Push(new SceneState(_currentScene, _input),
                 () => { });

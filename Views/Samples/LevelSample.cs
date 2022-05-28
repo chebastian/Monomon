@@ -28,6 +28,7 @@ namespace Monomon.Views.Samples
 {
     using Monomon.Battle;
     using Monomon.Data;
+    using Monomon.Effects;
     using System.Collections.Generic;
 
     public class Player
@@ -110,9 +111,9 @@ namespace Monomon.Views.Samples
     {
         private IINputHandler input;
         private StateStack<double> stack;
+        private PaletteEffect _paletteEffect;
         private Texture2D _tileSprites;
         private Texture2D _playerSprites;
-        private Effect paletteEffect;
         private RenderTarget2D _renderTarget;
         private Texture2D _spriteMap;
         private TileMap _map;
@@ -128,10 +129,11 @@ namespace Monomon.Views.Samples
             return new Vec2(((int)(pos.X / 16)) * 16, ((int)(pos.Y / 16)) * 16);
         }
 
-        public LevelSample(GraphicsDevice gd, IINputHandler input, StateStack<double> stack, ContentManager content) : base(gd, content)
+        public LevelSample(GraphicsDevice gd, IINputHandler input, StateStack<double> stack, ContentManager content, PaletteEffect effect) : base(gd, content)
         {
             this.input = input;
             this.stack = stack;
+            _paletteEffect = effect;
             _content = content;
             _player = new Player();
             _player.Pos = new Vec2(128, 128);
@@ -145,16 +147,6 @@ namespace Monomon.Views.Samples
 
             _tileSprites = content.Load<Texture2D>("levelMap");
             _playerSprites = content.Load<Texture2D>("player");
-
-            paletteEffect = content.Load<Effect>("Indexed");
-
-            //Init effect
-            {
-                _palette = content.Load<Texture2D>("paletteMini");
-                paletteEffect.Parameters["time"].SetValue(0.0f);
-                paletteEffect.Parameters["swap"].SetValue(1.0f);
-                paletteEffect.Parameters["palette"].SetValue(_palette);
-            }
         }
 
         public override void LoadScene(ContentManager content)
@@ -223,7 +215,6 @@ namespace Monomon.Views.Samples
         }
 
         public Rect Window = new Rect(0, 0, 160, 144);
-        private Texture2D _palette;
         private int _dx;
         private int _dy;
 
@@ -233,7 +224,8 @@ namespace Monomon.Views.Samples
 
             _graphics.SetRenderTarget(_renderTarget);
             _graphics.Clear(Color.White);
-            batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, paletteEffect);
+            //batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, paletteEffect);
+            _paletteEffect.EffectBegin(batch);
 
             var renderpos = (x: 0, y: 0);
 
@@ -251,7 +243,7 @@ namespace Monomon.Views.Samples
 
                 if (visual != (uint)TileType.None)
                 {
-                    _spriteBatch.Draw(_tileSprites,
+                    batch.Draw(_tileSprites,
                         renderPos,
                         new Rectangle(tileSrc.X, tileSrc.Y, Constants.TileW, Constants.TileH),
                         Color.White);
@@ -259,7 +251,7 @@ namespace Monomon.Views.Samples
             }
 
             var playerCamPos = ToWindowPosition(_player.Pos);
-            _spriteBatch.Draw(_playerSprites,
+            batch.Draw(_playerSprites,
                 new Rectangle((int)playerCamPos.X, (int)playerCamPos.Y, 16, 16),
                 SourceForDir(_player.Target - _player.OgPos),
                 Color.White
@@ -271,25 +263,25 @@ namespace Monomon.Views.Samples
             void MarkTile(Vec2 gridPos)
             {
                 var pcenter = ToWindowPosition(gridPos);
-                _spriteBatch.Draw(_playerSprites,
+                batch.Draw(_playerSprites,
                     new Rectangle((int)pcenter.X, (int)pcenter.Y, 2, 2),
                     new Rectangle(0, 0, 1, 1),
                     Color.Black
                     );
 
-                _spriteBatch.Draw(_playerSprites,
+                batch.Draw(_playerSprites,
                     new Rectangle((int)pcenter.X + Constants.TileW, (int)pcenter.Y, 2, 2),
                     new Rectangle(0, 0, 1, 1),
                     Color.Black
                     );
 
-                _spriteBatch.Draw(_playerSprites,
+                batch.Draw(_playerSprites,
                     new Rectangle((int)pcenter.X + Constants.TileW, (int)pcenter.Y + Constants.TileH, 2, 2),
                     new Rectangle(0, 0, 1, 1),
                     Color.Black
                     );
 
-                _spriteBatch.Draw(_playerSprites,
+                batch.Draw(_playerSprites,
                     new Rectangle((int)pcenter.X, (int)pcenter.Y + Constants.TileH, 2, 2),
                     new Rectangle(0, 0, 1, 1),
                     Color.Black
@@ -324,8 +316,7 @@ namespace Monomon.Views.Samples
             batch.Begin(samplerState: SamplerState.PointWrap);
             _graphics.SetRenderTarget(null);
             batch.Draw(_renderTarget, new Rectangle(0, 0, _renderTarget.Width * zoom, _renderTarget.Height * zoom), Color.White);
-            batch.End();
-            batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, paletteEffect);
+        //    batch.End();
 
         }
     }

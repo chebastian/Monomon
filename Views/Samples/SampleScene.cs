@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGameBase.Input;
+using Monomon.Effects;
 using Monomon.Input;
 using Monomon.State;
 using Monomon.UI;
@@ -25,7 +26,7 @@ namespace Monomon.Views.Samples
 
         public GraphicsDevice GraphicsDevice { get; }
 
-        public SampleScene(GraphicsDevice gd, StateStack<double> stack, IINputHandler input, ContentManager content)
+        public SampleScene(GraphicsDevice gd, StateStack<double> stack, IINputHandler input, ContentManager content, PaletteEffect effect)
             : base(gd,content)
 
         {
@@ -37,7 +38,7 @@ namespace Monomon.Views.Samples
 
             _sceneList = new UIList<string>(new List<UIItem<string>>() {
                 new UIItem<string>("Level test",x => {
-                    SwapScene(new LevelSample(GraphicsDevice,_input,_stack,content));
+                    SwapScene(new LevelSample(GraphicsDevice,_input,_stack,content,effect));
                 }),
                 new UIItem<string>("Battle test",x => {
                     SwapScene(new BattleSample(GraphicsDevice,_input,_stack,_content));
