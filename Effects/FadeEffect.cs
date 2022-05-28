@@ -6,7 +6,7 @@ using System;
 
 namespace Monomon.Effects
 {
-    class FadeEffect
+    public class FadeEffect
     {
         private Effect _fadeEffect;
         private float _fadeTime;
@@ -55,10 +55,10 @@ namespace Monomon.Effects
                 if (arg.lerp >= 0.8f)
                 {
                 }
-            }, () => { onready(); }, 0.0f, 1.0f, 1.4f, EasingFunc.Lerp);
+            }, () => { }, 0.0f, 1.0f, 1.4f, EasingFunc.Lerp);
 
             stack.Push(fade, () => { stack.Pop(); onComplete?.Invoke(); });
-            stack.Push(fadeIn, () => stack.Pop());
+            stack.Push(fadeIn, () => { stack.Pop(); onready(); });
         }
 
         public void Draw(SpriteBatch batch)
