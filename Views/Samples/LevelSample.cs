@@ -28,6 +28,7 @@ namespace Monomon.Data
 
 namespace Monomon.Views.Samples
 {
+    using Monomon.Battle;
     using Monomon.Data;
     using System.Collections.Generic;
 
@@ -115,7 +116,9 @@ namespace Monomon.Views.Samples
         private Texture2D _playerSprites;
         private Effect paletteEffect;
         private RenderTarget2D _renderTarget;
+        private Texture2D _spriteMap;
         private TileMap _map;
+        private SpriteFont _font;
         private SerializedLevelData _levelData;
 
         private Player _player;
@@ -136,7 +139,9 @@ namespace Monomon.Views.Samples
             _player.Pos = new Vec2(128, 128);
             windowPos = new Vec2(0, 0);
             _renderTarget = new RenderTarget2D(_graphics, 160, 144);
+            _spriteMap = content.Load<Texture2D>("spritemap");
             _map = new TileMap();
+            _font = content.Load<SpriteFont>("File");
             _levelData = System.Text.Json.JsonSerializer.Deserialize<SerializedLevelData>(File.ReadAllText("./Levels/grass.json")) ?? throw new ArgumentNullException("level");
             _map.CreateLevel(_levelData.VisibleTiles, _levelData.Tiles);
 
@@ -184,8 +189,12 @@ namespace Monomon.Views.Samples
                 { 
                     if(Random.Shared.NextDouble() < 0.25)
                     {
-                        var battle = new BattleSample(_graphics,input,stack,_content);
-                        stack.Push(new SceneState(battle,input),() => { stack.Pop(); },() => { });
+                        var battle = new Monomon.Battle.BattleScene(_graphics,
+                                                                    _content,
+                                                                    input,
+                                                                    new FinishBattleHandler(stack),
+                                                                    new ConfirmMessageHandler(stack, _graphics, _font, _spriteMap, _content, input));
+                        stack.Push(new SceneState(battle, input), () => { }, () => { });
                         battle.LoadScene(_content);
                         return;
                     }
