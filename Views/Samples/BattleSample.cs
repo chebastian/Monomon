@@ -279,6 +279,7 @@ namespace Monomon.Views.Samples
                     });
                     var no = new Choice("No", () =>
                     {
+                        _stack.Pop(); // pop the battle state
                     });
                     SelectChoice("Do you want to continue?", yesChoice, no);
                 }
