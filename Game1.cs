@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Monomon.Effects;
@@ -10,29 +9,6 @@ using Monomon.Views.Gui;
 using Monomon.Views.Samples;
 using Monomon.Views.Scenes;
 using System.Collections.Generic;
-
-namespace Monomon.Effects
-{
-    public class IndexedColorsEffect
-    {
-        private Effect paletteEffect;
-        private Texture2D _palette;
-        public IndexedColorsEffect(ContentManager content, Texture2D paletteTexture)
-        {
-            paletteEffect = content.Load<Effect>("Indexed");
-
-            _palette = paletteTexture;
-            paletteEffect.Parameters["time"].SetValue(0.0f);
-            paletteEffect.Parameters["swap"].SetValue(1.0f);
-            paletteEffect.Parameters["palette"].SetValue(_palette);
-        }
-
-        public void EffectBegin(SpriteBatch batch)
-        {
-            batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, paletteEffect);
-        }
-    }
-}
 
 namespace Monomon
 {
@@ -47,7 +23,7 @@ namespace Monomon
         private UIList<string> _sceneList;
         private SceneView _currentScene;
         private StateStack<double> _stateStack;
-        private IndexedColorsEffect _paletteEffect;
+        private PaletteEffect _paletteEffect;
 
         public Game1()
         {
@@ -64,7 +40,7 @@ namespace Monomon
             _input = new Monomon.Input.BufferInputHandler();
             _spriteBatch = new SpriteBatch(_graphics.GraphicsDevice);
             font = Content.Load<SpriteFont>("File");
-            _paletteEffect = new IndexedColorsEffect(Content,Content.Load<Texture2D>("paletteMini"));
+            _paletteEffect = new PaletteEffect(Content,Content.Load<Texture2D>("paletteMini"));
 
 
             _sceneList = new UIList<string>(new List<UIItem<string>>() {
