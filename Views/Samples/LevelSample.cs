@@ -189,7 +189,7 @@ namespace Monomon.Views.Samples
                         //    stack.Push(new SceneState(battle, input), () => { }, () => { });
                         //    battle.LoadScene(_content);
                         //}
-                        var battle = new BattleSample(_graphics, input, stack, _content);
+                        var battle = new BattleSample(_graphics, input, stack, _content,_paletteEffect);
                         stack.Push(new SceneState(battle, input), () => { }, () => { });
                         battle.LoadScene(_content);
 

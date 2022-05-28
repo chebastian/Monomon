@@ -27,6 +27,7 @@ namespace Monomon.Views.Samples
         private Mobmon _player;
         private Mobmon _mob;
         private StateStack<double> _stack;
+        private PaletteEffect _paletteEffect;
         private UIList<string> _list;
         private UIList<string> fightList;
         private UIList<string> itemList;
@@ -41,17 +42,16 @@ namespace Monomon.Views.Samples
         private SoundEffect _battleTackleEffect;
         private SoundEffect _battleHurtEffect;
         private SoundEffect _battleXpUpEffect;
-        private Texture2D _palette;
-        private static float _currentPalette = 0.2f;
         private bool ready;
         private FadeEffect _fadeImpl;
 
-        public BattleSample(GraphicsDevice gd, IINputHandler input, StateStack<double> stack, ContentManager content) : base(gd, content)
+        public BattleSample(GraphicsDevice gd, IINputHandler input, StateStack<double> stack, ContentManager content,PaletteEffect palette ) : base(gd, content)
         {
             _input = input;
             _player = new Mobmon("Player", 3, new MonStatus(4, 2, 3));
             _mob = new Mobmon("Mob", 9, new MonStatus(2, 2, 3));
             _stack = stack;
+            _paletteEffect = palette;
 
             _list = new UIList<string>(new List<UIItem<string>>() {
                 new UIItem<string>("Fight", x => { _currentList = fightList; }),
@@ -143,24 +143,13 @@ namespace Monomon.Views.Samples
             _fadeImpl = new FadeEffect(_content.Load<Effect>("Fade"),
                                        _content.Load<Texture2D>("fadeCircleOut"),
                                        _content.Load<Texture2D>("paletteMini"),
-                                       0.0f);
+                                       _paletteEffect.CurrentPalette);
 
             _fadeImpl.DoFade(_stack, () => ready = true);
         }
 
         public override void LoadScene(ContentManager content)
         {
-
-            _effect = content.Load<Effect>("Indexed");
-
-            //Init effect
-            {
-                _palette = content.Load<Texture2D>("paletteMini");
-                _effect?.Parameters["time"].SetValue(_currentPalette);
-                _effect?.Parameters["swap"].SetValue(1.0f);
-                _effect?.Parameters["palette"].SetValue(_palette);
-            }
-
             font = content.Load<SpriteFont>("File");
             _spriteMap = content.Load<Texture2D>("spritemap");
 
@@ -225,8 +214,7 @@ namespace Monomon.Views.Samples
                     var y = delta * (float)i;
                     choice.Add(new Choice($"#{i}", () =>
                     {
-                        _currentPalette = y;
-                        _effect?.Parameters["time"].SetValue(y);
+                        _paletteEffect.CurrentPalette = y;
                     }));
                 }
 
@@ -308,6 +296,8 @@ namespace Monomon.Views.Samples
 
         protected override void OnDraw(SpriteBatch batch)
         {
+            batch.End(); // end global effect, which is null
+            _paletteEffect.EffectBegin(batch); //start drawing again usingpalette... ?
             DrawBattle(batch);
         }
 
@@ -340,7 +330,8 @@ namespace Monomon.Views.Samples
 
             batch.End();
             _fadeImpl.Draw(batch);
-            batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearWrap, null, null, _effect);
+            //batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearWrap, null, null, _effect);
+            _paletteEffect.EffectBegin(batch); //since we stop to draw the fade reenable palette effect
         }
     }
 }
