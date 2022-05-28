@@ -112,6 +112,7 @@ namespace Monomon.Views.Samples
         private IINputHandler input;
         private StateStack<double> stack;
         private PaletteEffect _paletteEffect;
+        private FadeEffect _fade;
         private Texture2D _tileSprites;
         private Texture2D _playerSprites;
         private RenderTarget2D _renderTarget;
@@ -129,7 +130,7 @@ namespace Monomon.Views.Samples
             return new Vec2(((int)(pos.X / 16)) * 16, ((int)(pos.Y / 16)) * 16);
         }
 
-        public LevelSample(GraphicsDevice gd, IINputHandler input, StateStack<double> stack, ContentManager content, PaletteEffect effect) : base(gd, content)
+        public LevelSample(GraphicsDevice gd, IINputHandler input, StateStack<double> stack, ContentManager content, PaletteEffect effect,FadeEffect fade) : base(gd, content)
         {
             this.input = input;
             this.stack = stack;
@@ -144,6 +145,7 @@ namespace Monomon.Views.Samples
             _font = content.Load<SpriteFont>("File");
             _levelData = System.Text.Json.JsonSerializer.Deserialize<SerializedLevelData>(File.ReadAllText("./Levels/grass.json")) ?? throw new ArgumentNullException("level");
             _map.CreateLevel(_levelData.VisibleTiles, _levelData.Tiles);
+            _fade = fade;
 
             _tileSprites = content.Load<Texture2D>("levelMap");
             _playerSprites = content.Load<Texture2D>("player");
@@ -189,7 +191,7 @@ namespace Monomon.Views.Samples
                         //    stack.Push(new SceneState(battle, input), () => { }, () => { });
                         //    battle.LoadScene(_content);
                         //}
-                        var battle = new BattleSample(_graphics, input, stack, _content,_paletteEffect);
+                        var battle = new BattleSample(_graphics, input, stack, _content,_paletteEffect,_fade);
                         stack.Push(new SceneState(battle, input), () => { }, () => { });
                         battle.LoadScene(_content);
 

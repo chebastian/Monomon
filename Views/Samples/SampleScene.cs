@@ -26,7 +26,7 @@ namespace Monomon.Views.Samples
 
         public GraphicsDevice GraphicsDevice { get; }
 
-        public SampleScene(GraphicsDevice gd, StateStack<double> stack, IINputHandler input, ContentManager content, PaletteEffect effect)
+        public SampleScene(GraphicsDevice gd, StateStack<double> stack, IINputHandler input, ContentManager content, PaletteEffect effect, FadeEffect fade)
             : base(gd,content)
 
         {
@@ -35,13 +35,15 @@ namespace Monomon.Views.Samples
             GraphicsDevice = gd;
             font = content.Load<SpriteFont>("File");
             var sprites = content.Load<Texture2D>("spritemap");
+    
+
 
             _sceneList = new UIList<string>(new List<UIItem<string>>() {
                 new UIItem<string>("Level test",x => {
-                    SwapScene(new LevelSample(GraphicsDevice,_input,_stack,content,effect));
+                    SwapScene(new LevelSample(GraphicsDevice,_input,_stack,content,effect,fade));
                 }),
                 new UIItem<string>("Battle test",x => {
-                    SwapScene(new BattleSample(GraphicsDevice,_input,_stack,_content,effect));
+                    SwapScene(new BattleSample(GraphicsDevice,_input,_stack,_content,effect,fade));
                 }),
                 new UIItem<string>("Tween",x => {
                     SwapScene(new TweenSamples(GraphicsDevice,_content));

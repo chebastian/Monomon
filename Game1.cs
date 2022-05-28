@@ -24,6 +24,7 @@ namespace Monomon
         private SceneView _currentScene;
         private StateStack<double> _stateStack;
         private PaletteEffect _paletteEffect;
+        private FadeEffect _fadeImpl;
 
         public Game1()
         {
@@ -41,7 +42,10 @@ namespace Monomon
             _spriteBatch = new SpriteBatch(_graphics.GraphicsDevice);
             font = Content.Load<SpriteFont>("File");
             _paletteEffect = new PaletteEffect(Content,Content.Load<Texture2D>("paletteMini"));
-
+            _fadeImpl = new FadeEffect(Content.Load<Effect>("Fade"),
+                                       Content.Load<Texture2D>("fadeCircleOut"),
+                                       Content.Load<Texture2D>("paletteMini"),
+                                       _paletteEffect.CurrentPalette);
 
             _sceneList = new UIList<string>(new List<UIItem<string>>() {
                 new UIItem<string>("Battle test",x => {
@@ -55,7 +59,7 @@ namespace Monomon
             }, x => { }, x => { });
 
             //_currentScene = new BattleCardSample(GraphicsDevice);
-            _currentScene = new SampleScene(GraphicsDevice, _stateStack, _input, Content,_paletteEffect);
+            _currentScene = new SampleScene(GraphicsDevice, _stateStack, _input, Content,_paletteEffect,_fadeImpl);
 
             _stateStack.Push(new SceneState(_currentScene, _input),
                 () => { });
@@ -115,9 +119,14 @@ namespace Monomon
             _paletteEffect.EffectBegin(_spriteBatch);
 
             _stateStack.Render(gameTime.ElapsedGameTime.TotalSeconds);
-
-
             _spriteBatch.End();
+            _fadeImpl.Draw(_spriteBatch);
+            //batch.End();
+            //batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearWrap, null, null, _effect);
+            //_paletteEffect.EffectBegin(_spriteBatch); //since we stop to draw the fade reenable palette effect
+
+
+            //_spriteBatch.End();
 
             // TODO: Add your drawing code here
 

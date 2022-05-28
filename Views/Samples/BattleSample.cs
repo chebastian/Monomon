@@ -45,13 +45,14 @@ namespace Monomon.Views.Samples
         private bool ready;
         private FadeEffect _fadeImpl;
 
-        public BattleSample(GraphicsDevice gd, IINputHandler input, StateStack<double> stack, ContentManager content,PaletteEffect palette ) : base(gd, content)
+        public BattleSample(GraphicsDevice gd, IINputHandler input, StateStack<double> stack, ContentManager content,PaletteEffect palette, FadeEffect fade ) : base(gd, content)
         {
             _input = input;
             _player = new Mobmon("Player", 3, new MonStatus(4, 2, 3));
             _mob = new Mobmon("Mob", 9, new MonStatus(2, 2, 3));
             _stack = stack;
             _paletteEffect = palette;
+            _fadeImpl = fade;
 
             _list = new UIList<string>(new List<UIItem<string>>() {
                 new UIItem<string>("Fight", x => { _currentList = fightList; }),
@@ -140,10 +141,6 @@ namespace Monomon.Views.Samples
 
 
             _stack.Push(slideIn, () => _stack.Pop());
-            _fadeImpl = new FadeEffect(_content.Load<Effect>("Fade"),
-                                       _content.Load<Texture2D>("fadeCircleOut"),
-                                       _content.Load<Texture2D>("paletteMini"),
-                                       _paletteEffect.CurrentPalette);
 
             _fadeImpl.DoFade(_stack, () => ready = true);
         }
@@ -235,8 +232,11 @@ namespace Monomon.Views.Samples
                     });
                     var no = new Choice("No", () =>
                     {
-                        _fadeImpl.DoFade(_stack, () => { }, () => {
-                            _stack.Pop(); // pop the battle state 
+                        _fadeImpl.DoFade(_stack, 
+                            () => {
+                            }, 
+                            () => {
+                                _stack.Pop(); // pop the battle state 
                         });
                     });
                     SelectChoice("Do you want to continue?", yesChoice, no);
@@ -330,10 +330,9 @@ namespace Monomon.Views.Samples
 
 
 
-            batch.End();
-            _fadeImpl.Draw(batch);
+            //batch.End();
             //batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearWrap, null, null, _effect);
-            _paletteEffect.EffectBegin(batch); //since we stop to draw the fade reenable palette effect
+            //_paletteEffect.EffectBegin(batch); //since we stop to draw the fade reenable palette effect
         }
     }
 }
