@@ -37,6 +37,34 @@ namespace Monomon.Effects
 
         }
 
+        public void FadeIn(StateStack<double> stack, Action? onComplete = null)
+        {
+            var fadeIn = new TweenState(arg =>
+            {
+                _fadeEffect.Parameters["flip"].SetValue(true);
+                UpdateFade((float)(1.0f - arg.lerp));
+                if (arg.lerp >= 0.8f)
+                {
+                }
+            }, () => { }, 0.0f, 1.0f, 1.4f, EasingFunc.Lerp);
+
+            stack.Push(fadeIn, () => { stack.Pop(); onComplete?.Invoke(); });
+        }
+
+        public void FadeOut(StateStack<double> stack, Action? onComplete = null)
+        {
+            var fade = new TweenState(arg =>
+            {
+                _fadeEffect.Parameters["flip"].SetValue(false);
+                UpdateFade((float)(1.0 - arg.lerp));
+                if (arg.lerp >= 0.8f)
+                {
+                }
+            }, () => { }, 0.0f, 1.0f, 1.4f, EasingFunc.Lerp);
+
+            stack.Push(fade, () => { stack.Pop(); onComplete?.Invoke(); }); 
+        }
+
         public void DoFade(StateStack<double> stack, Action onready, Action? onComplete = null)
         {
             var fade = new TweenState(arg =>
@@ -60,6 +88,7 @@ namespace Monomon.Effects
             stack.Push(fade, () => { stack.Pop(); onComplete?.Invoke(); });
             stack.Push(fadeIn, () => { stack.Pop(); onready(); });
         }
+
 
         public void Draw(SpriteBatch batch)
         {
