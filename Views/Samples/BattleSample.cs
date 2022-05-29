@@ -45,7 +45,7 @@ namespace Monomon.Views.Samples
         private bool ready;
         private FadeEffect _fadeImpl;
 
-        public BattleSample(GraphicsDevice gd, IINputHandler input, StateStack<double> stack, ContentManager content,PaletteEffect palette, FadeEffect fade ) : base(gd, content)
+        public BattleSample(GraphicsDevice gd, IINputHandler input, StateStack<double> stack, ContentManager content, PaletteEffect palette, FadeEffect fade) : base(gd, content)
         {
             _input = input;
             _player = new Mobmon("Player", 3, new MonStatus(4, 2, 3));
@@ -224,20 +224,11 @@ namespace Monomon.Views.Samples
 
                 if (result == BattleOutcome.Win)
                 {
-                    var yesChoice = new Choice("Yes", () =>
-                    {
-                        _mob = new Mobmon("Mon2", 8, new MonStatus(5, 5, 5));
-                        _currentEnemyCard = new BattleCardViewModel(_mob.Name, _mob.MaxHealth, _mob.Health, 5);
-                        InitBattle();
-                    });
-                    var no = new Choice("No", () =>
-                    {
-                        _fadeImpl.FadeIn(_stack, 
-                            () => {
-                                _stack.Pop(); // pop the battle state 
+                    _fadeImpl.FadeIn(_stack,
+                        () =>
+                        {
+                            _stack.Pop(); // pop the battle state 
                         });
-                    });
-                    SelectChoice("Do you want to continue?", yesChoice, no);
                 }
                 else
                 {
