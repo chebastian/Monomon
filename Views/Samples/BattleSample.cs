@@ -45,11 +45,11 @@ namespace Monomon.Views.Samples
         private bool ready;
         private FadeEffect _fadeImpl;
 
-        public BattleSample(GraphicsDevice gd, IINputHandler input, StateStack<double> stack, ContentManager content, PaletteEffect palette, FadeEffect fade) : base(gd, content)
+        public BattleSample(GraphicsDevice gd, IINputHandler input, Mobmon player, Mobmon enemy, StateStack<double> stack, ContentManager content, PaletteEffect palette, FadeEffect fade) : base(gd, content)
         {
             _input = input;
-            _player = new Mobmon("Player", 3, new MonStatus(4, 2, 3));
-            _mob = new Mobmon("Mob", 9, new MonStatus(2, 2, 3));
+            _player = player;
+            _mob = enemy;
             _stack = stack;
             _paletteEffect = palette;
             _fadeImpl = fade;

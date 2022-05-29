@@ -29,6 +29,7 @@ namespace Monomon.Views.Samples
     using Monomon.Battle;
     using Monomon.Data;
     using Monomon.Effects;
+    using Monomon.Mons;
     using System.Collections.Generic;
 
     public class Player
@@ -120,6 +121,7 @@ namespace Monomon.Views.Samples
         private TileMap _map;
         private SpriteFont _font;
         private SerializedLevelData _levelData;
+        Mons.Mobmon _playerMon;
 
         private Player _player;
 
@@ -149,6 +151,7 @@ namespace Monomon.Views.Samples
 
             _tileSprites = content.Load<Texture2D>("levelMap");
             _playerSprites = content.Load<Texture2D>("player");
+            _playerMon = new Mons.Mobmon("Player", 10, (new MonStatus(8, 7, 3)));
         }
 
         public override void LoadScene(ContentManager content)
@@ -191,7 +194,14 @@ namespace Monomon.Views.Samples
                         //    stack.Push(new SceneState(battle, input), () => { }, () => { });
                         //    battle.LoadScene(_content);
                         //}
-                        var battle = new BattleSample(_graphics, input, stack, _content,_paletteEffect,_fade);
+                        var battle = new BattleSample(_graphics,
+                                                      input,
+                                                      _playerMon,
+                                                      CreateRandomEnemy(),
+                                                      stack,
+                                                      _content,
+                                                      _paletteEffect,
+                                                      _fade);;
                         _fade.FadeOut(stack, () => { });
                         stack.Push(new SceneState(battle, input), () => { }, () => { });
                         battle.LoadScene(_content);
@@ -215,6 +225,13 @@ namespace Monomon.Views.Samples
             //    _player.Pos += vel;
 
             //_player.Vel = vel;
+        }
+
+        private Mobmon CreateRandomEnemy()
+        {
+            return new Mobmon("Enemy",
+                              Random.Shared.Next(3,10),
+                              new MonStatus(2, 4, 5));
         }
 
         public Rect Window = new Rect(0, 0, 160, 144);
