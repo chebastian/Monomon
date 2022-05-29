@@ -232,9 +232,7 @@ namespace Monomon.Views.Samples
                     });
                     var no = new Choice("No", () =>
                     {
-                        _fadeImpl.DoFade(_stack, 
-                            () => {
-                            }, 
+                        _fadeImpl.FadeIn(_stack, 
                             () => {
                                 _stack.Pop(); // pop the battle state 
                         });

@@ -192,6 +192,7 @@ namespace Monomon.Views.Samples
                         //    battle.LoadScene(_content);
                         //}
                         var battle = new BattleSample(_graphics, input, stack, _content,_paletteEffect,_fade);
+                        _fade.FadeOut(stack, () => { });
                         stack.Push(new SceneState(battle, input), () => { }, () => { });
                         battle.LoadScene(_content);
 
