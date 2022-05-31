@@ -151,7 +151,7 @@ namespace Monomon.Views.Samples
 
             _tileSprites = content.Load<Texture2D>("levelMap");
             _playerSprites = content.Load<Texture2D>("player");
-            _playerMon = new Mons.Mobmon("Player", 10, (new MonStatus(8, 7, 3)));
+            _playerMon = new Mons.Mobmon("Player", 10, (new MonStatus(2, 7, 3)));
         }
 
         public override void LoadScene(ContentManager content)

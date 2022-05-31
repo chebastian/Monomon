@@ -60,6 +60,26 @@ namespace Monomon
             return new ConfirmState(new MessageScene(_gd, message, _font, _sprites, _content,true), _input);
         }
 
+        public void OnItem(BattleMessage message,Mons.Mobmon user, Mons.Mobmon _oponent, Action continueWith, BattleCardViewModel attackerCard, BattleCardViewModel oponentCard, bool isPlayer)
+        { 
+            var attackInfoState = TimedMessage($"{message.attacker} used {message.name}");
+            _stack.BeginStateSequence();
+            _stack.AddState(attackInfoState);
+
+            var health = user.Health;
+            var healthbarUpdateState = new TweenState((arg) => user.Health = Math.Min(user.MaxHealth,(float)(health + arg.lerp)), () =>
+            {
+                user.Health = Math.Min(health + message.damage,user.MaxHealth);
+            }, 0.0f, Math.Min(message.damage, health), 1.0f, EasingFunc.Lerp);
+
+            _stack.AddState(healthbarUpdateState, () =>
+            {
+                user.Health = Math.Min(health + message.damage,user.MaxHealth);
+            });
+
+            _stack.EndStateSecence(() => { continueWith(); });
+        }
+
         public void OnAttack(BattleMessage message, Mons.Mobmon attacker, Mons.Mobmon _oponent, Action continueWith, BattleCardViewModel attackerCard, BattleCardViewModel oponentCard, bool isPlayer)
         {
             var attackInfoState = TimedMessage($"{message.attacker} used {message.name}");

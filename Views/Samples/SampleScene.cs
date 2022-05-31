@@ -43,7 +43,7 @@ namespace Monomon.Views.Samples
                     SwapScene(new LevelSample(GraphicsDevice,_input,_stack,content,effect,fade));
                 }),
                 new UIItem<string>("Battle test",x => {
-                    SwapScene(new BattleSample(GraphicsDevice,_input,_stack,_content,effect,fade));
+                    //SwapScene(new BattleSample(GraphicsDevice,_input,_stack,_content,effect,fade));
                 }),
                 new UIItem<string>("Tween",x => {
                     SwapScene(new TweenSamples(GraphicsDevice,_content));
