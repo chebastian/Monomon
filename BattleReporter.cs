@@ -24,7 +24,7 @@ namespace Monomon
 
         }
 
-        public void Execute(PotionMessage potion, Mons.Mobmon user, Action continueWith, BattleCardViewModel attackerCard, BattleCardViewModel oponentCard, bool isPlayer)
+        public void Execute(PotionMessage potion, Mons.Mobmon user, Action continueWith)
         {
             var health = user.Health;
             var healthbarUpdateState = new TweenState((arg) => user.Health = Math.Min(user.MaxHealth, (float)(health + arg.lerp)), () =>
@@ -157,22 +157,10 @@ namespace Monomon
             _stack.BeginStateSequence();
             _stack.AddState(attackInfoState);
 
+            var handler = new PotionHandler(_gd, _stack, _input, _font, _sprites, _soundCallback, _content);
             if (message is PotionMessage potion)
-            {
-                var health = user.Health;
-                var healthbarUpdateState = new TweenState((arg) => user.Health = Math.Min(user.MaxHealth, (float)(health + arg.lerp)), () =>
-                {
-                    user.Health = Math.Min(health + potion.hpRestored, user.MaxHealth);
-                }, 0.0f, Math.Min(potion.hpRestored, health), 1.0f, EasingFunc.Lerp);
+                handler.Execute(potion, user, continueWith);
 
-                _stack.AddState(healthbarUpdateState, () =>
-                {
-                    message.Use(user);
-                });
-
-                _stack.EndStateSecence(() => { continueWith(); });
-
-            }
         }
 
         public void OnAttack(BattleMessage message, Mons.Mobmon attacker, Mons.Mobmon _oponent, Action continueWith, BattleCardViewModel attackerCard, BattleCardViewModel oponentCard, bool isPlayer)
