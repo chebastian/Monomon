@@ -93,7 +93,7 @@ namespace Monomon.Views.Samples
 
             itemList = new UIList<string>(new List<UIItem<string>>() {
                 new UIItem<string>("Potion", x => {
-                    _battleReporter.OnItem(new BattleMessage("Player","self","potion",5), _player,_mob,() => {_battleManager.NextTurn(); },_playerCard,_currentEnemyCard,true);
+                    _battleReporter.OnItem(new PotionMessage("Player","potion",5), _player,() => {_battleManager.NextTurn(); },_playerCard,_currentEnemyCard,true);
                 }),
                 new UIItem<string>("Mana Potion", x => {}),
                 new UIItem<string>("Back", x => {_currentList = _list; }),
@@ -126,7 +126,7 @@ namespace Monomon.Views.Samples
             _playerCard.PortraitOffsetX = -112;
             _playerCard.PortraitOffsetY = -32;
 
-            _battleReporter = new BattleReporter(_spriteBatch, _graphics, _stack, _input, font, _spriteMap, OnPlaySound, _content);
+            _battleReporter = new BattleReporter(_graphics, _stack, _input, font, _spriteMap, OnPlaySound, _content);
 
             _battleManager = new BattleManager(_player, _mob, _battleReporter, _input, _playerCard, _currentEnemyCard);
 

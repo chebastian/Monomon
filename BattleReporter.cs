@@ -2,13 +2,11 @@
 using Microsoft.Xna.Framework.Graphics;
 using MonoGameBase.Input;
 using Monomon.Battle;
-using Monomon.Input;
 using Monomon.State;
 using Monomon.ViewModels;
 using Monomon.Views.Scenes;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Monomon
 {
@@ -19,68 +17,37 @@ namespace Monomon
         XpUP,
     }
 
-    public class BattleReporter
+    public class PotionHandler : BattleReporter
     {
-        private readonly SpriteBatch batch;
-        private readonly StateStack<double> _stack;
-        private ContentManager _content;
-        private Action<Sounds> _soundCallback;
-        private Texture2D _sprites;
-        private SpriteFont _font;
-        private IINputHandler _input;
-        private GraphicsDevice _gd;
-
-        public List<string> Messages { get; set; }
-        public BattleReporter(SpriteBatch batch, GraphicsDevice gd, State.StateStack<double> stack, IINputHandler input, SpriteFont font, Texture2D sprites, Action<Sounds> soundCallback,ContentManager mgr)
+        public PotionHandler(GraphicsDevice gd, State.StateStack<double> stack, IINputHandler input, SpriteFont font, Texture2D sprites, Action<Sounds> soundCallback, ContentManager mgr) : base(gd, stack, input, font, sprites, soundCallback, mgr)
         {
-            _content = mgr;
-            _soundCallback = soundCallback;
-            _sprites = sprites;
-            _font = font;
-            _input = input;
-            _gd = gd;
 
-            if (batch is null)
-            {
-                throw new ArgumentNullException(nameof(batch));
-            }
-
-            this.batch = batch;
-            _stack = stack;
-            Messages = new List<string>();
         }
 
-        TimedState TimedMessage(string message)
+        public void Execute(PotionMessage potion, Mons.Mobmon user, Action continueWith, BattleCardViewModel attackerCard, BattleCardViewModel oponentCard, bool isPlayer)
         {
-            return new TimedState(new MessageScene(_gd, message, _font, _sprites,_content), 2500, _input);
-        }
-
-        ConfirmState ConfirmMessage(string message)
-        {
-            return new ConfirmState(new MessageScene(_gd, message, _font, _sprites, _content,true), _input);
-        }
-
-        public void OnItem(BattleMessage message,Mons.Mobmon user, Mons.Mobmon _oponent, Action continueWith, BattleCardViewModel attackerCard, BattleCardViewModel oponentCard, bool isPlayer)
-        { 
-            var attackInfoState = TimedMessage($"{message.attacker} used {message.name}");
-            _stack.BeginStateSequence();
-            _stack.AddState(attackInfoState);
-
             var health = user.Health;
-            var healthbarUpdateState = new TweenState((arg) => user.Health = Math.Min(user.MaxHealth,(float)(health + arg.lerp)), () =>
+            var healthbarUpdateState = new TweenState((arg) => user.Health = Math.Min(user.MaxHealth, (float)(health + arg.lerp)), () =>
             {
-                user.Health = Math.Min(health + message.damage,user.MaxHealth);
-            }, 0.0f, Math.Min(message.damage, health), 1.0f, EasingFunc.Lerp);
+                user.Health = Math.Min(health + potion.hpRestored, user.MaxHealth);
+            }, 0.0f, Math.Min(potion.hpRestored, health), 1.0f, EasingFunc.Lerp);
 
             _stack.AddState(healthbarUpdateState, () =>
             {
-                user.Health = Math.Min(health + message.damage,user.MaxHealth);
+                potion.Use(user);
             });
 
             _stack.EndStateSecence(() => { continueWith(); });
+        } 
+    }
+
+    public class AttackHandler : BattleReporter
+    {
+        public AttackHandler(GraphicsDevice gd, StateStack<double> stack, IINputHandler input, SpriteFont font, Texture2D sprites, Action<Sounds> soundCallback, ContentManager mgr) : base(gd, stack, input, font, sprites, soundCallback, mgr)
+        {
         }
 
-        public void OnAttack(BattleMessage message, Mons.Mobmon attacker, Mons.Mobmon _oponent, Action continueWith, BattleCardViewModel attackerCard, BattleCardViewModel oponentCard, bool isPlayer)
+        public void Execute(BattleMessage message, Mons.Mobmon attacker, Mons.Mobmon _oponent, Action continueWith, BattleCardViewModel attackerCard, BattleCardViewModel oponentCard, bool isPlayer)
         {
             var attackInfoState = TimedMessage($"{message.attacker} used {message.name}");
 
@@ -138,7 +105,7 @@ namespace Monomon
                         attacker.Xp = xp + 20;
                     }, 0.0f, 20, 1.0f, EasingFunc.EaseOutCube);
 
-                    _stack.AddState(xpUpdate, null, () => _soundCallback(Sounds.XpUP)); 
+                    _stack.AddState(xpUpdate, null, () => _soundCallback(Sounds.XpUP));
                 }
             }
 
@@ -148,5 +115,71 @@ namespace Monomon
                     continueWith();
             });
         }
+    }
+
+    public class BattleReporter
+    {
+        protected readonly StateStack<double> _stack;
+        protected ContentManager _content;
+        protected Action<Sounds> _soundCallback;
+        protected Texture2D _sprites;
+        protected SpriteFont _font;
+        protected IINputHandler _input;
+        protected GraphicsDevice _gd;
+
+        public List<string> Messages { get; set; }
+        public BattleReporter(GraphicsDevice gd, State.StateStack<double> stack, IINputHandler input, SpriteFont font, Texture2D sprites, Action<Sounds> soundCallback, ContentManager mgr)
+        {
+            _content = mgr;
+            _soundCallback = soundCallback;
+            _sprites = sprites;
+            _font = font;
+            _input = input;
+            _gd = gd;
+
+            _stack = stack;
+            Messages = new List<string>();
+        }
+
+        protected TimedState TimedMessage(string message)
+        {
+            return new TimedState(new MessageScene(_gd, message, _font, _sprites, _content), 2500, _input);
+        }
+
+        protected ConfirmState ConfirmMessage(string message)
+        {
+            return new ConfirmState(new MessageScene(_gd, message, _font, _sprites, _content, true), _input);
+        }
+
+        public void OnItem(ItemMessage message, Mons.Mobmon user, Action continueWith, BattleCardViewModel attackerCard, BattleCardViewModel oponentCard, bool isPlayer)
+        {
+            var attackInfoState = TimedMessage($"{message.user} used {message.name}");
+            _stack.BeginStateSequence();
+            _stack.AddState(attackInfoState);
+
+            if (message is PotionMessage potion)
+            {
+                var health = user.Health;
+                var healthbarUpdateState = new TweenState((arg) => user.Health = Math.Min(user.MaxHealth, (float)(health + arg.lerp)), () =>
+                {
+                    user.Health = Math.Min(health + potion.hpRestored, user.MaxHealth);
+                }, 0.0f, Math.Min(potion.hpRestored, health), 1.0f, EasingFunc.Lerp);
+
+                _stack.AddState(healthbarUpdateState, () =>
+                {
+                    message.Use(user);
+                });
+
+                _stack.EndStateSecence(() => { continueWith(); });
+
+            }
+        }
+
+        public void OnAttack(BattleMessage message, Mons.Mobmon attacker, Mons.Mobmon _oponent, Action continueWith, BattleCardViewModel attackerCard, BattleCardViewModel oponentCard, bool isPlayer)
+        {
+            var handler = new AttackHandler( _gd, _stack, _input, _font, _sprites, _soundCallback, _content);
+            handler.Execute(message,attacker,_oponent,continueWith,attackerCard,oponentCard,isPlayer);
+        }
+
     }
 }
