@@ -7,6 +7,8 @@ namespace Monomon.Battle
 {
     public record BattleMessage(string attacker, string receiver,string name, int damage);
 
+    public record AttackMessage(string attacker, string receiver,string name, int damage) : BattleMessage(attacker,receiver,name,damage);
+
     public abstract record ItemMessage(string user,string name)
     {
         public abstract void Use(Mobmon mon);
