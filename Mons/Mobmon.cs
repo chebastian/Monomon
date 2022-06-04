@@ -21,6 +21,7 @@ namespace Monomon.Mons
         public string Name { get; }
         public float Health { get; set; }
         public int MaxHealth { get; }
+        public float HealthPercentage => (MathF.Max(Health, 1) / MaxHealth);
         public MonStatus Stats { get; }
         public float Xp { get; set; }
     }

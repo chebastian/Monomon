@@ -124,7 +124,15 @@ namespace Monomon.Battle
 
             if (!_isPlayerTurn)
             {
-                Execute(new AttackCommand(AttackType.Tackle, _attacker.Stats));
+                if(_attacker.HealthPercentage < 0.3)
+                { 
+                    if(Random.Shared.Next(255) > 200)
+                    {
+                        Execute(new Potion((int)(_attacker.MaxHealth/0.3f)));
+                    }
+                }
+                else 
+                    Execute(new AttackCommand(AttackType.Tackle, _attacker.Stats));
             }
 
         }
