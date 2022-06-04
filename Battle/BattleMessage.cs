@@ -14,11 +14,11 @@ namespace Monomon.Battle
         public abstract void Use(Mobmon mon);
     }
 
-    public record PotionMessage(string user, string name, int hpRestored) : ItemMessage(user, name)
+    public record PotionMessage(string user, string name,float current, int hpRestored) : ItemMessage(user, name)
     {
         public override void Use(Mobmon mon)
         {
-            mon.Health = Math.Min(mon.Health + hpRestored,mon.MaxHealth);
+            mon.Health = Math.Min(current + hpRestored,mon.MaxHealth);
         }
     }
 }

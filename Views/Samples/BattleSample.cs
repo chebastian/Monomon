@@ -92,10 +92,14 @@ namespace Monomon.Views.Samples
             });
 
             itemList = new UIList<string>(new List<UIItem<string>>() {
-                new UIItem<string>("Potion", x => {
+                new UIItem<string>("Potion +5", x => {
                     _battleManager.Execute(new Potion(5));
+                    _currentList = _list;
                 }),
-                new UIItem<string>("Mana Potion", x => {}),
+                new UIItem<string>("Potion +1", x => {
+                    _battleManager.Execute(new Potion(1));
+                    _currentList = _list;
+                }),
                 new UIItem<string>("Back", x => {_currentList = _list; }),
             }, x =>
             {

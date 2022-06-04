@@ -1,5 +1,4 @@
 ﻿using MonoGameBase.Input;
-using Monomon.Input;
 using Monomon.Mons;
 using Monomon.ViewModels;
 using System;
@@ -49,10 +48,10 @@ namespace Monomon.Battle
 
         internal void Execute(BattleCommand cmd)
         {
-            if(cmd is AttackCommand attack)
+            if (cmd is AttackCommand attack)
                 DoTackle(attack);
             if (cmd is Potion potion)
-                _reporter.OnItem(new PotionMessage(_attacker.Name, "potion", potion.hpRestore), _attacker, () => { NextTurn(); });
+                _reporter.OnItem(new PotionMessage(_attacker.Name, "potion",_attacker.Health, potion.hpRestore), _attacker, () => { NextTurn(); });
         }
 
         public bool IsInteractive()
@@ -85,9 +84,10 @@ namespace Monomon.Battle
         void DoTackle(AttackCommand attackCommand)
         {
             var msg = new AttackMessage(_attacker.Name, _oponent.Name, attackCommand.attackType.ToString(), attackCommand.stat.attack);
-            _reporter.OnAttack(msg,_attacker,_oponent, () => {
+            _reporter.OnAttack(msg, _attacker, _oponent, () =>
+            {
                 NextTurn();
-            },_attackerCard,_oponentCard,_attacker == _player);
+            }, _attackerCard, _oponentCard, _attacker == _player);
         }
 
         Task Swipe(AttackCommand attackCommand, Turn t)
@@ -124,14 +124,11 @@ namespace Monomon.Battle
 
             if (!_isPlayerTurn)
             {
-                if(_attacker.HealthPercentage < 0.3)
-                { 
-                    if(Random.Shared.Next(255) > 200)
-                    {
-                        Execute(new Potion((int)(_attacker.MaxHealth/0.3f)));
-                    }
+                if (_attacker.HealthPercentage < 0.3 && Random.Shared.Next(255) > 200)
+                {
+                    Execute(new Potion((int)(_attacker.MaxHealth / 0.3f)));
                 }
-                else 
+                else
                     Execute(new AttackCommand(AttackType.Tackle, _attacker.Stats));
             }
 
