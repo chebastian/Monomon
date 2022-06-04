@@ -151,7 +151,7 @@ namespace Monomon
             return new ConfirmState(new MessageScene(_gd, message, _font, _sprites, _content, true), _input);
         }
 
-        public void OnItem(ItemMessage message, Mons.Mobmon user, Action continueWith, BattleCardViewModel attackerCard, BattleCardViewModel oponentCard, bool isPlayer)
+        public void OnItem(ItemMessage message, Mons.Mobmon user, Action continueWith)
         {
             var attackInfoState = TimedMessage($"{message.user} used {message.name}");
             _stack.BeginStateSequence();

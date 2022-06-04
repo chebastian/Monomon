@@ -47,10 +47,12 @@ namespace Monomon.Battle
             _currentTurn.Execute();
         }
 
-        internal void Execute(BattleCommand attackCommand)
+        internal void Execute(BattleCommand cmd)
         {
-            if(attackCommand is AttackCommand attack)
+            if(cmd is AttackCommand attack)
                 DoTackle(attack);
+            if (cmd is Potion potion)
+                _reporter.OnItem(new PotionMessage(_attacker.Name, "potion", potion.hpRestore), _attacker, () => { NextTurn(); });
         }
 
         public bool IsInteractive()
@@ -82,17 +84,6 @@ namespace Monomon.Battle
 
         void DoTackle(AttackCommand attackCommand)
         {
-            //DisplayAttackName(attackCommand.attackType);
-            //RenderAnimationToCompletion(attackCommand.attackType);
-            //UpdateHealthBar(attackCommand.stat.attack);
-            //DislpayOptionalAttackMessage(attackCommand);
-            //NextRound();
-
-            //MVP
-            // display attackname
-            // update health
-            // next round
-
             var msg = new AttackMessage(_attacker.Name, _oponent.Name, attackCommand.attackType.ToString(), attackCommand.stat.attack);
             _reporter.OnAttack(msg,_attacker,_oponent, () => {
                 NextTurn();
