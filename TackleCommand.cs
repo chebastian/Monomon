@@ -17,5 +17,5 @@ namespace Monomon.Battle
     public record Slash(MonStatus stat) : AttackCommand(AttackType.Slash,stat with { attack = stat.attack + 12 });
     public record Swipe(MonStatus stat) : AttackCommand(AttackType.Swipe,stat with { attack = stat.attack + 7 });
 
-    public record Potion(int hpRestore) : BattleCommand();
+    public record PotionCommand(int hpRestore) : BattleCommand();
 }

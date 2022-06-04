@@ -50,7 +50,7 @@ namespace Monomon.Battle
         {
             if (cmd is AttackCommand attack)
                 DoTackle(attack);
-            if (cmd is Potion potion)
+            if (cmd is PotionCommand potion)
                 _reporter.OnItem(new PotionMessage(_attacker.Name, "potion",_attacker.Health, potion.hpRestore), _attacker, () => { NextTurn(); });
         }
 
@@ -126,7 +126,7 @@ namespace Monomon.Battle
             {
                 if (_attacker.HealthPercentage < 0.3 && Random.Shared.Next(255) > 200)
                 {
-                    Execute(new Potion((int)(_attacker.MaxHealth / 0.3f)));
+                    Execute(new PotionCommand((int)(_attacker.MaxHealth / 0.3f)));
                 }
                 else
                     Execute(new AttackCommand(AttackType.Tackle, _attacker.Stats));
