@@ -46,32 +46,11 @@ namespace Monomon.Battle
             _currentTurn = t;
             _currentTurn.Execute();
         }
-        internal void Attack(AttackCommand attackCommand)
+
+        internal void Execute(UICommand attackCommand)
         {
-            //SetTurn(new Turn(c =>
-            //{
-            //    Task.Run(async () =>
-            //    {
-            //        _executing = true;
-            //        var task = attackCommand.attackType switch
-            //        {
-            //            AttackType.Tackle => Tackle(attackCommand, c),
-            //            AttackType.Slash => Swipe(attackCommand, c),
-            //            AttackType.Wrap => Wrap(attackCommand, c),
-            //            _ => throw new ArgumentOutOfRangeException($"{attackCommand.attackType}")
-            //        };
-
-            //        task.Start();
-            //        await task.ContinueWith(
-            //        x =>
-            //        {
-            //            c.Completed = true;
-            //            _executing = false;
-            //        });
-            //    });
-
-            //}));
-            DoTackle(attackCommand);
+            if(attackCommand is AttackCommand attack)
+                DoTackle(attack);
         }
 
         public bool IsInteractive()
@@ -154,7 +133,7 @@ namespace Monomon.Battle
 
             if (!_isPlayerTurn)
             {
-                Attack(new AttackCommand(AttackType.Tackle, _attacker.Stats));
+                Execute(new AttackCommand(AttackType.Tackle, _attacker.Stats));
             }
 
         }

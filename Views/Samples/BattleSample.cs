@@ -71,15 +71,15 @@ namespace Monomon.Views.Samples
 
             fightList = new UIList<string>(new List<UIItem<string>>() {
                 new UIItem<string>("Tackle", x => {
-                    _battleManager.Attack(new AttackCommand(AttackType.Tackle, _player.Stats));
+                    _battleManager.Execute(new AttackCommand(AttackType.Tackle, _player.Stats));
                     _currentList = _list;
                 }),
                 new UIItem<string>("Slash", x => {
-                    _battleManager.Attack(new Slash(_player.Stats));
+                    _battleManager.Execute(new Slash(_player.Stats));
                     _currentList = _list;
                 }),
                 new UIItem<string>("Swipe", x => {
-                    _battleManager.Attack(new Swipe( _player.Stats));
+                    _battleManager.Execute(new Swipe( _player.Stats));
                     _currentList = _list;
                 }),
                 new UIItem<string>("Growl", x => {}),
