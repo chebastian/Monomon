@@ -47,7 +47,7 @@ namespace Monomon.Battle
             _currentTurn.Execute();
         }
 
-        internal void Execute(UICommand attackCommand)
+        internal void Execute(BattleCommand attackCommand)
         {
             if(attackCommand is AttackCommand attack)
                 DoTackle(attack);
