@@ -8,67 +8,66 @@ using Monomon.Views.Scenes;
 using System;
 using System.Collections.Generic;
 
-namespace Monomon
+namespace Monomon;
+
+public enum Sounds
 {
-    public enum Sounds
+    Attack_Tackle,
+    TakeDamage,
+    XpUP,
+    EnterBattle
+}
+
+public class BattleReporter
+{
+    protected readonly StateStack<double> _stack;
+    protected ContentManager _content;
+    protected Action<Sounds> _soundCallback;
+    protected Texture2D _sprites;
+    protected SpriteFont _font;
+    protected IINputHandler _input;
+    protected GraphicsDevice _gd;
+
+    public List<string> Messages { get; set; }
+    public BattleReporter(GraphicsDevice gd, State.StateStack<double> stack, IINputHandler input, SpriteFont font, Texture2D sprites, Action<Sounds> soundCallback, ContentManager mgr)
     {
-        Attack_Tackle,
-        TakeDamage,
-        XpUP,
-        EnterBattle
+        _content = mgr;
+        _soundCallback = soundCallback;
+        _sprites = sprites;
+        _font = font;
+        _input = input;
+        _gd = gd;
+
+        _stack = stack;
+        Messages = new List<string>();
     }
 
-    public class BattleReporter
+    protected TimedState TimedMessage(string message)
     {
-        protected readonly StateStack<double> _stack;
-        protected ContentManager _content;
-        protected Action<Sounds> _soundCallback;
-        protected Texture2D _sprites;
-        protected SpriteFont _font;
-        protected IINputHandler _input;
-        protected GraphicsDevice _gd;
+        return new TimedState(new MessageScene(_gd, message, _font, _sprites, _content), 2500, _input);
+    }
 
-        public List<string> Messages { get; set; }
-        public BattleReporter(GraphicsDevice gd, State.StateStack<double> stack, IINputHandler input, SpriteFont font, Texture2D sprites, Action<Sounds> soundCallback, ContentManager mgr)
-        {
-            _content = mgr;
-            _soundCallback = soundCallback;
-            _sprites = sprites;
-            _font = font;
-            _input = input;
-            _gd = gd;
+    protected ConfirmState ConfirmMessage(string message)
+    {
+        return new ConfirmState(new MessageScene(_gd, message, _font, _sprites, _content, true), _input);
+    }
 
-            _stack = stack;
-            Messages = new List<string>();
-        }
+    public void OnItem(ItemMessage message, Mons.Mobmon user, Action continueWith)
+    {
+        var attackInfoState = TimedMessage($"{message.user} used {message.name}");
+        _stack.BeginStateSequence();
+        _stack.AddState(attackInfoState);
 
-        protected TimedState TimedMessage(string message)
-        {
-            return new TimedState(new MessageScene(_gd, message, _font, _sprites, _content), 2500, _input);
-        }
-
-        protected ConfirmState ConfirmMessage(string message)
-        {
-            return new ConfirmState(new MessageScene(_gd, message, _font, _sprites, _content, true), _input);
-        }
-
-        public void OnItem(ItemMessage message, Mons.Mobmon user, Action continueWith)
-        {
-            var attackInfoState = TimedMessage($"{message.user} used {message.name}");
-            _stack.BeginStateSequence();
-            _stack.AddState(attackInfoState);
-
-            var handler = new PotionHandler(_gd, _stack, _input, _font, _sprites, _soundCallback, _content);
-            if (message is PotionMessage potion)
-                handler.Execute(potion, user, continueWith);
-
-        }
-
-        public void OnAttack(BattleMessage message, Mons.Mobmon attacker, Mons.Mobmon _oponent, Action continueWith, BattleCardViewModel attackerCard, BattleCardViewModel oponentCard, bool isPlayer)
-        {
-            var handler = new AttackHandler( _gd, _stack, _input, _font, _sprites, _soundCallback, _content);
-            handler.Execute(message,attacker,_oponent,continueWith,attackerCard,oponentCard,isPlayer);
-        }
+        var handler = new PotionHandler(_gd, _stack, _input, _font, _sprites, _soundCallback, _content);
+        if (message is PotionMessage potion)
+            handler.Execute(potion, user, continueWith);
 
     }
+
+    public void OnAttack(BattleMessage message, Mons.Mobmon attacker, Mons.Mobmon _oponent, Action continueWith, BattleCardViewModel attackerCard, BattleCardViewModel oponentCard, bool isPlayer)
+    {
+        var handler = new AttackHandler( _gd, _stack, _input, _font, _sprites, _soundCallback, _content);
+        handler.Execute(message,attacker,_oponent,continueWith,attackerCard,oponentCard,isPlayer);
+    }
+
 }
