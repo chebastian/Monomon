@@ -184,16 +184,6 @@ namespace Monomon.Views.Samples
                 {
                     if (Random.Shared.NextDouble() < 0.25)
                     {
-                        // new battle scene
-                        //{
-                        //    var battle = new Monomon.Battle.BattleScene(_graphics,
-                        //                                                _content,
-                        //                                                input,
-                        //                                                new FinishBattleHandler(stack),
-                        //                                                new ConfirmMessageHandler(stack, _graphics, _font, _spriteMap, _content, input));
-                        //    stack.Push(new SceneState(battle, input), () => { }, () => { });
-                        //    battle.LoadScene(_content);
-                        //}
                         var battle = new BattleSample(_graphics,
                                                       input,
                                                       _playerMon,
@@ -215,16 +205,6 @@ namespace Monomon.Views.Samples
             }
 
             _player.Update((float)time);
-
-            var tiles = _map.GetTilesInside(playerRect.MinkowskiSum(new Rect(0, 0, 16, 16))).Where(x => x.type == TileType.Wall).Select(x => x.rect).ToList();
-            var info = CollisionHelper.HandleCollision(_map, playerRect, vel, tiles);
-
-            //if (info.Collisions.Any())
-            //    _player.Pos += info.ResultingVelocity;
-            //else
-            //    _player.Pos += vel;
-
-            //_player.Vel = vel;
         }
 
         private Mobmon CreateRandomEnemy()
@@ -244,14 +224,12 @@ namespace Monomon.Views.Samples
 
             _graphics.SetRenderTarget(_renderTarget);
             _graphics.Clear(Color.White);
-            //batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, paletteEffect);
             _paletteEffect.EffectBegin(batch);
 
             var renderpos = (x: 0, y: 0);
 
             foreach (var tile in _map.GetTilesInside(new Rect(Window.X, Window.Y, Window.Width, Window.Height)))
             {
-                //_spriteBatch.Draw(_floorTexture, new Vector2(winPos.x  + (tile.rect.X - .X), winPos.y + (tile.rect.Y - window.Y)), new Rectangle((int)(tileindex.X * TileW), (int)tileindex.Y * TileH, Constants.TileW, Constants.TileH), Color.White);
                 var tilepos = (x: tile.rect.X / (Constants.TileW), y: tile.rect.Y / (Constants.TileH));
                 var visual = _map.GetVisibleTileAt((int)tilepos.x, (int)tilepos.y);
                 var tileindex = MapHelper.To2DIndex(visual, Constants.SpriteMapW);
@@ -336,8 +314,6 @@ namespace Monomon.Views.Samples
             batch.Begin(samplerState: SamplerState.PointWrap);
             _graphics.SetRenderTarget(null);
             batch.Draw(_renderTarget, new Rectangle(0, 0, _renderTarget.Width * zoom, _renderTarget.Height * zoom), Color.White);
-        //    batch.End();
-
         }
     }
 
