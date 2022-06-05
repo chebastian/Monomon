@@ -13,7 +13,7 @@ using System.IO;
 
 namespace Monomon.Data
 {
-    public static class Constants
+    public static class TileValues
     {
         public const int TileH = 16;
         public const int TileW = 16;
@@ -98,8 +98,8 @@ namespace Monomon.Views.Samples
                 var bothPressed = (_dx != 00 && _dy != 0.0);
                 _dy = bothPressed ? 0 : _dy;
 
-                var targetOnGrid = ToGridTopLeft(_player.Center + new Vec2(_dx * Constants.TileW, _dy * Constants.TileH));
-                var tileAtTarget = _map.GetTileAt((int)targetOnGrid.X / Constants.TileW, (int)targetOnGrid.Y / Constants.TileH);
+                var targetOnGrid = ToGridTopLeft(_player.Center + new Vec2(_dx * TileValues.TileW, _dy * TileValues.TileH));
+                var tileAtTarget = _map.GetTileAt((int)targetOnGrid.X / TileValues.TileW, (int)targetOnGrid.Y / TileValues.TileH);
 
                 if (_player.Dist == 0.0f && tileAtTarget != TileType.Wall)
                     _player.WalkInDirection(targetOnGrid, OnPlayerEnterTile);
@@ -110,7 +110,7 @@ namespace Monomon.Views.Samples
 
         private void OnPlayerEnterTile()
         {
-            var tileAtFeet = _map.GetTile((int)_player.Center.X / Constants.TileW, (int)_player.Center.Y / Constants.TileH);
+            var tileAtFeet = _map.GetTile((int)_player.Center.X / TileValues.TileW, (int)_player.Center.Y / TileValues.TileH);
             if (new List<uint>() { 543, 452, 569 }.Contains(tileAtFeet.visual))
             {
                 if (Random.Shared.NextDouble() < 0.25)
@@ -153,12 +153,12 @@ namespace Monomon.Views.Samples
 
             foreach (var tile in _map.GetTilesInside(new Rect(Window.X, Window.Y, Window.Width, Window.Height)))
             {
-                var tilepos = (x: tile.rect.X / (Constants.TileW), y: tile.rect.Y / (Constants.TileH));
+                var tilepos = (x: tile.rect.X / (TileValues.TileW), y: tile.rect.Y / (TileValues.TileH));
                 var visual = _map.GetVisibleTileAt((int)tilepos.x, (int)tilepos.y);
-                var tileindex = MapHelper.To2DIndex(visual, Constants.SpriteMapW);
+                var tileindex = MapHelper.To2DIndex(visual, TileValues.SpriteMapW);
 
 
-                var tileSrc = (X: (int)tileindex.X * (Constants.TileW), Y: (int)tileindex.Y * (Constants.TileH));
+                var tileSrc = (X: (int)tileindex.X * (TileValues.TileW), Y: (int)tileindex.Y * (TileValues.TileH));
 
                 var renderPos = ToWindowPosition(new Vec2(tile.rect.X, tile.rect.Y));
 
@@ -166,7 +166,7 @@ namespace Monomon.Views.Samples
                 {
                     batch.Draw(_tileSprites,
                         renderPos,
-                        new Rectangle(tileSrc.X, tileSrc.Y, Constants.TileW, Constants.TileH),
+                        new Rectangle(tileSrc.X, tileSrc.Y, TileValues.TileW, TileValues.TileH),
                         Color.White);
                 }
             }
@@ -179,7 +179,7 @@ namespace Monomon.Views.Samples
                 );
 
             MarkTile(ToGridTopLeft(_player.Center));
-            MarkTile(ToGridTopLeft(_player.Center + new Vec2(_dx * Constants.TileW, _dy * Constants.TileH)));
+            MarkTile(ToGridTopLeft(_player.Center + new Vec2(_dx * TileValues.TileW, _dy * TileValues.TileH)));
 
             void MarkTile(Vec2 gridPos)
             {
@@ -191,19 +191,19 @@ namespace Monomon.Views.Samples
                     );
 
                 batch.Draw(_playerSprites,
-                    new Rectangle((int)pcenter.X + Constants.TileW, (int)pcenter.Y, 2, 2),
+                    new Rectangle((int)pcenter.X + TileValues.TileW, (int)pcenter.Y, 2, 2),
                     new Rectangle(0, 0, 1, 1),
                     Color.Black
                     );
 
                 batch.Draw(_playerSprites,
-                    new Rectangle((int)pcenter.X + Constants.TileW, (int)pcenter.Y + Constants.TileH, 2, 2),
+                    new Rectangle((int)pcenter.X + TileValues.TileW, (int)pcenter.Y + TileValues.TileH, 2, 2),
                     new Rectangle(0, 0, 1, 1),
                     Color.Black
                     );
 
                 batch.Draw(_playerSprites,
-                    new Rectangle((int)pcenter.X, (int)pcenter.Y + Constants.TileH, 2, 2),
+                    new Rectangle((int)pcenter.X, (int)pcenter.Y + TileValues.TileH, 2, 2),
                     new Rectangle(0, 0, 1, 1),
                     Color.Black
                     );
