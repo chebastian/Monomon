@@ -11,16 +11,6 @@ using Monomon.Views.Scenes;
 using System;
 using System.IO;
 
-namespace Monomon.Data
-{
-    public static class TileValues
-    {
-        public const int TileH = 16;
-        public const int TileW = 16;
-        public const int SpriteMapW = 27;
-    }
-}
-
 namespace Monomon.Views.Samples
 {
     using Monomon.Battle;

@@ -30,7 +30,7 @@ namespace Monomon.Views.Samples
         {
             get
             {
-                return Pos + new Vec2(Constants.TileW / 2, Constants.TileH / 2);
+                return Pos + new Vec2(TileValues.TileW / 2, TileValues.TileH / 2);
             }
         }
 
