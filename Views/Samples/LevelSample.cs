@@ -4,14 +4,12 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonogameBase;
 using MonogameBase.Camera;
-using MonoGameBase.Collision;
 using MonoGameBase.Input;
 using MonoGameBase.Level;
 using Monomon.State;
 using Monomon.Views.Scenes;
 using System;
 using System.IO;
-using System.Linq;
 
 namespace Monomon.Data
 {
@@ -55,7 +53,7 @@ namespace Monomon.Views.Samples
             return new Vec2(((int)(pos.X / 16)) * 16, ((int)(pos.Y / 16)) * 16);
         }
 
-        public LevelSample(GraphicsDevice gd, IINputHandler input, StateStack<double> stack, ContentManager content, PaletteEffect effect,FadeEffect fade) : base(gd, content)
+        public LevelSample(GraphicsDevice gd, IINputHandler input, StateStack<double> stack, ContentManager content, PaletteEffect effect, FadeEffect fade) : base(gd, content)
         {
             this.input = input;
             this.stack = stack;
@@ -102,38 +100,40 @@ namespace Monomon.Views.Samples
 
                 var targetOnGrid = ToGridTopLeft(_player.Center + new Vec2(_dx * Constants.TileW, _dy * Constants.TileH));
                 var tileAtTarget = _map.GetTileAt((int)targetOnGrid.X / Constants.TileW, (int)targetOnGrid.Y / Constants.TileH);
-                var tileAtFeet = _map.GetTile((int)_player.Center.X / Constants.TileW, (int)_player.Center.Y / Constants.TileH);
-                if (new List<uint>() { 543, 452, 569 }.Contains(tileAtFeet.visual))
-                {
-                    if (Random.Shared.NextDouble() < 0.25)
-                    {
-                        var battle = new BattleSample(_graphics,
-                                                      input,
-                                                      _playerMon,
-                                                      CreateRandomEnemy(),
-                                                      stack,
-                                                      _content,
-                                                      _paletteEffect,
-                                                      _fade);;
-                        _fade.FadeOut(stack, () => { });
-                        stack.Push(new SceneState(battle, input), () => { }, () => { });
-                        battle.LoadScene(_content);
-
-                        return;
-                    }
-                }
 
                 if (_player.Dist == 0.0f && tileAtTarget != TileType.Wall)
-                    _player.WalkInDirection(targetOnGrid);
+                    _player.WalkInDirection(targetOnGrid, OnPlayerEnterTile);
             }
 
             _player.Update((float)time);
         }
 
+        private void OnPlayerEnterTile()
+        {
+            var tileAtFeet = _map.GetTile((int)_player.Center.X / Constants.TileW, (int)_player.Center.Y / Constants.TileH);
+            if (new List<uint>() { 543, 452, 569 }.Contains(tileAtFeet.visual))
+            {
+                if (Random.Shared.NextDouble() < 0.25)
+                {
+                    var battle = new BattleSample(_graphics,
+                                                  input,
+                                                  _playerMon,
+                                                  CreateRandomEnemy(),
+                                                  stack,
+                                                  _content,
+                                                  _paletteEffect,
+                                                  _fade); ;
+                    _fade.FadeOut(stack, () => { });
+                    stack.Push(new SceneState(battle, input), () => { }, () => { });
+                    battle.LoadScene(_content);
+                }
+            }
+        }
+
         private Mobmon CreateRandomEnemy()
         {
             return new Mobmon("Enemy",
-                              Random.Shared.Next(3,10),
+                              Random.Shared.Next(3, 10),
                               new MonStatus(2, 4, 5));
         }
 

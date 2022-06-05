@@ -15,10 +15,14 @@ namespace Monomon.Views.Samples
             Target = new Vec2();
             Dist = 0.0f;
             OgPos = new Vec2();
+            _onCompleted = () => { };
         }
         public Vec2 Pos { get; set; }
         public Vec2 Vel { get; set; }
         public Vec2 Target { get; set; }
+
+        private Action _onCompleted;
+
         public float Dist { get; set; }
         public Vec2 OgPos { get; private set; }
 
@@ -64,9 +68,10 @@ namespace Monomon.Views.Samples
                 Pos = Pos.Lerp(Target, Dist);
         }
 
-        internal void WalkInDirection(Vec2 target)
+        internal void WalkInDirection(Vec2 target, Action onCompleted)
         {
             Target = target;//new Vec2(Center.X + dx * Constants.TileW, Center.Y + dy* Constants.TileH);
+            _onCompleted = onCompleted;
             Dist = 1.0f;
             OgPos = Pos;
         }
@@ -78,6 +83,11 @@ namespace Monomon.Views.Samples
                 Dist -= dt * 4.0f;
                 Dist = MathF.Max(0.0f, Dist);
                 Pos = OgPos.Lerp(Target, 1.0f - Dist);
+
+                if(Dist == 0.0f)
+                {
+                    _onCompleted();
+                }
             }
         }
     }
