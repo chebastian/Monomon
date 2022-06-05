@@ -15,6 +15,7 @@ namespace Monomon
         Attack_Tackle,
         TakeDamage,
         XpUP,
+        EnterBattle
     }
 
     public class BattleReporter
