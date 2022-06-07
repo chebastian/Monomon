@@ -164,7 +164,7 @@ class BattleSample : SceneView
         _battleTackleEffect = content.Load<SoundEffect>("tackle");
         _battleHurtEffect = content.Load<SoundEffect>("hurtChirpy");
         _battleXpUpEffect = content.Load<SoundEffect>("XpUp");
-        _enterBattleEffect = content.Load<SoundEffect>("enterBattle");
+        _enterBattleEffect = content.Load<SoundEffect>("enterBattle3");
 
         InitBattle();
 

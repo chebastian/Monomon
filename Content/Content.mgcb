@@ -74,6 +74,12 @@
 /processorParam:Quality=Best
 /build:enterBattle.wav
 
+#begin enterBattle3.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:enterBattle3.wav
+
 #begin menuMoveChirpy.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
