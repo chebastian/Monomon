@@ -43,7 +43,7 @@ namespace Monomon
             font = Content.Load<SpriteFont>("File");
             _paletteEffect = new PaletteEffect(Content,Content.Load<Texture2D>("paletteMini"));
             _fadeImpl = new FadeEffect(Content.Load<Effect>("Fade"),
-                                       Content.Load<Texture2D>("fadeCircleOut"),
+                                       Content.Load<Texture2D>("pixelCircle"),
                                        Content.Load<Texture2D>("paletteMini"),
                                        _paletteEffect.CurrentPalette);
 

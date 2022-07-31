@@ -149,7 +149,7 @@ class BattleSample : SceneView
 
         _stack.Push(slideIn, () => _stack.Pop());
 
-        _fadeImpl.DoFade(_stack, () => ready = true);
+        _fadeImpl.DoFade(0.8f,_stack, () => ready = true);
         OnPlaySound(Sounds.EnterBattle);
     }
 
