@@ -44,6 +44,7 @@ namespace Monomon
             _paletteEffect = new PaletteEffect(Content,Content.Load<Texture2D>("paletteMini"));
             _fadeImpl = new FadeEffect(Content.Load<Effect>("Fade"),
                                        Content.Load<Texture2D>("pixelCircle"),
+                                       Content.Load<Texture2D>("flashTexture"),
                                        Content.Load<Texture2D>("paletteMini"),
                                        _paletteEffect.CurrentPalette);
 

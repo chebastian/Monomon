@@ -11,9 +11,10 @@ namespace Monomon.Effects
         private Effect _fadeEffect;
         private float _fadeTime;
         private Texture2D _fadeTexture;
+        private Texture2D _flashTexture;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-        public FadeEffect(Effect effect, Texture2D fadeTexture, Texture2D palette, float palettey)
+        public FadeEffect(Effect effect, Texture2D fadeTexture, Texture2D flashTexture, Texture2D palette, float palettey)
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
             _fadeEffect = effect;
@@ -26,6 +27,7 @@ namespace Monomon.Effects
                 //todo add to ctr
                 //fadeTexture = content.Load<Texture2D>("fadeCircleOut");
                 _fadeTexture = fadeTexture;
+                _flashTexture = flashTexture;
 
                 _fadeEffect.Parameters["flip"].SetValue(false);
                 _fadeEffect.Parameters["fadeAmount"].SetValue(0.0f);
@@ -37,8 +39,14 @@ namespace Monomon.Effects
 
         }
 
+        private void SetTexture(Texture2D tex)
+        {
+            _fadeEffect.Parameters["fadeTexture"].SetValue(tex);
+        }
+
         public void FadeIn(StateStack<double> stack, Action? onComplete = null)
         {
+            SetTexture(_fadeTexture);
             var fadeIn = new TweenState(arg =>
             {
                 _fadeEffect.Parameters["flip"].SetValue(true);
@@ -53,20 +61,19 @@ namespace Monomon.Effects
 
         public void FadeOut(StateStack<double> stack, Action? onComplete = null)
         {
+            SetTexture(_fadeTexture);
             var fade = new TweenState(arg =>
             {
                 _fadeEffect.Parameters["flip"].SetValue(false);
                 UpdateFade((float)(1.0 - arg.lerp));
-                if (arg.lerp >= 0.8f)
-                {
-                }
             }, () => { }, 0.0f, 1.0f, 1.4f, EasingFunc.Lerp);
 
-            stack.Push(fade, () => { stack.Pop(); onComplete?.Invoke(); }); 
+            stack.Push(fade, () => { stack.Pop(); onComplete?.Invoke(); });
         }
 
         public void DoFade(StateStack<double> stack, Action onready, Action? onComplete = null)
         {
+            SetTexture(_fadeTexture);
             var fade = new TweenState(arg =>
             {
                 _fadeEffect.Parameters["flip"].SetValue(false);
@@ -91,6 +98,7 @@ namespace Monomon.Effects
 
         public void DoFade(float speed, StateStack<double> stack, Action onready, Action? onComplete = null)
         {
+            SetTexture(_fadeTexture);
             var fade = new TweenState(arg =>
             {
                 _fadeEffect.Parameters["flip"].SetValue(false);
@@ -98,7 +106,7 @@ namespace Monomon.Effects
                 if (arg.lerp >= 0.8f)
                 {
                 }
-            }, () => { }, 0.0f, 1.0f,speed, EasingFunc.Lerp);
+            }, () => { }, 0.0f, 1.0f, speed, EasingFunc.Lerp);
 
             var fadeIn = new TweenState(arg =>
             {
@@ -111,6 +119,53 @@ namespace Monomon.Effects
 
             stack.Push(fade, () => { stack.Pop(); onComplete?.Invoke(); });
             stack.Push(fadeIn, () => { stack.Pop(); onready(); });
+        }
+
+        public void Flash(float speed, StateStack<double> stack, Action onready, Action? onComplete = null)
+        {
+            var flashSpeed = 0.1f;
+            {
+                SetTexture(_flashTexture);
+                var fade = new TweenState(arg =>
+                {
+                    _fadeEffect.Parameters["flip"].SetValue(false);
+                    UpdateFade((float)(1.0 - arg.lerp));
+                }, () => { }, 0.0f, 1.0f, flashSpeed, EasingFunc.Lerp);
+
+                var fadeIn = new TweenState(arg =>
+                {
+                    _fadeEffect.Parameters["flip"].SetValue(true);
+                    UpdateFade((float)(1.0f - arg.lerp));
+                }, () => { }, 0.0f, 1.0f, flashSpeed, EasingFunc.Lerp);
+
+                var stop = new TweenState(arg =>
+                {
+                }, () => { }, 0.0f, 1.3f, 0.7f, EasingFunc.Lerp);
+
+
+                stack.Push(stop, () => { stack.Pop(); onComplete?.Invoke(); });
+                stack.Push(fade, () => { stack.Pop(); onready(); });
+                stack.Push(fadeIn, () => { stack.Pop(); });
+            }
+
+            {
+                SetTexture(_flashTexture);
+                var fade = new TweenState(arg =>
+                {
+                    _fadeEffect.Parameters["flip"].SetValue(false);
+                    UpdateFade((float)(1.0 - arg.lerp));
+                }, () => { }, 0.0f, 1.0f, flashSpeed, EasingFunc.Lerp);
+
+                var fadeIn = new TweenState(arg =>
+                {
+                    _fadeEffect.Parameters["flip"].SetValue(true);
+                    UpdateFade((float)(1.0f - arg.lerp));
+                }, () => { }, 0.0f, 1.0f, flashSpeed, EasingFunc.Lerp);
+
+                stack.Push(fade, () => { stack.Pop(); });
+                stack.Push(fadeIn, () => { stack.Pop(); });
+            } 
+
         }
 
 
