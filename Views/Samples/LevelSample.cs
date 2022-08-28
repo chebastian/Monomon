@@ -18,6 +18,8 @@ using Monomon.Data;
 using Monomon.Effects;
 using Monomon.Mons;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 public class LevelSample : SceneView
 {
@@ -98,10 +100,11 @@ public class LevelSample : SceneView
         _player.Update((float)time);
     }
 
+    static readonly ReadOnlyCollection<uint> _grassTiles = new(new uint [] { 543,452,569 } );
     private void OnPlayerEnterTile()
     {
         var tileAtFeet = _map.GetTile((int)_player.Center.X / TileValues.TileW, (int)_player.Center.Y / TileValues.TileH);
-        if (new List<uint>() { 543, 452, 569 }.Contains(tileAtFeet.visual))
+        if(_grassTiles.Any(grass => tileAtFeet.visual == grass))
         {
             if (Random.Shared.NextDouble() < 0.25)
             {
