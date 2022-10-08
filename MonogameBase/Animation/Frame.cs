@@ -2,7 +2,7 @@
 {
     using System;
 
-    public class Frame
+    public class Frame : IEquatable<Frame>
     {
         public (int x, int y) Source;
         public int w;
@@ -54,6 +54,16 @@
 
         public Action OnEnter => _onEnter;
         protected Action _onEnter;
+
+        public bool Equals(Frame? other)
+        {
+            if(other != null)
+            {
+                return other.Source == Source;
+            }
+
+            return false;
+        }
     }
 
     public class StopFrame : Frame
