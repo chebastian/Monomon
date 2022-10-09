@@ -229,19 +229,19 @@ public class LevelSample : SceneView
             batch.Draw(_playerSprites,
                 new Rectangle((int)pcenter.X + TileValues.TileW, (int)pcenter.Y, 2, 2),
                 new Rectangle(0, 0, 1, 1),
-                Color.Black
+                Color.White
                 );
 
             batch.Draw(_playerSprites,
                 new Rectangle((int)pcenter.X + TileValues.TileW, (int)pcenter.Y + TileValues.TileH, 2, 2),
                 new Rectangle(0, 0, 1, 1),
-                Color.Black
+                Color.White
                 );
 
             batch.Draw(_playerSprites,
                 new Rectangle((int)pcenter.X, (int)pcenter.Y + TileValues.TileH, 2, 2),
                 new Rectangle(0, 0, 1, 1),
-                Color.Black
+                Color.White
                 );
         }
 
