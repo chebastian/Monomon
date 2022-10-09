@@ -13,6 +13,7 @@ using System.IO;
 
 namespace Monomon.Views.Samples;
 
+using MonoGameBase.Animation;
 using Monomon.Battle;
 using Monomon.Data;
 using Monomon.Effects;
@@ -35,7 +36,8 @@ public class LevelSample : SceneView
     private SpriteFont _font;
     private SerializedLevelData _levelData;
     Mons.Mobmon _playerMon;
-
+    private AnimationPlayer _animPlayer;
+    private List<Frame> _currentAnim;
     private Player _player;
 
     private Vec2 windowPos;
@@ -63,12 +65,37 @@ public class LevelSample : SceneView
         _fade = fade;
 
         _tileSprites = content.Load<Texture2D>("levelMap");
-        _playerSprites = content.Load<Texture2D>("player");
+        _playerSprites = content.Load<Texture2D>("playerTopDown");
         _playerMon = new Mons.Mobmon("Player", 10, (new MonStatus(2, 7, 3)));
+
+        _animPlayer = new AnimationPlayer(7.0f);
+        _currentAnim = SourceForDir(new Vec2(0, 1));
+        _animPlayer.ChangeAnimation(_currentAnim);
     }
+
+    List<Frame> LeftAnim = new () { new(0,0), new(0,3) };
+    List<Frame> RightAnim = new () { new(1,0), new(1,3) };
+    List<Frame> UpAnim = new () { new(0,2), new(1,2) };
+    List<Frame> DownAnim = new () { new(0,1), new(1,1) };
 
     public override void LoadScene(ContentManager content)
     {
+    }
+
+    List<Frame> SourceForDir(Vec2 inDir)
+    {
+        var dx = inDir.Normalize();
+
+        List<Frame> frame = dx switch
+        {
+            var dir when dir.X > 0 => RightAnim,
+            var dir when dir.X < 0 => LeftAnim,
+            var dir when dir.Y > 0 => DownAnim,
+            var dir when dir.Y < 0 => UpAnim,
+            _ => new() { _currentAnim[0] }
+        };
+
+        return frame;
     }
 
     public override void Update(double time)
@@ -80,6 +107,12 @@ public class LevelSample : SceneView
         Window.X = winPos.X;
         Window.Y = winPos.Y;
 
+        var currentFrame = SourceForDir(_player.Target - _player.OgPos);
+        if (currentFrame != _currentAnim)
+        {
+            _currentAnim = currentFrame;
+            _animPlayer.ChangeAnimation(_currentAnim);
+        }
 
         var vel = new Vec2(_dx * 16, _dy * 16) * time;
 
@@ -95,6 +128,15 @@ public class LevelSample : SceneView
 
             if (_player.Dist == 0.0f && tileAtTarget != TileType.Wall)
                 _player.WalkInDirection(targetOnGrid, OnPlayerEnterTile);
+        }
+
+        if(_player.Dist > 0.0f)
+        {
+            _animPlayer.Update((float)time); 
+        }
+        else
+        {
+            _animPlayer.ChangeAnimation(_currentAnim);
         }
 
         _player.Update((float)time);
@@ -165,10 +207,11 @@ public class LevelSample : SceneView
         }
 
         var playerCamPos = ToWindowPosition(_player.Pos);
+        var frame = _animPlayer.CurrentFrame();
         batch.Draw(_playerSprites,
             new Rectangle((int)playerCamPos.X, (int)playerCamPos.Y, 16, 16),
-            SourceForDir(_player.Target - _player.OgPos),
-            Color.White
+            new Rectangle((int)frame.Source.x * 16, (int)frame.Source.y*16,16,16),
+            Color.Magenta
             );
 
         MarkTile(ToGridTopLeft(_player.Center));
@@ -180,7 +223,7 @@ public class LevelSample : SceneView
             batch.Draw(_playerSprites,
                 new Rectangle((int)pcenter.X, (int)pcenter.Y, 2, 2),
                 new Rectangle(0, 0, 1, 1),
-                Color.Black
+                Color.White
                 );
 
             batch.Draw(_playerSprites,
@@ -202,21 +245,6 @@ public class LevelSample : SceneView
                 );
         }
 
-        static Rectangle SourceForDir(Vec2 inDir)
-        {
-            var dx = inDir.Normalize();
-
-            int frameX = dx switch
-            {
-                var dir when dir.X > 0 => 2,
-                var dir when dir.X < 0 => 3,
-                var dir when dir.Y > 0 => 4,
-                var dir when dir.Y < 0 => 1,
-                _ => 0
-            };
-
-            return new Rectangle(frameX * 16, 0, 16, 16);
-        }
 
 
         Vector2 ToWindowPosition(Vec2 pos)
@@ -227,7 +255,8 @@ public class LevelSample : SceneView
 
         var zoom = 2;
         batch.End();
-        batch.Begin(samplerState: SamplerState.PointWrap);
+        batch.Begin(samplerState: SamplerState.PointClamp);
+        //batch.Begin(SpriteSortMode.Immediates
         _graphics.SetRenderTarget(null);
         batch.Draw(_renderTarget, new Rectangle(0, 0, _renderTarget.Width * zoom, _renderTarget.Height * zoom), Color.White);
     }
