@@ -44,7 +44,7 @@ namespace Monomon.Effects
             _fadeEffect.Parameters["fadeTexture"].SetValue(tex);
         }
 
-        public void FadeIn(StateStack<double> stack, Action? onComplete = null)
+        public void FadeIn(SceneStack stack, Action? onComplete = null)
         {
             SetTexture(_fadeTexture);
             var fadeIn = new TweenState(arg =>
@@ -59,7 +59,7 @@ namespace Monomon.Effects
             stack.Push(fadeIn, () => { stack.Pop(); onComplete?.Invoke(); });
         }
 
-        public void FadeOut(StateStack<double> stack, Action? onComplete = null)
+        public void FadeOut(SceneStack stack, Action? onComplete = null)
         {
             SetTexture(_fadeTexture);
             var fade = new TweenState(arg =>
@@ -71,7 +71,7 @@ namespace Monomon.Effects
             stack.Push(fade, () => { stack.Pop(); onComplete?.Invoke(); });
         }
 
-        public void DoFade(StateStack<double> stack, Action onready, Action? onComplete = null)
+        public void DoFade(SceneStack stack, Action onready, Action? onComplete = null)
         {
             SetTexture(_fadeTexture);
             var fade = new TweenState(arg =>
@@ -96,7 +96,7 @@ namespace Monomon.Effects
             stack.Push(fadeIn, () => { stack.Pop(); onready(); });
         }
 
-        public void DoFade(float speed, StateStack<double> stack, Action onready, Action? onComplete = null)
+        public void DoFade(float speed, SceneStack stack, Action onready, Action? onComplete = null)
         {
             SetTexture(_fadeTexture);
             var fade = new TweenState(arg =>
@@ -121,7 +121,7 @@ namespace Monomon.Effects
             stack.Push(fadeIn, () => { stack.Pop(); onready(); });
         }
 
-        public void Flash(float speed, StateStack<double> stack, Action onready, Action? onComplete = null)
+        public void Flash(float speed, SceneStack stack, Action onready, Action? onComplete = null)
         {
             var flashSpeed = 0.1f;
             {

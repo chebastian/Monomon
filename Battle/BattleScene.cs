@@ -20,13 +20,13 @@ public record ConfirmArg(string message, params Choice[] choises);
 public class ConfirmMessageHandler : ICommand<ConfirmArg>
 {
     private IINputHandler _input;
-    StateStack<double> _stack;
+    SceneStack _stack;
     GraphicsDevice _graphics;
     SpriteFont font;
     Texture2D _spriteMap;
     ContentManager _content;
 
-    public ConfirmMessageHandler(StateStack<double> stack, GraphicsDevice graphics, SpriteFont font, Texture2D spriteMap, ContentManager content, IINputHandler input)
+    public ConfirmMessageHandler(SceneStack stack, GraphicsDevice graphics, SpriteFont font, Texture2D spriteMap, ContentManager content, IINputHandler input)
     {
         _input = input;
         _stack = stack;

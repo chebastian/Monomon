@@ -22,11 +22,11 @@ public class SampleScene : SceneView
     private SpriteFont font;
     private UIList<string> _sceneList;
     private IINputHandler _input;
-    private StateStack<double> _stack;
+    private SceneStack _stack;
 
     public GraphicsDevice GraphicsDevice { get; }
 
-    public SampleScene(GraphicsDevice gd, StateStack<double> stack, IINputHandler input, ContentManager content, PaletteEffect effect, FadeEffect fade)
+    public SampleScene(GraphicsDevice gd, SceneStack stack, IINputHandler input, ContentManager content, PaletteEffect effect, FadeEffect fade)
         : base(gd,content)
 
     {

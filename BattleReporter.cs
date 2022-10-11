@@ -20,7 +20,7 @@ public enum Sounds
 
 public class BattleReporter
 {
-    protected readonly StateStack<double> _stack;
+    protected readonly SceneStack _stack;
     protected ContentManager _content;
     protected Action<Sounds> _soundCallback;
     protected Texture2D _sprites;
@@ -29,7 +29,7 @@ public class BattleReporter
     protected GraphicsDevice _gd;
 
     public List<string> Messages { get; set; }
-    public BattleReporter(GraphicsDevice gd, State.StateStack<double> stack, IINputHandler input, SpriteFont font, Texture2D sprites, Action<Sounds> soundCallback, ContentManager mgr)
+    public BattleReporter(GraphicsDevice gd, SceneStack stack, IINputHandler input, SpriteFont font, Texture2D sprites, Action<Sounds> soundCallback, ContentManager mgr)
     {
         _content = mgr;
         _soundCallback = soundCallback;

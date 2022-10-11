@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Monomon.Animation;
+using Monomon.State;
 using System;
 using System.Collections.Generic;
 
@@ -71,7 +72,8 @@ namespace Monomon.Views.Scenes
         EaseOutCube, 
     }
 
-    public class TweenState : State.State<double>
+
+    public class TweenState : State<RenderParams>
     {
         private readonly Action<(double time, double lerp)> _update;
         private readonly Action completed;
@@ -100,7 +102,7 @@ namespace Monomon.Views.Scenes
             };
         }
 
-        public override void Render(double param)
+        public override void Render(RenderParams param)
             {
         }
         float Lerp(float firstFloat, float secondFloat, float by)

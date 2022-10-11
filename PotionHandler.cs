@@ -9,7 +9,7 @@ namespace Monomon
 {
     public class PotionHandler : BattleReporter
     {
-        public PotionHandler(GraphicsDevice gd, State.StateStack<double> stack, IINputHandler input, SpriteFont font, Texture2D sprites, Action<Sounds> soundCallback, ContentManager mgr) : base(gd, stack, input, font, sprites, soundCallback, mgr)
+        public PotionHandler(GraphicsDevice gd, SceneStack stack, IINputHandler input, SpriteFont font, Texture2D sprites, Action<Sounds> soundCallback, ContentManager mgr) : base(gd, stack, input, font, sprites, soundCallback, mgr)
         {
 
         }

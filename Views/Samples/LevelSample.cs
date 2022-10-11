@@ -25,7 +25,7 @@ using System.Linq;
 public class LevelSample : SceneView
 {
     private IINputHandler input;
-    private StateStack<double> stack;
+    private SceneStack stack;
     private PaletteEffect _paletteEffect;
     private FadeEffect _fade;
     private Texture2D _tileSprites;
@@ -47,7 +47,7 @@ public class LevelSample : SceneView
         return new Vec2(((int)(pos.X / 16)) * 16, ((int)(pos.Y / 16)) * 16);
     }
 
-    public LevelSample(GraphicsDevice gd, IINputHandler input, StateStack<double> stack, ContentManager content, PaletteEffect effect, FadeEffect fade) : base(gd, content)
+    public LevelSample(GraphicsDevice gd, IINputHandler input, SceneStack stack, ContentManager content, PaletteEffect effect, FadeEffect fade) : base(gd, content)
     {
         this.input = input;
         this.stack = stack;

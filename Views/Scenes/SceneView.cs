@@ -24,7 +24,7 @@ namespace Monomon.Views.Scenes
             _effect = null;
         }
 
-        internal void Draw(double time)
+        internal void Draw(RenderParams param)
         {
             _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearWrap, null, null, _effect);
             OnDraw(_spriteBatch);

@@ -11,7 +11,7 @@ namespace Monomon
 {
     public class AttackHandler : BattleReporter
     {
-        public AttackHandler(GraphicsDevice gd, StateStack<double> stack, IINputHandler input, SpriteFont font, Texture2D sprites, Action<Sounds> soundCallback, ContentManager mgr) : base(gd, stack, input, font, sprites, soundCallback, mgr)
+        public AttackHandler(GraphicsDevice gd, SceneStack stack, IINputHandler input, SpriteFont font, Texture2D sprites, Action<Sounds> soundCallback, ContentManager mgr) : base(gd, stack, input, font, sprites, soundCallback, mgr)
         {
         }
 

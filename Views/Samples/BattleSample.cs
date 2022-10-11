@@ -26,7 +26,7 @@ class BattleSample : SceneView
     private IINputHandler _input;
     private Mobmon _player;
     private Mobmon _mob;
-    private StateStack<double> _stack;
+    private SceneStack _stack;
     private PaletteEffect _paletteEffect;
     private UIList<string> _list;
     private UIList<string> fightList;
@@ -46,7 +46,7 @@ class BattleSample : SceneView
     private bool ready;
     private FadeEffect _fadeImpl;
 
-    public BattleSample(GraphicsDevice gd, IINputHandler input, Mobmon player, Mobmon enemy, StateStack<double> stack, ContentManager content, PaletteEffect palette, FadeEffect fade) : base(gd, content)
+    public BattleSample(GraphicsDevice gd, IINputHandler input, Mobmon player, Mobmon enemy, SceneStack stack, ContentManager content, PaletteEffect palette, FadeEffect fade) : base(gd, content)
     {
         _input = input;
         _player = player;

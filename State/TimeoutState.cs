@@ -18,7 +18,7 @@ namespace Monomon.State
         private bool _skipped;
         private float timeout;
 
-        public override void Render(double param)
+        public override void Render(RenderParams param)
         {
             base.Render(param);
         }
@@ -50,7 +50,7 @@ namespace Monomon.State
             _skipped = false;
         }
 
-        public override void Render(double param)
+        public override void Render(RenderParams param)
         {
             base.Render(param);
         }
@@ -124,7 +124,7 @@ namespace Monomon.State
                 Completed = true; 
         }
 
-        public override void Render(double param)
+        public override void Render(RenderParams param)
         {
             base.Render(param);
         }

@@ -14,6 +14,16 @@ namespace Monomon
 {
 #nullable disable
 
+    public class RenderParams
+    {
+
+    }
+
+    public class SceneStack : StateStack<RenderParams>
+    {
+
+    }
+
     public class Game1 : Game
     {
         private GraphicsDeviceManager _graphics;
@@ -22,7 +32,7 @@ namespace Monomon
         private SpriteFont font;
         private UIList<string> _sceneList;
         private SceneView _currentScene;
-        private StateStack<double> _stateStack;
+        private SceneStack _stateStack;
         private PaletteEffect _paletteEffect;
         private FadeEffect _fadeImpl;
 
@@ -31,7 +41,7 @@ namespace Monomon
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-            _stateStack = new StateStack<double>();
+            _stateStack = new SceneStack();
         }
 
         protected override void Initialize()
@@ -119,7 +129,7 @@ namespace Monomon
             GraphicsDevice.Clear(Color.Black);
             _paletteEffect.EffectBegin(_spriteBatch);
 
-            _stateStack.Render(gameTime.ElapsedGameTime.TotalSeconds);
+            _stateStack.Render(new RenderParams());
             _spriteBatch.End();
             _fadeImpl.Draw(_spriteBatch);
             //batch.End();
