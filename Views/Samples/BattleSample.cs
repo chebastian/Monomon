@@ -299,8 +299,9 @@ class BattleSample : SceneView
 
     protected override void OnDraw(SpriteBatch batch)
     {
-        batch.End(); // end global effect, which is null
-        _paletteEffect.EffectBegin(batch); //start drawing again usingpalette... ?
+        //Disable palette effect for battles, this causes alphas to work as expected again
+        //batch.End(); // end global effect, which is null
+        //_paletteEffect.EffectBegin(batch); //start drawing again usingpalette... ?
         DrawBattle(batch);
     }
 
@@ -321,6 +322,9 @@ class BattleSample : SceneView
     {
         if (ready)
         {
+            //TODO clear the screen black so that the battle does not render uppon the level, 221011
+            _graphics.Clear(Color.Black);
+
             ListView.DrawUIList(_currentList, new Vector2(UIValues.PlayerHudX, UIValues.PlayerHudY + 100), batch, font);
             BattleCardView.Draw(batch, new Vector2(_currentEnemyCard.X, _currentEnemyCard.Y), font, _spriteMap, _currentEnemyCard);
             BattleCardView.Draw(batch, new Vector2(_playerCard.X, _playerCard.Y), font, _spriteMap, _playerCard);

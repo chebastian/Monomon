@@ -182,7 +182,9 @@ public class LevelSample : SceneView
 
         _graphics.SetRenderTarget(_renderTarget);
         _graphics.Clear(Color.White);
-        _paletteEffect.EffectBegin(batch);
+        // TODO disable palette effect to get correct alphas
+        //_paletteEffect.EffectBegin(batch);
+        batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearWrap, null, null, null);
 
         var renderpos = (x: 0, y: 0);
 
@@ -211,7 +213,7 @@ public class LevelSample : SceneView
         batch.Draw(_playerSprites,
             new Rectangle((int)playerCamPos.X, (int)playerCamPos.Y, 16, 16),
             new Rectangle((int)frame.Source.x * 16, (int)frame.Source.y*16,16,16),
-            Color.Magenta
+            Color.White
             );
 
         MarkTile(ToGridTopLeft(_player.Center));
@@ -253,7 +255,7 @@ public class LevelSample : SceneView
             return new Vector2(wv.X + renderpos.x, wv.Y + renderpos.y);
         }
 
-        var zoom = 2;
+        var zoom = 3;
         batch.End();
         batch.Begin(samplerState: SamplerState.PointClamp);
         //batch.Begin(SpriteSortMode.Immediates
