@@ -13,14 +13,32 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin File.spritefont
+#begin battleFont.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
-/build:File.spritefont
+/build:battleFont.spritefont
 
-#begin playerTopDown.png
+#begin enterBattle.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:enterBattle.wav
+
+#begin enterBattle3.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:enterBattle3.wav
+
+#begin Fade.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Fade.fx
+
+#begin fadeCircleOut.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=0,0,0,255
@@ -30,9 +48,16 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:playerTopDown.png
+/build:fadeCircleOut.png
 
-#begin player.png
+#begin File.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:File.spritefont
+
+#begin flashTexture.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -42,7 +67,26 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:player.png
+/build:flashTexture.png
+
+#begin font.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:font.spritefont
+
+#begin hurtChirpy.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:hurtChirpy.wav
+
+#begin Indexed.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Indexed.fx
 
 #begin levelMap.png
 /importer:TextureImporter
@@ -56,17 +100,23 @@
 /processorParam:TextureFormat=Color
 /build:levelMap.png
 
-#begin spritemap.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=0,0,0,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:spritemap.png
+#begin menuMoveChirpy.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:menuMoveChirpy.wav
+
+#begin menuSelectChirpy.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:menuSelectChirpy.wav
+
+#begin menuSelectSimple.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:menuSelectSimple.wav
 
 #begin paletteMini.png
 /importer:TextureImporter
@@ -92,7 +142,7 @@
 /processorParam:TextureFormat=Color
 /build:pixelCircle.png
 
-#begin flashTexture.png
+#begin player.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -102,37 +152,31 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:flashTexture.png
+/build:player.png
 
-#begin enterBattle.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:enterBattle.wav
+#begin playerTopDown.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=0,0,0,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:playerTopDown.png
 
-#begin enterBattle3.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:enterBattle3.wav
-
-#begin menuMoveChirpy.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:menuMoveChirpy.wav
-
-#begin menuSelectChirpy.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:menuSelectChirpy.wav
-
-#begin menuSelectSimple.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:menuSelectSimple.wav
+#begin spritemap.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=0,0,0,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:spritemap.png
 
 #begin tackle.wav
 /importer:WavImporter
@@ -146,32 +190,3 @@
 /processorParam:Quality=Best
 /build:XpUp.wav
 
-#begin hurtChirpy.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:hurtChirpy.wav
-
-#begin Indexed.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/build:Indexed.fx
-
-#begin Fade.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/build:Fade.fx
-
-#begin fadeCircleOut.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=0,0,0,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:fadeCircleOut.png
