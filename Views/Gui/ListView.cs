@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Monomon.UI;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,6 +26,10 @@ namespace Monomon.Views.Gui
 
 
             var y = pos.Y;
+            if (!list.Items.Any())
+                return;
+
+            var itemHeight = font.MeasureString(list.Items.First().Item.ToString()).Y;
             foreach (var item in list.Items.Select((x, i) => (x, i)))
             {
                 var c = item.x.Selected ? Color.Red : Color.White;
@@ -33,7 +38,8 @@ namespace Monomon.Views.Gui
                 batch.DrawString(font, item.x.Item.ToString(), new Vector2(x, y+padding), c);
                 if(item.x.Selected)
                     batch.DrawString(font,">",new Vector2(pos.X+padding,y+padding), c);
-                y += 20;
+
+                y += itemHeight;
             }
         }
     }
