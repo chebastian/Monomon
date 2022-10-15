@@ -51,12 +51,12 @@ namespace Monomon.Views.Scenes
             }
             else
             {
-                int panelw = 350;
-                int panelx = 100;
+                int panelw = UIValues.PortraitW;
+                int panelx = 0;
                 int padding = 8;
                 var renderString = FitString(message, panelw - (padding * 2));
-                var height = Math.Max(_font.MeasureString(renderString).Y, 100);
-                Panel.Draw(batch, _sprites, Panel.AltPanel, new Rectangle(panelx, UIValues.BattleMessageY, panelw, (int)(height + padding)));
+                var height = Math.Min(_font.MeasureString(renderString).Y, 100);
+                Panel.Draw(batch, _sprites, Panel.BasePanel, new Rectangle(panelx, UIValues.BattleMessageY, panelw, (int)(height + padding)));
 
                 string FitString(string msg, int w)
                 {
@@ -81,8 +81,8 @@ namespace Monomon.Views.Scenes
                 }
 
                 batch.DrawString(_font,renderString,new Vector2(panelx+padding,UIValues.BattleMessageY+padding), Color.White);
-                if(_confirm)
-                    batch.DrawString(_font,"X",new Vector2(panelx+panelw-padding-padding,UIValues.BattleMessageY+height-padding), Color.Red);
+                if (_confirm)
+                    batch.DrawString(_font, "X", new Vector2(panelx + panelw - padding - padding, UIValues.BattleMessageY + height - padding), Color.Red);
             }
         }
     }

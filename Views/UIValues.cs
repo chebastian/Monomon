@@ -18,7 +18,9 @@
         public static int WinW = 160;
         public static int PlayerHudX => 0;
         public static int PlayerHudY => 0;
-        public static int OponentHudX => 6 * TileSz;
-        public static int BattleMessageY => 50;
+        public static int OponentHudX = 6 * TileSz;
+        public static int BattleMessageY = 6 * TileSz;
+
+        public static int ListMinW = TileSz * 4;
     }
 }
