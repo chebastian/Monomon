@@ -132,6 +132,7 @@ namespace Monomon
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
+            _paletteEffect.CurrentPalette = 0.3f; // TODO sefe 20221015 debug color to see what actually uses the palette effect
             _paletteEffect.EffectBegin(_spriteBatch);
 
             _stateStack.Render(new RenderParams(_spriteBatch));
