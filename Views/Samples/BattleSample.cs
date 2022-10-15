@@ -310,9 +310,9 @@ class BattleSample : SceneView
             //TODO clear the screen black so that the battle does not render uppon the level, 221011
             _graphics.Clear(Color.Black);
 
-            ListView.DrawUIList(_currentList, new Vector2(UIValues.PlayerMenuX*UIValues.TileSz,UIValues.PlayerMenuY*UIValues.TileSz), batch, font);
-            BattleCardView.Draw(batch, new Vector2(_currentEnemyCard.X, _currentEnemyCard.Y), font, _spriteMap, _currentEnemyCard);
-            BattleCardView.Draw(batch, new Vector2(_playerCard.X, _playerCard.Y), font, _spriteMap, _playerCard);
+            ListView.DrawUIList(_currentList, new Vector2(UIValues.PlayerMenuX,UIValues.PlayerMenuY*UIValues.TileSz), batch, font);
+            BattleCardView.DrawTopCard(batch, new Vector2(0, 2), font, _spriteMap, _currentEnemyCard);
+            BattleCardView.Draw(batch, new Vector2(UIValues.PlayerMenuX, _playerCard.Y+15), font, _spriteMap, _playerCard);
         }
         _currentEnemyCard.SetHealth(_mob.Health);
         _playerCard.SetHealth(_player.Health);

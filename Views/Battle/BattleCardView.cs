@@ -48,6 +48,36 @@ namespace Monomon.Views.Battle
             }
         }
 
+        public static void DrawTopCard(SpriteBatch batch, Vector2 pos, SpriteFont font, Texture2D spriteMap, BattleCardViewModel card)
+        {
+            var textHeight = font.MeasureString("H");
+            var color = card.IsLow() ? Color.Red : Color.Green;
+
+            int progressWidth = UIValues.TileSz * 4;
+
+            batch.Draw(spriteMap,
+                       new Rectangle(card.X + card.PortraitOffsetX, card.PoirtrateAnimDelta + card.Y + card.PortraitOffsetY, card.PortraitSrc.Width, card.PortraitSrc.Height),
+                       card.PortraitSrc,
+                       Color.White);
+
+            Stack(new List<Action<int>>() {
+                py => batch.DrawString(font, $"{card.Name}", new Vector2(pos.X, py + pos.Y), Color.White),
+                py => ProgressbarView.Draw(batch, card.Percentage, progressWidth, new Vector2(pos.X, pos.Y + py), smallBarSprites, smallEmptyBarSprites, spriteMap, Color.White),
+                py => batch.DrawString(font, $"{(int)(card.CurrentHealth)}/{card.MaxHealth}", new Vector2(pos.X, pos.Y + py), Color.White)
+
+            },0,12);
+
+            if (card.Dying)
+            {
+                batch.Draw(spriteMap,
+                    new Rectangle(card.X + card.PortraitOffsetX,
+                                  card.Y + card.PortraitOffsetY + card.PortraitSrc.Height,
+                                  card.PortraitSrc.Width,
+                                  card.PortraitSrc.Height),
+                    new Rectangle(0, 0, 1, 1),
+                    Color.White);
+            }
+        }
         public static void Draw(SpriteBatch batch, Vector2 pos, SpriteFont font, Texture2D spriteMap, BattleCardViewModel card)
         {
             var textHeight = font.MeasureString("H");
@@ -67,7 +97,7 @@ namespace Monomon.Views.Battle
                 py => batch.DrawString(font, $"Lv: {card.Level}", new Vector2(pos.X, pos.Y + py), Color.White),
                 py => ProgressbarView.Draw(batch, card.XpPercentage, progressWidth, new Vector2(pos.X, pos.Y + py), smallBarSprites, smallEmptyBarSprites, spriteMap, Color.Black)
 
-            },card.PortraitSrc.Height+3,10);
+            },0,10);
 
             if (card.Dying)
             {
