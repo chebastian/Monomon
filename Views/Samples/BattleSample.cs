@@ -305,18 +305,7 @@ class BattleSample : SceneView
         DrawBattle(batch);
     }
 
-    private void DrawBattleResult(BattleOutcome battleOutcome)
-    {
-        var outcomeString = battleOutcome
-            == BattleOutcome.Win ? "You win!" : "You lose";
-        _spriteBatch.DrawString(font, outcomeString, new Vector2(10, 10), Color.White);
-    }
 
-    private void DrawBattleLog()
-    {
-        if (_battleReporter.Messages.Any())
-            _spriteBatch.DrawString(font, _battleReporter.Messages.Last(), new Vector2(200, 100), Color.White);
-    }
 
     private void DrawBattle(SpriteBatch batch)
     {
