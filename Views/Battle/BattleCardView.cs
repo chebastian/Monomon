@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Monomon.ViewModels;
+using Monomon.Views.Constants;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,30 +23,60 @@ namespace Monomon.Views.Battle
                 new Rectangle(8, 8, 8, 8),
                 new Rectangle(16, 8, 8, 8)
                 );
-        public static void Draw(SpriteBatch batch,Vector2 pos, SpriteFont font,Texture2D spriteMap, BattleCardViewModel card)
-        { 
+
+        private static int w = 4;
+        private static int h = 5;
+        private static SpriteCollection smallBarSprites = new SpriteCollection(
+                new Rectangle(32, 0, w, h),
+                new Rectangle(32 + w, 0, w, h),
+                new Rectangle(48 - w, 0, w, h)
+                );
+
+        private static SpriteCollection smallEmptyBarSprites = new SpriteCollection(
+                new Rectangle(48, 0, w, h),
+                new Rectangle(48 + w, 0, w, h),
+                new Rectangle(64 - w, 0, w, h)
+                );
+
+        public static void Stack(List<Action<int>> drawCalls,int offset, int spaceing)
+        {
+            var y = offset;
+            foreach (var call in drawCalls)
+            {
+                call(y);
+                y += spaceing;
+            }
+        }
+
+        public static void Draw(SpriteBatch batch, Vector2 pos, SpriteFont font, Texture2D spriteMap, BattleCardViewModel card)
+        {
+            var textHeight = font.MeasureString("H");
             var color = card.IsLow() ? Color.Red : Color.Green;
 
-            batch.DrawString(font, $"{card.Name}", new Vector2(pos.X, pos.Y), Color.White);
-            ProgressbarView.Draw(batch, card.Percentage, 150, new Vector2(pos.X, pos.Y + 40), barSprites,emptyBarSprites, spriteMap, Color.White);
-            batch.DrawString(font, $"HP: {(int)(card.CurrentHealth)}/{card.MaxHealth}", new Vector2(pos.X, pos.Y + 20), color);
-            batch.DrawString(font, $"Lv: {card.Level}", new Vector2(pos.X, pos.Y + 60), Color.White);
-
-            ProgressbarView.Draw(batch, card.XpPercentage, 150, new Vector2(pos.X, pos.Y + 80), barSprites, emptyBarSprites,spriteMap, Color.Black);
+            int progressWidth = UIValues.TileSz * 4;
 
             batch.Draw(spriteMap,
                        new Rectangle(card.X + card.PortraitOffsetX, card.PoirtrateAnimDelta + card.Y + card.PortraitOffsetY, card.PortraitSrc.Width, card.PortraitSrc.Height),
                        card.PortraitSrc,
                        Color.White);
 
-            if(card.Dying)
+            Stack(new List<Action<int>>() { 
+                //py => batch.DrawString(font, $"{card.Name}", new Vector2(pos.X, py + pos.Y), Color.White),
+                py => batch.DrawString(font, $"HP: {(int)(card.CurrentHealth)}/{card.MaxHealth}", new Vector2(pos.X, pos.Y + py), Color.White),
+                py => ProgressbarView.Draw(batch, card.Percentage, progressWidth, new Vector2(pos.X, pos.Y + py), smallBarSprites, smallEmptyBarSprites, spriteMap, Color.White),
+                py => batch.DrawString(font, $"Lv: {card.Level}", new Vector2(pos.X, pos.Y + py), Color.White),
+                py => ProgressbarView.Draw(batch, card.XpPercentage, progressWidth, new Vector2(pos.X, pos.Y + py), smallBarSprites, smallEmptyBarSprites, spriteMap, Color.Black)
+
+            },card.PortraitSrc.Height+3,10);
+
+            if (card.Dying)
             {
                 batch.Draw(spriteMap,
                     new Rectangle(card.X + card.PortraitOffsetX,
                                   card.Y + card.PortraitOffsetY + card.PortraitSrc.Height,
                                   card.PortraitSrc.Width,
                                   card.PortraitSrc.Height),
-                    new Rectangle(0,0,1,1),
+                    new Rectangle(0, 0, 1, 1),
                     Color.White);
             }
         }

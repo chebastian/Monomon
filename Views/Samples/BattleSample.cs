@@ -120,16 +120,16 @@ class BattleSample : SceneView
         _currentEnemyCard = new BattleCardViewModel(_mob.Name, _mob.MaxHealth, _mob.Health, 2);
         _currentEnemyCard.X = UIValues.OponentHudX;
         _currentEnemyCard.Y = 10;
-        _currentEnemyCard.PortraitSrc = new Rectangle(0, 90, 72, 112);
-        _currentEnemyCard.PortraitOffsetX = 240;
-        _currentEnemyCard.PortraitOffsetY = 32;
+        _currentEnemyCard.PortraitSrc = new Rectangle(11*UIValues.TileSz, 0, UIValues.PortraitW, UIValues.PortraitH);
+        _currentEnemyCard.PortraitOffsetX = 0;
+        _currentEnemyCard.PortraitOffsetY = 0;
 
         _playerCard = new BattleCardViewModel("Player", _player.MaxHealth, _player.Health, 6);
-        _playerCard.X = UIValues.PlayerHudX;
-        _playerCard.Y = UIValues.PlayerHudY;
-        _playerCard.PortraitSrc = new Rectangle(72, 90, 96, 128);
-        _playerCard.PortraitOffsetX = -112;
-        _playerCard.PortraitOffsetY = -32;
+        _playerCard.X = UIValues.PlayerPoirtraitX;
+        _playerCard.Y = UIValues.PlayerPoirtraitY;
+        _playerCard.PortraitSrc = new Rectangle(7*UIValues.TileSz, 0, UIValues.PortraitW, UIValues.PortraitH);
+        _playerCard.PortraitOffsetX = 0;
+        _playerCard.PortraitOffsetY = 0;
 
         _battleReporter = new BattleReporter(_graphics, _stack, _input, font, _spriteMap, OnPlaySound, _content);
 
@@ -311,10 +311,12 @@ class BattleSample : SceneView
     {
         if (ready)
         {
+            _playerCard.PortraitOffsetX = 0;
+            _playerCard.PortraitOffsetY = 0;
             //TODO clear the screen black so that the battle does not render uppon the level, 221011
             _graphics.Clear(Color.Black);
 
-            ListView.DrawUIList(_currentList, new Vector2(UIValues.PlayerHudX, UIValues.PlayerHudY + 100), batch, font);
+            ListView.DrawUIList(_currentList, new Vector2(UIValues.PlayerMenuX*UIValues.TileSz,UIValues.PlayerMenuY*UIValues.TileSz), batch, font);
             BattleCardView.Draw(batch, new Vector2(_currentEnemyCard.X, _currentEnemyCard.Y), font, _spriteMap, _currentEnemyCard);
             BattleCardView.Draw(batch, new Vector2(_playerCard.X, _playerCard.Y), font, _spriteMap, _playerCard);
         }
