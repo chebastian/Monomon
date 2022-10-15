@@ -59,7 +59,6 @@ class BattleSample : SceneView
             new UIItem<string>("Fight", x => { _currentList = fightList; }),
             new UIItem<string>("Item", x => { _currentList = itemList;}),
             new UIItem<string>("Mon"),
-            new UIItem<string>("Run"),
         }, x =>
         {
 

@@ -61,7 +61,7 @@ namespace Monomon.State
             {
                 if (_scene is MessageScene msg)
                 {
-                    if (_skipped)
+                    if (_skipped || msg.IsCompleted)
                         Completed = true;
 
                     msg.Update(1.0f);

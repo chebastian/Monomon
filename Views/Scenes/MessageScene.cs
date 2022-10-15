@@ -23,6 +23,8 @@ namespace Monomon.Views.Scenes
         {
             _confirm = confirm;
             this.message = message;
+            if (confirm)
+                this.message += " >>";
             _font = font;
             _sprites = sprites;
 
@@ -40,8 +42,13 @@ namespace Monomon.Views.Scenes
             _charCount = (int)(Math.Min(1.0f, _totalTime) * message.Length);
         }
 
+        public bool IsCompleted => _totalTime >= 1.0f;
+
         protected override void OnDraw(SpriteBatch batch)
         {
+            if (_confirm && _totalTime <= 0) // Do not render untill we are updated... i think
+                return;
+
             var meassured = false;
             if (meassured)
             {
@@ -81,8 +88,8 @@ namespace Monomon.Views.Scenes
                 }
 
                 batch.DrawString(_font,renderString,new Vector2(panelx+padding,UIValues.BattleMessageY+padding), Color.White);
-                if (_confirm)
-                    batch.DrawString(_font, "X", new Vector2(panelx + panelw - padding - padding, UIValues.BattleMessageY + height - padding), Color.Red);
+                //if (_confirm)
+                //    batch.DrawString(_font, "X", new Vector2(panelx + panelw - padding - padding, UIValues.BattleMessageY + height - padding), Color.Red);
             }
         }
     }
