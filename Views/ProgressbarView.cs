@@ -22,11 +22,11 @@ namespace Monomon.Views
             var sz = Math.Max(sprites.first.Width, fullW * percentage);
 
             var first = new Rectangle((int)pos.X, (int)pos.Y, sprites.first.Width, sprites.first.Height + 2);
-            var last = new Rectangle((int)((int)pos.X + fullW), (int)pos.Y, sprites.first.Width, sprites.first.Height+2);
+            var last = new Rectangle((int)((int)pos.X + fullW) - sprites.end.Width, (int)pos.Y, sprites.first.Width, sprites.first.Height+2);
 
             batch.Draw(tex, first, sprites.first, Color.White);
 
-            for (var i = sprites.first.Width; i < fullW; i++)
+            for (var i = sprites.first.Width; i < fullW-sprites.end.Width; i++)
             { 
                 batch.Draw(tex, new Rectangle((int)pos.X + i,(int)pos.Y,1,emptyCollection.mid.Height+2), emptyCollection.mid, Color.White);
 
