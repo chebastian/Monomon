@@ -38,7 +38,7 @@ namespace Monomon.Views.Scenes
 
         protected override void OnDraw(SpriteBatch batch)
         {
-            ListView.DrawUIList(List, new Vector2(UIValues.PlayerHudX-50,UIValues.PlayerHudY+100), _spriteBatch, _font);
+            ListView.DrawUIList(List, new Vector2(UIValues.PlayerHudX-50,UIValues.PlayerHudY+100), batch, _font);
         }
     }
 }

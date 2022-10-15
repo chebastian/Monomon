@@ -30,7 +30,6 @@ public class LevelSample : SceneView
     private FadeEffect _fade;
     private Texture2D _tileSprites;
     private Texture2D _playerSprites;
-    private RenderTarget2D _renderTarget;
     private Texture2D _spriteMap;
     private TileMap _map;
     private SpriteFont _font;
@@ -56,7 +55,6 @@ public class LevelSample : SceneView
         _player = new Player();
         _player.Pos = new Vec2(128, 128);
         windowPos = new Vec2(0, 0);
-        _renderTarget = new RenderTarget2D(_graphics, 160, 144);
         _spriteMap = content.Load<Texture2D>("spritemap");
         _map = new TileMap();
         _font = content.Load<SpriteFont>("File");
@@ -178,13 +176,8 @@ public class LevelSample : SceneView
 
     protected override void OnDraw(SpriteBatch batch)
     {
-        batch.End();
 
-        _graphics.SetRenderTarget(_renderTarget);
         _graphics.Clear(Color.White);
-        // TODO disable palette effect to get correct alphas
-        //_paletteEffect.EffectBegin(batch);
-        batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearWrap, null, null, null);
 
         var renderpos = (x: 0, y: 0);
 
@@ -255,12 +248,6 @@ public class LevelSample : SceneView
             return new Vector2(wv.X + renderpos.x, wv.Y + renderpos.y);
         }
 
-        var zoom = 3;
-        batch.End();
-        batch.Begin(samplerState: SamplerState.PointClamp);
-        //batch.Begin(SpriteSortMode.Immediates
-        _graphics.SetRenderTarget(null);
-        batch.Draw(_renderTarget, new Rectangle(0, 0, _renderTarget.Width * zoom, _renderTarget.Height * zoom), Color.White);
     }
 }
 

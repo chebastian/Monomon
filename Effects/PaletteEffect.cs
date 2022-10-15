@@ -30,7 +30,7 @@ namespace Monomon.Effects
 
         public void EffectBegin(SpriteBatch batch)
         {
-            batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, null, null, null, paletteEffect);
+            batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointWrap, null, null, paletteEffect);
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Monomon
 #nullable disable
 
     public class RenderParams
-    { 
+    {
         public RenderParams(SpriteBatch batch)
         {
             Batch = batch;
@@ -54,9 +54,10 @@ namespace Monomon
             // TODO: Add your initialization logic here
 
             _input = new Monomon.Input.BufferInputHandler();
+            _renderTarget = new RenderTarget2D(_graphics.GraphicsDevice, 160, 144);
             _spriteBatch = new SpriteBatch(_graphics.GraphicsDevice);
             font = Content.Load<SpriteFont>("File");
-            _paletteEffect = new PaletteEffect(Content,Content.Load<Texture2D>("paletteMini"));
+            _paletteEffect = new PaletteEffect(Content, Content.Load<Texture2D>("paletteMini"));
             _fadeImpl = new FadeEffect(Content.Load<Effect>("Fade"),
                                        Content.Load<Texture2D>("pixelCircle"),
                                        Content.Load<Texture2D>("flashTexture"),
@@ -75,7 +76,7 @@ namespace Monomon
             }, x => { }, x => { });
 
             //_currentScene = new BattleCardSample(GraphicsDevice);
-            _currentScene = new SampleScene(GraphicsDevice, _stateStack, _input, Content,_paletteEffect,_fadeImpl);
+            _currentScene = new SampleScene(GraphicsDevice, _stateStack, _input, Content, _paletteEffect, _fadeImpl);
 
             _stateStack.Push(new SceneState(_currentScene, _input),
                 () => { });
@@ -129,23 +130,32 @@ namespace Monomon
         }
 
 
+        private RenderTarget2D _renderTarget;
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
-            _paletteEffect.CurrentPalette = 0.3f; // TODO sefe 20221015 debug color to see what actually uses the palette effect
-            _paletteEffect.EffectBegin(_spriteBatch);
 
-            _stateStack.Render(new RenderParams(_spriteBatch));
-            _spriteBatch.End();
+            //Render entire scene to lowres rendertarget
+            {
+                GraphicsDevice.SetRenderTarget(_renderTarget);
+                _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointWrap, null, null, null);
+                _stateStack.Render(new RenderParams(_spriteBatch));
+                _spriteBatch.End();
+            }
+
+            //Render game upscaled and with palette effect
+            {
+                GraphicsDevice.SetRenderTarget(null);
+                int zoom = 2;
+                _paletteEffect.CurrentPalette = 0.3f; // TODO sefe 20221015 debug color to see what actually uses the palette effect
+                _paletteEffect.EffectBegin(_spriteBatch);
+                _spriteBatch.Draw(_renderTarget, new Rectangle(0, 0, _renderTarget.Width * zoom, _renderTarget.Height * zoom), Color.White);
+                _spriteBatch.End();
+            }
+
+            //Render fade effect ontop of everything
+            //TODO this should render in the same part as game to match scale and palette
             _fadeImpl.Draw(_spriteBatch);
-            //batch.End();
-            //batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearWrap, null, null, _effect);
-            //_paletteEffect.EffectBegin(_spriteBatch); //since we stop to draw the fade reenable palette effect
-
-
-            //_spriteBatch.End();
-
-            // TODO: Add your drawing code here
 
             base.Draw(gameTime);
         }
