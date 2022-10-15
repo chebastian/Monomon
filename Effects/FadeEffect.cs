@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Monomon.State;
+using Monomon.Views.Constants;
 using Monomon.Views.Scenes;
 using System;
 
@@ -172,8 +173,8 @@ namespace Monomon.Effects
 
         public void Draw(SpriteBatch batch)
         {
-            batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearWrap, null, null, _fadeEffect);
-            batch.Draw(_fadeTexture, new Rectangle(0, 0, 800, 600), Color.White);
+            batch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointWrap, null, null, _fadeEffect);
+            batch.Draw(_fadeTexture, new Rectangle(0, 0, UIValues.WinW, UIValues.WinH), Color.White);
             batch.End();
         }
 

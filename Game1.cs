@@ -141,21 +141,21 @@ namespace Monomon
                 _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointWrap, null, null, null);
                 _stateStack.Render(new RenderParams(_spriteBatch));
                 _spriteBatch.End();
+
+                //Render fade effect ontop of everything
+                _fadeImpl.Draw(_spriteBatch);
             }
 
             //Render game upscaled and with palette effect
             {
                 GraphicsDevice.SetRenderTarget(null);
-                int zoom = 2;
+                int zoom = 3;
                 _paletteEffect.CurrentPalette = 0.3f; // TODO sefe 20221015 debug color to see what actually uses the palette effect
                 _paletteEffect.EffectBegin(_spriteBatch);
                 _spriteBatch.Draw(_renderTarget, new Rectangle(0, 0, _renderTarget.Width * zoom, _renderTarget.Height * zoom), Color.White);
                 _spriteBatch.End();
             }
 
-            //Render fade effect ontop of everything
-            //TODO this should render in the same part as game to match scale and palette
-            _fadeImpl.Draw(_spriteBatch);
 
             base.Draw(gameTime);
         }
