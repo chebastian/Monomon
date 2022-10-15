@@ -62,8 +62,8 @@ namespace Monomon.Views.Battle
 
             Stack(new List<Action<int>>() { 
                 //py => batch.DrawString(font, $"{card.Name}", new Vector2(pos.X, py + pos.Y), Color.White),
-                py => batch.DrawString(font, $"HP: {(int)(card.CurrentHealth)}/{card.MaxHealth}", new Vector2(pos.X, pos.Y + py), Color.White),
                 py => ProgressbarView.Draw(batch, card.Percentage, progressWidth, new Vector2(pos.X, pos.Y + py), smallBarSprites, smallEmptyBarSprites, spriteMap, Color.White),
+                py => batch.DrawString(font, $"{(int)(card.CurrentHealth)}/{card.MaxHealth}", new Vector2(pos.X, pos.Y + py), Color.White),
                 py => batch.DrawString(font, $"Lv: {card.Level}", new Vector2(pos.X, pos.Y + py), Color.White),
                 py => ProgressbarView.Draw(batch, card.XpPercentage, progressWidth, new Vector2(pos.X, pos.Y + py), smallBarSprites, smallEmptyBarSprites, spriteMap, Color.Black)
 
