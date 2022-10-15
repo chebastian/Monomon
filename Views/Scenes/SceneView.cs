@@ -13,22 +13,18 @@ namespace Monomon.Views.Scenes
     {
         protected ContentManager _content;
         protected GraphicsDevice _graphics;
-        protected SpriteBatch _spriteBatch;
         protected Effect? _effect;
 
         public SceneView(GraphicsDevice gd, ContentManager content)
         {
             _content = content;
             _graphics = gd;
-            _spriteBatch = new SpriteBatch(_graphics);
             _effect = null;
         }
 
         internal void Draw(RenderParams param)
         {
-            _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearWrap, null, null, _effect);
-            OnDraw(_spriteBatch);
-            _spriteBatch.End();
+            OnDraw(param.Batch);
         }
 
         protected abstract void OnDraw(SpriteBatch batch);

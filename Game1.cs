@@ -15,8 +15,13 @@ namespace Monomon
 #nullable disable
 
     public class RenderParams
-    {
+    { 
+        public RenderParams(SpriteBatch batch)
+        {
+            Batch = batch;
+        }
 
+        public SpriteBatch Batch { get; }
     }
 
     public class SceneStack : StateStack<RenderParams>
@@ -129,7 +134,7 @@ namespace Monomon
             GraphicsDevice.Clear(Color.Black);
             _paletteEffect.EffectBegin(_spriteBatch);
 
-            _stateStack.Render(new RenderParams());
+            _stateStack.Render(new RenderParams(_spriteBatch));
             _spriteBatch.End();
             _fadeImpl.Draw(_spriteBatch);
             //batch.End();
