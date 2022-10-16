@@ -60,13 +60,6 @@ namespace Monomon.Views.Battle
                        card.PortraitSrc,
                        Color.White);
 
-            Stack(new List<Action<int>>() {
-                py => batch.DrawString(font, $"{card.Name}", new Vector2(pos.X, py + pos.Y), Color.White),
-                py => ProgressbarView.Draw(batch, card.Percentage, progressWidth, new Vector2(pos.X, pos.Y + py), smallBarSprites, smallEmptyBarSprites, spriteMap, Color.White),
-                py => batch.DrawString(font, $"{(int)(card.CurrentHealth)}/{card.MaxHealth}", new Vector2(pos.X, pos.Y + py), Color.White)
-
-            },0,12);
-
             if (card.Dying)
             {
                 batch.Draw(spriteMap,
@@ -74,9 +67,17 @@ namespace Monomon.Views.Battle
                                   card.Y + card.PortraitOffsetY + card.PortraitSrc.Height,
                                   card.PortraitSrc.Width,
                                   card.PortraitSrc.Height),
-                    new Rectangle(0, 0, 1, 1),
+                    new Rectangle(0, 16, 1, 1), // Black pixel
                     Color.White);
             }
+
+            Stack(new List<Action<int>>() {
+                py => batch.DrawString(font, $"{card.Name}", new Vector2(pos.X, py + pos.Y), Color.White),
+                py => ProgressbarView.Draw(batch, card.Percentage, progressWidth, new Vector2(pos.X, pos.Y + py), smallBarSprites, smallEmptyBarSprites, spriteMap, Color.White),
+                py => batch.DrawString(font, $"{(int)(card.CurrentHealth)}/{card.MaxHealth}", new Vector2(pos.X, pos.Y + py), Color.White)
+
+            },0,12);
+
         }
         public static void Draw(SpriteBatch batch, Vector2 pos, SpriteFont font, Texture2D spriteMap, BattleCardViewModel card)
         {
@@ -106,7 +107,7 @@ namespace Monomon.Views.Battle
                                   card.Y + card.PortraitOffsetY + card.PortraitSrc.Height,
                                   card.PortraitSrc.Width,
                                   card.PortraitSrc.Height),
-                    new Rectangle(0, 0, 1, 1),
+                    new Rectangle(0, 16, 1, 1),
                     Color.White);
             }
         }
