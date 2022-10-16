@@ -167,7 +167,7 @@ public class LevelSample : SceneView
     {
         return new Mobmon("Enemy",
                           Random.Shared.Next(3, 10),
-                          new MonStatus(2, 4, 5));
+                          new MonStatus(5, 4, 5));
     }
 
     public Rect Window = new Rect(0, 0, 160, 144);
