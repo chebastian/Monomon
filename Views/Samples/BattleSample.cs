@@ -241,7 +241,7 @@ class BattleSample : SceneView
             {
                 var yesChoice = new Choice("Yes", () =>
                 {
-                    _player = new Mobmon("Player", 3, new MonStatus(4, 2, 3));
+                    _player.Health = 10;
                     InitBattle();
                 });
                 var no = new Choice("No", () =>
