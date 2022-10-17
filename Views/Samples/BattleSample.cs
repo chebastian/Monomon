@@ -121,12 +121,12 @@ class BattleSample : SceneView
         _currentEnemyCard = new BattleCardViewModel(_mob.Name, _mob.MaxHealth, _mob.Health, 2);
         _currentEnemyCard.X = UIValues.OponentHudX;
         _currentEnemyCard.Y = 10;
-        _currentEnemyCard.PortraitSrc = new Rectangle(11*UIValues.TileSz, 0, UIValues.PortraitW, UIValues.PortraitH);
+        _currentEnemyCard.PortraitSrc = new Rectangle(11 * UIValues.TileSz, 0, UIValues.PortraitW, UIValues.PortraitH);
 
         _playerCard = new BattleCardViewModel("Player", _player.MaxHealth, _player.Health, 6);
         _playerCard.X = UIValues.PlayerPoirtraitX;
         _playerCard.Y = UIValues.PlayerPoirtraitY;
-        _playerCard.PortraitSrc = new Rectangle(7*UIValues.TileSz, 0, UIValues.PortraitW, UIValues.PortraitH);
+        _playerCard.PortraitSrc = new Rectangle(7 * UIValues.TileSz, 0, UIValues.PortraitW, UIValues.PortraitH);
 
         _battleReporter = new BattleReporter(_graphics, _stack, _input, font, _spriteMap, OnPlaySound, _content);
 
@@ -146,8 +146,9 @@ class BattleSample : SceneView
 
         _stack.Push(slideIn, () => _stack.Pop());
 
-        _fadeImpl.Flash(0.2f, _stack, () => { }, () => { 
-            _fadeImpl.DoFade(0.8f,_stack, () => ready = true); 
+        _fadeImpl.Flash(0.2f, _stack, () => { }, () =>
+        {
+            _fadeImpl.DoFade(0.8f, _stack, () => ready = true);
         });
         OnPlaySound(Sounds.EnterBattle);
     }
@@ -315,9 +316,9 @@ class BattleSample : SceneView
             //TODO clear the screen black so that the battle does not render uppon the level, 221011
             _graphics.Clear(Color.Black);
 
-            ListView.DrawUIList(_currentRoot, new Vector2(UIValues.PlayerMenuX,UIValues.PlayerMenuY*UIValues.TileSz), batch, font);
+            ListView.DrawUIList(_currentRoot, new Vector2(UIValues.PlayerMenuX, UIValues.PlayerMenuY * UIValues.TileSz), batch, font);
             BattleCardView.DrawTopCard(batch, new Vector2(0, 2), font, _spriteMap, _currentEnemyCard);
-            BattleCardView.Draw(batch, new Vector2(UIValues.PlayerMenuX, _playerCard.Y+15), font, _spriteMap, _playerCard);
+            BattleCardView.Draw(batch, new Vector2(UIValues.PlayerMenuX, _playerCard.Y + 15), font, _spriteMap, _playerCard);
         }
         _currentEnemyCard.SetHealth(_mob.Health);
         _playerCard.SetHealth(_player.Health);
