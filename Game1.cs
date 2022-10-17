@@ -140,6 +140,7 @@ namespace Monomon
             {
                 GraphicsDevice.SetRenderTarget(_renderTarget);
                 _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointWrap, null, null, null);
+
                 _stateStack.Render(new RenderParams(_spriteBatch));
 
                 //Panel.Draw(_spriteBatch, ListView.PanelTexture, Panel.BasePanel, new Rectangle(0,0,160,144));
@@ -152,7 +153,7 @@ namespace Monomon
             //Render game upscaled and with palette effect
             {
                 GraphicsDevice.SetRenderTarget(null);
-                int zoom = 2;
+                int zoom = 3;
                 _paletteEffect.CurrentPalette = 0.3f; // TODO sefe 20221015 debug color to see what actually uses the palette effect
                 _paletteEffect.EffectBegin(_spriteBatch);
                 _spriteBatch.Draw(_renderTarget, new Rectangle(0, 0, _renderTarget.Width * zoom, _renderTarget.Height * zoom), Color.White);

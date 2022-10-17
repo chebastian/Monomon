@@ -150,7 +150,7 @@ public class LevelSample : SceneView
             {
                 var battle = new BattleSample(_graphics,
                                               input,
-                                              _playerMon,
+                                              new() { _playerMon, new Mobmon("Another", 5, new MonStatus(2,2,2)), new Mobmon("Third", 3, new MonStatus(3,3,3)) },
                                               CreateRandomEnemy(),
                                               stack,
                                               _content,

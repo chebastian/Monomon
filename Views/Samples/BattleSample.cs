@@ -24,6 +24,7 @@ class BattleSample : SceneView
 {
     private BattleManager _battleManager;
     private IINputHandler _input;
+    private List<Mobmon> _playerMons;
     private Mobmon _player;
     private Mobmon _mob;
     private SceneStack _stack;
@@ -46,10 +47,11 @@ class BattleSample : SceneView
     private bool ready;
     private FadeEffect _fadeImpl;
 
-    public BattleSample(GraphicsDevice gd, IINputHandler input, Mobmon player, Mobmon enemy, SceneStack stack, ContentManager content, PaletteEffect palette, FadeEffect fade) : base(gd, content)
+    public BattleSample(GraphicsDevice gd, IINputHandler input, List<Mobmon> playerMons, Mobmon enemy, SceneStack stack, ContentManager content, PaletteEffect palette, FadeEffect fade) : base(gd, content)
     {
         _input = input;
-        _player = player;
+        _playerMons = playerMons;
+        _player = playerMons.First();
         _mob = enemy;
         _stack = stack;
         _paletteEffect = palette;
@@ -239,10 +241,14 @@ class BattleSample : SceneView
             }
             else
             {
+                var chooseMon = _playerMons.Select(x => new Choice(x.Name, () =>
+                {
+                    _player = x;
+                    InitBattle();
+                }));
                 var yesChoice = new Choice("Yes", () =>
                 {
-                    _player.Health = 10;
-                    InitBattle();
+                    SelectChoice("Which mon: ", chooseMon.ToArray());
                 });
                 var no = new Choice("No", () =>
                 {
