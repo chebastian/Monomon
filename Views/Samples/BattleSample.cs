@@ -60,7 +60,7 @@ class BattleSample : SceneView
         _rootMenu = new UIList<string>(new List<UIItem<string>>() {
             new UIItem<string>("Fight", x => { _currentRoot = fightList; }),
             new UIItem<string>("Item", x => { _currentRoot = itemList;}),
-            new UIItem<string>("Mon"),
+            new UIItem<string>("Mon", x => SwapMon()),
         }, x =>
         {
 
@@ -114,6 +114,27 @@ class BattleSample : SceneView
 
         _currentRoot = _rootMenu;
 
+    }
+
+    private void SwapMon()
+    {
+        var chooseMon = _playerMons.Select(x => new Choice(x.Name, () =>
+        {
+            _battleManager.Execute(new PotionCommand(0));
+            _player = x;
+            _playerCard.Swap(x.Name, x.MaxHealth, x.Health, 6);
+            _currentRoot = _rootMenu;
+        }));
+        var yesChoice = new Choice("Yes", () =>
+        {
+            SelectChoice("Select your mon", chooseMon.ToArray());
+        });
+        var no = new Choice("No", () =>
+        {
+            _currentRoot = _rootMenu;
+        });
+
+        SelectChoice("Do you want to swap your mon?", yesChoice, no);
     }
 
     private void InitBattle()

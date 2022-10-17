@@ -22,15 +22,23 @@ namespace Monomon.ViewModels
             Level = level;
             _lastHealth = currentHealth;
             _healt = currentHealth;
-            _xp = 1;
+            _xp = 1; //TODO this should be set based on the mon
             _xpToNextLevel = 100;
+        }
+
+        public void Swap(string name, int maxH, float currentH, int level)
+        {
+            Name = name;
+            CurrentHealth = currentH;
+            MaxHealth = maxH;
+            Level = level;
         }
 
         public int X { get; set; }
         public int Y { get; set; }
 
-        public string Name { get; }
-        public int MaxHealth { get; }
+        public string Name { get; private set; }
+        public int MaxHealth { get; private set; }
         public float CurrentHealth
         {
             get => currentHealth; set
@@ -83,7 +91,7 @@ namespace Monomon.ViewModels
             return firstFloat * (1 - by) + secondFloat * by;
         }
 
-        public int Level { get; }
+        public int Level { get; private set; }
         public float Percentage { get; set; }
         public float XpPercentage { get; set; }
         public int PortraitOffsetX { get; internal set; }
