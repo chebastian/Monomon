@@ -29,7 +29,7 @@ class BattleSample : SceneView
     private Mobmon _mob;
     private SceneStack _stack;
     private PaletteEffect _paletteEffect;
-    private UIList<string> _list;
+    private UIList<string> _rootMenu;
     private UIList<string> fightList;
     private UIList<string> itemList;
     private UIList<string> _currentList;
@@ -57,7 +57,7 @@ class BattleSample : SceneView
         _paletteEffect = palette;
         _fadeImpl = fade;
 
-        _list = new UIList<string>(new List<UIItem<string>>() {
+        _rootMenu = new UIList<string>(new List<UIItem<string>>() {
             new UIItem<string>("Fight", x => { _currentList = fightList; }),
             new UIItem<string>("Item", x => { _currentList = itemList;}),
             new UIItem<string>("Mon"),
@@ -74,15 +74,15 @@ class BattleSample : SceneView
         fightList = new UIList<string>(new List<UIItem<string>>() {
             new UIItem<string>("Tackle", x => {
                 _battleManager.Execute(new AttackCommand(AttackType.Tackle, _player.Stats));
-                _currentList = _list;
+                _currentList = _rootMenu;
             }),
             new UIItem<string>("Slash", x => {
                 _battleManager.Execute(new Slash(_player.Stats));
-                _currentList = _list;
+                _currentList = _rootMenu;
             }),
             new UIItem<string>("Swipe", x => {
                 _battleManager.Execute(new Swipe( _player.Stats));
-                _currentList = _list;
+                _currentList = _rootMenu;
             }),
             new UIItem<string>("Growl", x => {}),
         }, x =>
@@ -96,13 +96,13 @@ class BattleSample : SceneView
         itemList = new UIList<string>(new List<UIItem<string>>() {
             new UIItem<string>("Potion +5", x => {
                 _battleManager.Execute(new PotionCommand(5));
-                _currentList = _list;
+                _currentList = _rootMenu;
             }),
             new UIItem<string>("Potion +1", x => {
                 _battleManager.Execute(new PotionCommand(1));
-                _currentList = _list;
+                _currentList = _rootMenu;
             }),
-            new UIItem<string>("Back", x => {_currentList = _list; }),
+            new UIItem<string>("Back", x => {_currentList = _rootMenu; }),
         }, x =>
         {
             OnMenuMove();
@@ -112,7 +112,7 @@ class BattleSample : SceneView
         OnMenuSelect();
     });
 
-        _currentList = _list;
+        _currentList = _rootMenu;
 
     }
 
@@ -202,7 +202,7 @@ class BattleSample : SceneView
                 _currentList.SelectPrevious();
             if (_input.IsKeyPressed(KeyName.Back))
             {
-                _currentList = _list;
+                _currentList = _rootMenu;
             }
 
             if (_input.IsKeyPressed(KeyName.Select))
