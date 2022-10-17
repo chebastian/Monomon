@@ -32,7 +32,7 @@ class BattleSample : SceneView
     private UIList<string> _rootMenu;
     private UIList<string> fightList;
     private UIList<string> itemList;
-    private UIList<string> _currentList;
+    private UIList<string> _currentRoot;
     private BattleReporter _battleReporter;
     private BattleCardViewModel _currentEnemyCard;
     private BattleCardViewModel _playerCard;
@@ -58,8 +58,8 @@ class BattleSample : SceneView
         _fadeImpl = fade;
 
         _rootMenu = new UIList<string>(new List<UIItem<string>>() {
-            new UIItem<string>("Fight", x => { _currentList = fightList; }),
-            new UIItem<string>("Item", x => { _currentList = itemList;}),
+            new UIItem<string>("Fight", x => { _currentRoot = fightList; }),
+            new UIItem<string>("Item", x => { _currentRoot = itemList;}),
             new UIItem<string>("Mon"),
         }, x =>
         {
@@ -74,15 +74,15 @@ class BattleSample : SceneView
         fightList = new UIList<string>(new List<UIItem<string>>() {
             new UIItem<string>("Tackle", x => {
                 _battleManager.Execute(new AttackCommand(AttackType.Tackle, _player.Stats));
-                _currentList = _rootMenu;
+                _currentRoot = _rootMenu;
             }),
             new UIItem<string>("Slash", x => {
                 _battleManager.Execute(new Slash(_player.Stats));
-                _currentList = _rootMenu;
+                _currentRoot = _rootMenu;
             }),
             new UIItem<string>("Swipe", x => {
                 _battleManager.Execute(new Swipe( _player.Stats));
-                _currentList = _rootMenu;
+                _currentRoot = _rootMenu;
             }),
             new UIItem<string>("Growl", x => {}),
         }, x =>
@@ -96,13 +96,13 @@ class BattleSample : SceneView
         itemList = new UIList<string>(new List<UIItem<string>>() {
             new UIItem<string>("Potion +5", x => {
                 _battleManager.Execute(new PotionCommand(5));
-                _currentList = _rootMenu;
+                _currentRoot = _rootMenu;
             }),
             new UIItem<string>("Potion +1", x => {
                 _battleManager.Execute(new PotionCommand(1));
-                _currentList = _rootMenu;
+                _currentRoot = _rootMenu;
             }),
-            new UIItem<string>("Back", x => {_currentList = _rootMenu; }),
+            new UIItem<string>("Back", x => {_currentRoot = _rootMenu; }),
         }, x =>
         {
             OnMenuMove();
@@ -112,7 +112,7 @@ class BattleSample : SceneView
         OnMenuSelect();
     });
 
-        _currentList = _rootMenu;
+        _currentRoot = _rootMenu;
 
     }
 
@@ -197,17 +197,17 @@ class BattleSample : SceneView
         if (_battleManager.IsPlayerTurn() && _battleManager.IsInteractive())
         {
             if (_input.IsKeyPressed(KeyName.Down))
-                _currentList.SelectNext();
+                _currentRoot.SelectNext();
             if (_input.IsKeyPressed(KeyName.Up))
-                _currentList.SelectPrevious();
+                _currentRoot.SelectPrevious();
             if (_input.IsKeyPressed(KeyName.Back))
             {
-                _currentList = _rootMenu;
+                _currentRoot = _rootMenu;
             }
 
             if (_input.IsKeyPressed(KeyName.Select))
             {
-                _currentList.Select();
+                _currentRoot.Select();
             }
         }
         if (_input.IsKeyPressed(KeyName.Option))
@@ -315,7 +315,7 @@ class BattleSample : SceneView
             //TODO clear the screen black so that the battle does not render uppon the level, 221011
             _graphics.Clear(Color.Black);
 
-            ListView.DrawUIList(_currentList, new Vector2(UIValues.PlayerMenuX,UIValues.PlayerMenuY*UIValues.TileSz), batch, font);
+            ListView.DrawUIList(_currentRoot, new Vector2(UIValues.PlayerMenuX,UIValues.PlayerMenuY*UIValues.TileSz), batch, font);
             BattleCardView.DrawTopCard(batch, new Vector2(0, 2), font, _spriteMap, _currentEnemyCard);
             BattleCardView.Draw(batch, new Vector2(UIValues.PlayerMenuX, _playerCard.Y+15), font, _spriteMap, _playerCard);
         }
