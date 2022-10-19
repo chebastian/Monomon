@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using Monomon.Mons;
+using System.Threading.Tasks;
 
 namespace Monomon.Battle
 {
@@ -8,6 +9,7 @@ namespace Monomon.Battle
         Slash,
         Swipe,
         Wrap,
+        Growl
     } 
 
     public record MonStatus(int attack, int defense, int speed);
@@ -16,6 +18,8 @@ namespace Monomon.Battle
     public record Tackle(MonStatus stat) : AttackCommand(AttackType.Tackle,stat);
     public record Slash(MonStatus stat) : AttackCommand(AttackType.Slash,stat with { attack = stat.attack + 12 });
     public record Swipe(MonStatus stat) : AttackCommand(AttackType.Swipe,stat with { attack = stat.attack + 7 });
+    public record Growl(MonStatus stat) : AttackCommand(AttackType.Growl,stat with { attack = 0 });
 
     public record PotionCommand(int hpRestore) : BattleCommand();
+    public record SwapMonCommand(Mobmon from, Mobmon to) : BattleCommand();
 }

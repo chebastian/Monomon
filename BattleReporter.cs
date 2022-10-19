@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using MonoGameBase.Input;
 using Monomon.Battle;
+using Monomon.Mons;
 using Monomon.State;
 using Monomon.ViewModels;
 using Monomon.Views.Scenes;
@@ -61,7 +62,12 @@ public class BattleReporter
         var handler = new PotionHandler(_gd, _stack, _input, _font, _sprites, _soundCallback, _content);
         if (message is PotionMessage potion)
             handler.Execute(potion, user, continueWith);
+    }
 
+    public void OnSwap(Mobmon swapper, Mobmon swapTo, Action doSwap,Action continueWith, BattleCardViewModel card)
+    {
+        var handler = new SwapMonHandler(_gd,_stack,_input,_font,_sprites, _soundCallback, _content);
+        handler.Execute(swapper, swapTo, doSwap,continueWith, card, card);
     }
 
     public void OnAttack(BattleMessage message, Mons.Mobmon attacker, Mons.Mobmon _oponent, Action continueWith, BattleCardViewModel attackerCard, BattleCardViewModel oponentCard, bool isPlayer)

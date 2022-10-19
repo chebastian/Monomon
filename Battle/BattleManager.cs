@@ -46,12 +46,26 @@ namespace Monomon.Battle
             _currentTurn.Execute();
         }
 
+        internal void Swap(Mobmon from, Mobmon to, Action onSwap)
+        {
+            _reporter.OnSwap(from, to,
+                () =>
+                {
+                    onSwap();
+                    _attacker = to;
+                },
+                () =>
+                {
+                    NextTurn();
+                }, _attackerCard);
+        }
+
         internal void Execute(BattleCommand cmd)
         {
             if (cmd is AttackCommand attack)
                 DoTackle(attack);
             if (cmd is PotionCommand potion)
-                _reporter.OnItem(new PotionMessage(_attacker.Name, "potion",_attacker.Health, potion.hpRestore), _attacker, () => { NextTurn(); });
+                _reporter.OnItem(new PotionMessage(_attacker.Name, "potion", _attacker.Health, potion.hpRestore), _attacker, () => { NextTurn(); });
         }
 
         public bool IsInteractive()

@@ -84,7 +84,10 @@ class BattleSample : SceneView
                 _battleManager.Execute(new Swipe( _player.Stats));
                 _currentRoot = _rootMenu;
             }),
-            new UIItem<string>("Growl", x => {}),
+            new UIItem<string>("Growl", x => {
+                _battleManager.Execute(new Growl( _player.Stats));
+                _currentRoot = _rootMenu;
+            }),
         }, x =>
         {
             OnMenuMove();
@@ -120,9 +123,7 @@ class BattleSample : SceneView
     {
         var chooseMon = _playerMons.Select(x => new Choice(x.Name, () =>
         {
-            _battleManager.Execute(new PotionCommand(0));
-            _player = x;
-            _playerCard.Swap(x.Name, x.MaxHealth, x.Health, 6);
+            _battleManager.Swap(_player, x, () => _player = x);
             _currentRoot = _rootMenu;
         }));
         var yesChoice = new Choice("Yes", () =>
