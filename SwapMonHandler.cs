@@ -30,14 +30,14 @@ namespace Monomon
             var tweenOut = new TweenState(x => {
                 swapperCard.PortraitOffsetX = (int)x.lerp;
             },() => { 
-            },swapperCard.PortraitOffsetX,-swapperCard.PortraitSrc.Width,1, EasingFunc.EaseOutBack);
+            },swapperCard.PortraitOffsetX,-swapperCard.PortraitSrc.Width,.8f, EasingFunc.EaseOutBack);
 
             var tweenIn = new TweenState(x => {
                 swapperCard.PortraitOffsetX = (int)x.lerp;
             },() => {
                 swapperCard.Swap(swapTo.Name, swapTo.MaxHealth, swapTo.Health, 3);
                 doSwap();
-            },-swapperCard.PortraitSrc.Width,0,1, EasingFunc.EaseInBack);
+            },-swapperCard.PortraitSrc.Width,0,.6f, EasingFunc.EaseOutBack);
 
             _stack.AddState(message);
             _stack.AddState(tweenOut);
