@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Monomon.Mons
 {
-    public class Mobmon
+    public class Mobmon : IEquatable<Mobmon>
     {
         public Mobmon(string name,int health, Battle.MonStatus stats)
         {
@@ -24,5 +24,10 @@ namespace Monomon.Mons
         public float HealthPercentage => (MathF.Max(Health, 1) / MaxHealth);
         public MonStatus Stats { get; }
         public float Xp { get; set; }
+
+        public bool Equals(Mobmon? other)
+        {
+            return Name == other?.Name;
+        }
     }
 }
