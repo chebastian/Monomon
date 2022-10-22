@@ -34,6 +34,7 @@ namespace Monomon
 
             var tweenIn = new TweenState(x => {
                 swapperCard.PortraitOffsetX = (int)x.lerp;
+                swapperCard.PortraitOffsetY = (int)x.lerp;
             },() => {
                 swapperCard.Swap(swapTo.Name, swapTo.MaxHealth, swapTo.Health, 3);
                 doSwap();
