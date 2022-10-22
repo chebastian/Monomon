@@ -18,6 +18,8 @@ using Monomon.Battle;
 using Monomon.Data;
 using Monomon.Effects;
 using Monomon.Mons;
+using Monomon.Views.Battle;
+using Monomon.Views.Gui;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -38,6 +40,7 @@ public class LevelSample : SceneView
     private AnimationPlayer _animPlayer;
     private List<Frame> _currentAnim;
     private Player _player;
+    private List<Mobmon> _playerMons;
 
     private Vec2 windowPos;
 
@@ -64,7 +67,8 @@ public class LevelSample : SceneView
 
         _tileSprites = content.Load<Texture2D>("levelMap");
         _playerSprites = content.Load<Texture2D>("playerTopDown");
-        _playerMon = new Mons.Mobmon("Player", 10, (new MonStatus(2, 7, 3)));
+        _playerMons = new() { new Mobmon("Player", 10, new (2,7,3)), new Mobmon("Another", 10, new MonStatus(2, 12, 2)), new Mobmon("Third", 13, new MonStatus(3, 13, 3)) };
+        _playerMon = _playerMons.First();
 
         _animPlayer = new AnimationPlayer(7.0f);
         _currentAnim = SourceForDir(new Vec2(0, 1));
@@ -150,7 +154,7 @@ public class LevelSample : SceneView
             {
                 var battle = new BattleSample(_graphics,
                                               input,
-                                              new() { _playerMon, new Mobmon("Another", 10, new MonStatus(2,12,2)), new Mobmon("Third", 13, new MonStatus(3,13,3)) },
+                                              _playerMons,
                                               CreateRandomEnemy(),
                                               stack,
                                               _content,
@@ -238,9 +242,9 @@ public class LevelSample : SceneView
                 new Rectangle(0, 0, 1, 1),
                 Color.White
                 );
+
+            MonSummaryView.Draw(batch, _font, _spriteMap, _playerMons);
         }
-
-
 
         Vector2 ToWindowPosition(Vec2 pos)
         {

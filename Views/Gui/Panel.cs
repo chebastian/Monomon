@@ -61,6 +61,16 @@ namespace Monomon.Views.Gui
             //                                  sprites.bottom.end.Height),
             //          sprites.top.mid, Color.White);
         }
+        public static void Stack<T>(IEnumerable<T> items, Action<T,int> call,int offset, int spaceing)
+        {
+            var y = offset;
+            foreach (var item in items)
+            {
+                call(item,y);
+                y += spaceing;
+            }
+        }
+
         public static void Stack(List<Action<int>> drawCalls,int offset, int spaceing)
         {
             var y = offset;
