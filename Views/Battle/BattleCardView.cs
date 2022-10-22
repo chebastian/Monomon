@@ -38,6 +38,20 @@ namespace Monomon.Views.Battle
                 new Rectangle(64 - w, 0, w, h)
                 );
 
+        private static int miniw = 4;
+        private static int minih = 3;
+        public static SpriteCollection miniBarSprites = new SpriteCollection(
+                new Rectangle(64, 0, miniw, minih),
+                new Rectangle(64 + miniw, 0, miniw, minih),
+                new Rectangle(80 - miniw, 0, miniw, minih)
+                );
+
+        public static SpriteCollection miniEmptyBarSprites = new SpriteCollection(
+                new Rectangle(80, 0, miniw, minih),
+                new Rectangle(80 + miniw, 0, miniw, minih),
+                new Rectangle(96 - miniw, 0, miniw, minih)
+                );
+
         public static void Stack(List<Action<int>> drawCalls,int offset, int spaceing)
         {
             var y = offset;
