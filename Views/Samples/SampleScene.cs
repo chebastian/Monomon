@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Input;
 using MonoGameBase.Input;
 using Monomon.Effects;
 using Monomon.Input;
+using Monomon.Mons;
 using Monomon.State;
 using Monomon.UI;
 using Monomon.Views.Gui;
@@ -14,12 +15,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Monomon.Views.Gui.ListView;
 
 namespace Monomon.Views.Samples;
 
 public class SampleScene : SceneView
 {
     private SpriteFont font;
+    private Texture2D _sprites;
     private UIList<string> _sceneList;
     private IINputHandler _input;
     private SceneStack _stack;
@@ -35,6 +38,7 @@ public class SampleScene : SceneView
         GraphicsDevice = gd;
         font = content.Load<SpriteFont>("File");
         var sprites = content.Load<Texture2D>("spritemap");
+        _sprites = content.Load<Texture2D>("spritemap");
 
 
 
@@ -109,6 +113,16 @@ public class SampleScene : SceneView
 
     protected override void OnDraw(SpriteBatch batch)
     {
-        ListView.DrawUIList(_sceneList, new Vector2(10, 10),batch,font);
+        DrawUIList(_sceneList, new Vector2(10, 10),batch,font);
+
+
+        List<UIItem<Drawable<Mobmon>>> list = new List<UIItem<Drawable<Mobmon>>>()
+        { 
+            new UIItem<Drawable<Mobmon>>(new TestDrawable(new Mobmon("First", 4, new(2,3,4)), _sprites,font)),
+            new UIItem<Drawable<Mobmon>>(new TestDrawable(new Mobmon("2nd", 14, new(2,3,4)), _sprites,font)),
+            new UIItem<Drawable<Mobmon>>(new TestDrawable(new Mobmon("3rd", 2, new(2,3,4)), _sprites,font)),
+        };
+
+        DrawUIListX<Mobmon>(list, new Vector2(80, 80), batch, font);
     }
 }
